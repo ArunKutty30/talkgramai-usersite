@@ -1,0 +1,172 @@
+.countdown {
+  font-size: 34px;
+}
+
+.Launch-countdown-hold {
+  font-family: "Inter", sans-serif;
+  padding-top: 3rem;
+  text-align: center;
+  padding: 3rem 8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.amountimg {
+  width: 30%;
+}
+
+.talkgram-logo {
+  width: 200px;
+  height: 10%;
+  padding-bottom: 2rem;
+}
+
+.heading1 {
+  font-weight: bold;
+  color: #302c3a;
+  padding: 1rem 0;
+  font-size: 40px;
+}
+
+.description {
+  color: #6a6a6a;
+  font-weight: 600px;
+  padding: 1rem 0;
+  font-size: 20px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.beta-launch {
+  font-weight: bolder;
+  color: #ff8322;
+  font-size: 3rem;
+  padding: 2rem 0;
+  text-shadow: 2px 2px white;
+  text-transform: uppercase;
+}
+
+.title {
+  font-weight: 800;
+  color: transparent;
+  font-size: 48px;
+  background: url("https://phandroid.s3.amazonaws.com/wp-content/uploads/2014/05/rainbow-nebula.jpg")
+    #ff8322 repeat;
+  background-position: 40% 50%;
+  -webkit-background-clip: text;
+  position: relative;
+  text-align: center;
+  line-height: 1.2;
+  letter-spacing: 2px;
+  padding: 2rem 0;
+  text-transform: uppercase;
+}
+
+.launch-container {
+  overflow-x: hidden;
+  flex: 0 0 auto;
+  border-radius: 15px;
+}
+
+.launch-btn {
+  padding: 15px 25px;
+  font-size: 24px;
+  text-align: center;
+  cursor: pointer;
+  outline: none;
+  color: #fff;
+  background: linear-gradient(180deg, #ff8322 0%, #ff4a22 100%);
+  border: none;
+  border-radius: 15px;
+  box-shadow: 2px 4px #434343;
+  /* box-shadow: 1.58469px 1.58469px 20.47865px rgba(0, 0, 0, 0.25); */
+  font-weight: 500;
+  font-family: "Inter";
+  position: relative;
+  overflow: hidden;
+  margin: 10px;
+  text-transform: uppercase;
+}
+
+.launch-btn:hover {
+  background: linear-gradient(180deg, #ff8322 0%, #ff4a22 100%);
+}
+
+.launch-btn:active {
+  background: linear-gradient(180deg, #ff8322 0%, #ff4a22 100%);
+  box-shadow: 2px 2px #434343;
+  transform: translateY(4px);
+}
+
+.launch-btn:before {
+  content: "";
+  position: absolute;
+  width: 100px;
+  height: 100%;
+  background-image: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(255, 255, 255, 0.8),
+    rgba(255, 255, 255, 0) 70%
+  );
+  top: 0;
+  left: -100px;
+  animation: shine 3s infinite linear; /* Animation */
+}
+
+@keyframes shine {
+  0% {
+    left: -100px;
+  }
+  20% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+@media (max-width: 800px) {
+  .Launch-countdown-hold {
+    padding: 4rem 2rem;
+  }
+  .talkgram-logo {
+    width: 60%;
+    object-fit: contain;
+  }
+
+  .heading1 {
+    font-size: 1.3rem;
+  }
+
+  .description {
+    font-size: 0.7rem;
+    padding: 1rem 0;
+    width: 90%;
+  }
+
+  .beta-launch {
+    font-weight: bolder;
+    color: #ff8322;
+    font-size: 1.5rem;
+    padding: 1rem 0;
+    margin: 0;
+  }
+
+  .amountimg {
+    width: 80%;
+  }
+
+  .title {
+    font-size: 36px;
+  }
+
+  .countdown {
+    font-size: 28px;
+  }
+}

@@ -1,0 +1,812 @@
+import React, { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
+import { collection, limit, onSnapshot, orderBy, query, where } from "firebase/firestore";
+import ReactCountdown, { CountdownRenderProps } from "react-countdown";
+import { Box } from "@mui/material";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+
+import SectionHeader from "../SectionHeader";
+import Button from "../Button";
+import NoSessionIllustration from "../../assets/images/no_sessions.svg";
+import { userStore } from "../../store/userStore";
+import { BOOKINGS_COLLECTION_NAME } from "../../constants/data";
+import { db } from "../../utils/firebase";
+import { IBookingSession } from "../../constants/types";
+import { reminderStore } from "../../store/reminderStore";
+import { addPrefixZero } from "../../utils/helpers";
+import DashboardSessionCard from "../SessionCards/DashboardSessionCard";
+import AreaChart from "../Chart/AreaChart";
+import Tooltip from "../Tooltip";
+
+dayjs.extend(relativeTime);
+
+const SessionReminder = () => {
+  const fetching = reminderStore((store) => store.fetching);
+  const endDate = reminderStore((store) => store.endDate);
+  const session = reminderStore((store) => store.session);
+  const remainingSession = reminderStore((store) => store.session);
+
+  const renderer = ({ completed, hours, minutes, seconds, days }: CountdownRenderProps) => {
+    if (completed) {
+      return null;
+    } else {
+      return (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "start",
+            gap: "15px",
+          }}
+        >
+          <p style={{ color: "#646464" }}>Your remaining</p>
+          <h1>
+            {remainingSession} Session{remainingSession > 1 ? "s" : ""}
+          </h1>
+          <div>
+            {/* <BellIcon width={14} height={14} /> */}
+            <p>
+              {/* Your {session} session{session > 1 ? "s" : ""} for this week ends in{" "} */}
+              ends in{" "}
+              <b style={{ display: "inline-block", minWidth: "67px" }}>
+                {addPrefixZero(days)}D : {addPrefixZero(hours)}H : {addPrefixZero(minutes)}M :{" "}
+                {addPrefixZero(seconds)}S
+              </b>{" "}
+              !!
+            </p>
+          </div>
+        </Box>
+      );
+    }
+  };
+
+  const nextWeekRenderer = ({ completed, hours, minutes, seconds, days }: CountdownRenderProps) => {
+    if (completed) {
+      return null;
+    } else {
+      return (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "start",
+            gap: "15px",
+          }}
+        >
+          <p style={{ color: "#646464" }}>Your next</p>
+          <h1>
+            {remainingSession} Session{remainingSession > 1 ? "s" : ""}
+          </h1>
+          <div>
+            {/* <BellIcon width={14} height={14} /> */}
+            <p>
+              {/* Your next week session booking starts in{" "} */}
+              starts in{" "}
+              <b style={{ display: "inline-block", minWidth: "67px" }}>
+                {addPrefixZero(days)}D : {addPrefixZero(hours)}H : {addPrefixZero(minutes)}M :{" "}
+                {addPrefixZero(seconds)}S
+              </b>{" "}
+            </p>
+          </div>
+        </Box>
+      );
+    }
+  };
+
+  if (fetching) return null;
+
+  if (session <= 0)
+    return (
+      <StyledTimeReminder>
+        <ReactCountdown date={endDate} renderer={nextWeekRenderer} />
+      </StyledTimeReminder>
+    );
+
+  return (
+    <StyledTimeReminder>
+      <ReactCountdown date={endDate} renderer={renderer} />
+    </StyledTimeReminder>
+  );
+};
+
+const SubscribedUserSession: React.FC = () => {
+  const user = userStore((store) => store.user);
+  const [sessions, setSessions] = useState<IBookingSession[]>([]);
+  const [previousSessions, setPreviousSessionss] = useState<IBookingSession[]>([]);
+  const subscriptionData = userStore((store) => store.subscriptionData);
+  const [showPopup, setShowPopup] = useState(false);
+  const missedClass = userStore((state) => state.missedClass);
+  const overallBookedSession = userStore((state) => state.overallBookedSession);
+
+  useEffect(() => {
+    if (!user) return;
+    const colRef = collection(db, BOOKINGS_COLLECTION_NAME);
+    const q = query(
+      colRef,
+      where("user", "==", user.uid),
+      where("status", "==", "UPCOMING"),
+      where("endTime", ">=", new Date()),
+      orderBy("endTime", "asc"),
+      limit(1)
+    );
+
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const slots: any[] = [];
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          slots.push({
+            id: doc.id,
+            ...data,
+            startTime: data.startTime.toDate(),
+            endTime: data.endTime.toDate(),
+            createdAt: data.createdAt.toDate(),
+            updatedAt: data.updatedAt.toDate(),
+          });
+        });
+        setSessions(slots);
+      },
+      (error) => {
+        console.error("Error fetching upcoming sessions:", error);
+      }
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    const colRef = collection(db, BOOKINGS_COLLECTION_NAME);
+    const q = query(
+      colRef,
+      where("user", "==", user.uid),
+      where("endTime", "<", new Date()),
+      orderBy("endTime", "desc"),
+      limit(1)
+    );
+
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const slots: any[] = [];
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          if (data.status !== "MISSED") {
+            slots.push({
+              id: doc.id,
+              ...data,
+              startTime: data.startTime.toDate(),
+              endTime: data.endTime.toDate(),
+              createdAt: data.createdAt.toDate(),
+              updatedAt: data.updatedAt.toDate(),
+            });
+          }
+        });
+        setPreviousSessionss(slots);
+      },
+      (error) => {
+        console.error("Error fetching upcoming sessions:", error);
+      }
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [user]);
+
+  const handlePopup = () => {
+    setShowPopup(!showPopup);
+  };
+
+  const sessionLists = useMemo(() => {
+    if (!overallBookedSession.length) return [];
+
+    const list = overallBookedSession.map((b) => {
+      if (b.feedbackFromTutor) {
+        return {
+          confidence: b.feedbackFromTutor.skills?.confidence || 0,
+          passion: b.feedbackFromTutor.skills?.passion || 0,
+          listeningComprehension: b.feedbackFromTutor.skills?.listeningComprehension || 0,
+          conversationBuilding: b.feedbackFromTutor.skills?.conversationBuilding || 0,
+        };
+      }
+
+      return {
+        confidence: 0,
+        passion: 0,
+        listeningComprehension: 0,
+        conversationBuilding: 0,
+      };
+    });
+
+    return list;
+  }, [overallBookedSession]);
+
+  console.log("test", sessions);
+
+  return (
+    <>
+      <div className="pad">
+        <SectionHeader
+          title={`Howdy ${user && user.displayName}!`}
+          description="Here’s everything at once. Let today be the reason you look back and smile on tomorrow."
+          isPopupOpen={showPopup}
+          handlePopup={handlePopup}
+        />
+        <StyledUserSessionStats>
+          <StyledSessionStatsCard>
+            <h6 className="s-16 mb-8 stats-topics">
+              Confidence
+              <Tooltip title="Here’s everything at once. Let today be the reason you look back and smile on tomorrow.">
+                <InfoOutlinedIcon className="stats-info-icon" />
+              </Tooltip>
+            </h6>
+            <div className="flex-between">
+              <div className="flex-column">
+                <div className="stats">
+                  <h3>
+                    {sessionLists.length
+                      ? sessionLists.slice(sessionLists.length - 1).map((m) => m.confidence)
+                      : 0}
+                  </h3>
+                  {/* <div className="arrow-red">
+                    <SouthIcon className="icon" />
+                  </div>
+                  <p className="stats-value">15 %</p> */}
+                </div>
+                <p className="sub-title">compared to last session</p>
+              </div>
+              <div className="block-right">
+                {/* <img src={checked} alt="" /> */}
+                <AreaChart
+                  data={sessionLists.map((s, i) => ({
+                    name: `Session ${i + 1}`,
+                    score: s.confidence,
+                  }))}
+                />
+              </div>
+            </div>
+          </StyledSessionStatsCard>
+          <StyledSessionStatsCard>
+            <h6 className="s-16 mb-8 stats-topics">
+              Passion{" "}
+              <Tooltip title="Here’s everything at once. Let today be the reason you look back and smile on tomorrow.">
+                <InfoOutlinedIcon className="stats-info-icon" />
+              </Tooltip>
+            </h6>
+            <div className="flex-between">
+              <div className="flex-column">
+                <div className="stats">
+                  <h3>
+                    <h3>
+                      {sessionLists.length
+                        ? sessionLists.slice(sessionLists.length - 1).map((m) => m.passion)
+                        : 0}
+                    </h3>
+                  </h3>
+                  {/* <div className="arrow-red">
+                    <SouthIcon className="icon" />
+                  </div>
+                  <p className="stats-value">15 %</p> */}
+                </div>
+                <p className="sub-title">compared to last session</p>
+              </div>
+              <div className="block-right">
+                <AreaChart
+                  data={sessionLists.map((s, i) => ({
+                    name: `Session ${i + 1}`,
+                    score: s.passion,
+                  }))}
+                />
+              </div>
+            </div>
+          </StyledSessionStatsCard>
+          <StyledSessionStatsCard>
+            <h6 className="s-16 mb-8 stats-topics">
+              Listening Comprehension{" "}
+              <Tooltip title="Here’s everything at once. Let today be the reason you look back and smile on tomorrow.">
+                <InfoOutlinedIcon className="stats-info-icon" />
+              </Tooltip>
+            </h6>
+            <div className="flex-between">
+              <div className="flex-column">
+                <div className="stats">
+                  <h3>
+                    {sessionLists.length
+                      ? sessionLists
+                          .slice(sessionLists.length - 1)
+                          .map((m) => m.listeningComprehension)
+                      : 0}
+                  </h3>
+                  {/* <div className="arrow-red">
+                    <SouthIcon className="icon" />
+                  </div>
+                  <p className="stats-value">15 %</p> */}
+                </div>
+                <p className="sub-title">compared to last session</p>
+              </div>
+              <div className="block-right">
+                <AreaChart
+                  data={sessionLists.map((s, i) => ({
+                    name: `Session ${i + 1}`,
+                    score: s.listeningComprehension,
+                  }))}
+                />
+              </div>
+            </div>
+          </StyledSessionStatsCard>
+          <StyledSessionStatsCard>
+            <h6 className="s-16 mb-8 stats-topics">
+              Conversation Building{" "}
+              <Tooltip title="Here’s everything at once. Let today be the reason you look back and smile on tomorrow.">
+                <InfoOutlinedIcon className="stats-info-icon" />
+              </Tooltip>
+            </h6>
+            <div className="flex-between">
+              <div className="flex-column">
+                <div className="stats">
+                  <h3>
+                    {sessionLists.length
+                      ? sessionLists
+                          .slice(sessionLists.length - 1)
+                          .map((m) => m.conversationBuilding)
+                      : 0}
+                  </h3>
+                  {/* <div className="arrow-red">
+                    <SouthIcon className="icon" />
+                  </div>
+                  <p className="stats-value">15 %</p> */}
+                </div>
+                <p className="sub-title">compared to last session</p>
+              </div>
+              <div className="block-right">
+                <AreaChart
+                  data={sessionLists.map((s, i) => ({
+                    name: `Session ${i + 1}`,
+                    score: s.conversationBuilding,
+                  }))}
+                />
+              </div>
+            </div>
+          </StyledSessionStatsCard>
+        </StyledUserSessionStats>
+        <StyledGridContainer>
+          <StyledUpComingSessionContainer>
+            <div className="flex-between mb-20">
+              <h5 className="section-title">Upcoming Sessions</h5>
+            </div>
+            {sessions.length ? (
+              sessions.map((sessionDetails) => (
+                <div key={sessionDetails.id} className="section-hold">
+                  <DashboardSessionCard type="upcoming" {...sessionDetails} />
+                </div>
+              ))
+            ) : (
+              <StyledNoSession>
+                <img src={NoSessionIllustration} alt="no session illustration" />
+                <p>You do not have any Upcoming Sessions</p>
+              </StyledNoSession>
+            )}
+          </StyledUpComingSessionContainer>
+          <StyledPreviousSessionContainer>
+            <div className="flex-between" style={{ marginBottom: "24px" }}>
+              <h5 className="section-title">Previous Sessions</h5>
+            </div>
+            <div className="section-hold-shadow"></div>
+            {previousSessions.length ? (
+              previousSessions.map((sessionDetails) => (
+                <div key={sessionDetails.id} className="section-hold">
+                  <DashboardSessionCard type="previous" {...sessionDetails} />
+                </div>
+              ))
+            ) : (
+              <StyledNoSession>
+                <img src={NoSessionIllustration} alt="no session illustration" />
+                <p>You do not have any Previous Sessions</p>
+              </StyledNoSession>
+            )}
+          </StyledPreviousSessionContainer>
+        </StyledGridContainer>
+        <StyledCurrentPlan>
+          <Box className="current-plan-sec-1">
+            <SessionReminder />
+            <Box
+              className="book-session-one"
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "15px",
+              }}
+            >
+              <Link to="/book-session">
+                <Button>+ Book Session</Button>
+              </Link>
+            </Box>
+          </Box>
+
+          <Box className="sec-last-card-hold">
+            <CurrentPlanCards title="Total Sessions" count={subscriptionData?.noOfSession || 0} />
+            <CurrentPlanCards
+              title="Sessions Left"
+              count={
+                (subscriptionData?.noOfSession || 0) -
+                ((subscriptionData?.bookedSession || 0) + (missedClass || 0))
+              }
+            />
+            <CurrentPlanCards
+              title="Backlog Sessions"
+              count={subscriptionData?.backlogSession || 0}
+            />
+            <CurrentPlanCards
+              title="Cancelled Sessions"
+              count={subscriptionData?.cancelledSession || 0}
+            />
+            <CurrentPlanCards title="Missed Class" count={missedClass || 0} />
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "15px",
+              height: "2rem",
+            }}
+            className="book-session-two"
+          >
+            <Link to="/book-session">
+              <Button style={{ whiteSpace: "nowrap", width: "100%" }}>+ Book Session</Button>
+            </Link>
+          </Box>
+        </StyledCurrentPlan>
+      </div>
+    </>
+  );
+};
+
+const CurrentPlanCards = ({ title, count }: { title: string; count: number }) => {
+  return (
+    <Box
+      sx={{
+        background: "white",
+        padding: "1rem",
+        borderRadius: "12px",
+        border: "1px solid #E3E3E380",
+        boxShadow: "0px 1px 6px rgba(0, 0, 0, 0.02)",
+        minWidth: "10rem",
+        fontSize: "0.7rem",
+      }}
+    >
+      <p style={{ fontSize: "13px" }}>{title}</p>
+      <h1 style={{ padding: "0.5rem 0 0 0" }}>{count}</h1>
+    </Box>
+  );
+};
+
+// 767 1023
+
+const StyledCurrentPlan = styled.section`
+  border-radius: 12px;
+  width: 100%;
+  border: 1px solid #cecece40;
+  background: #d9d9d91c;
+  padding: 25px;
+  margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: 3fr 4fr 2fr;
+  justify-content: space-between;
+  align-items: center;
+
+  .book-session-one {
+    display: none;
+  }
+
+  .current-plan-sec-1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .sec-last-card-hold {
+    display: grid;
+    grid-template-columns: repeat(4, 10rem);
+    justify-content: start;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  @media (max-width: 1100px) {
+    grid-template-columns: 1fr;
+    justify-content: start;
+    align-items: start;
+    gap: 20px;
+
+    .book-session-one {
+      display: flex;
+      justify-content: end;
+    }
+
+    .book-session-two {
+      display: none;
+    }
+  }
+
+  @media (max-width: 820px) {
+    .sec-last-card-hold {
+      grid-template-columns: repeat(2, 15rem);
+      justify-content: start;
+    }
+
+    .book-session-one {
+      display: none;
+    }
+
+    .book-session-two {
+      margin: 1rem 0;
+      display: flex;
+      justify-content: start;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .sec-last-card-hold {
+      grid-template-columns: repeat(2, 10rem);
+      justify-content: start;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .sec-last-card-hold {
+      grid-template-columns: repeat(2, 9rem);
+      font-size: 70%;
+      gap: 5px;
+      justify-content: start;
+    }
+  }
+`;
+
+const StyledUpComingSessionContainer = styled.section`
+  border-radius: 12px;
+  border: 1px solid #cecece40;
+  background: #d9d9d91c;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+  position: relative;
+
+  @media (max-width: 600px) {
+    padding: 15px;
+  }
+
+  .section-hold-shadow {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(274deg, #eeeeee 0%, rgba(251, 251, 251, 0) 100%);
+    border-radius: 11px;
+  }
+
+  .section-title {
+    font-weight: 500;
+  }
+
+  .section-hold {
+    display: grid;
+    grid-template-columns: 1fr;
+    // justify-content: start;
+    // align-items: start;
+    // gap: 15px;
+    // overflow: auto hidden;
+  }
+`;
+
+const StyledPreviousSessionContainer = styled.section`
+  border-radius: 12px;
+  border: 1px solid #cecece40;
+  background: #d9d9d91c;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+  position: relative;
+
+  @media (max-width: 600px) {
+    padding: 15px;
+  }
+
+  .section-hold-shadow {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(274deg, #eeeeee 0%, rgba(251, 251, 251, 0) 100%);
+    border-radius: 11px;
+  }
+
+  .section-title {
+    font-weight: 500;
+  }
+
+  .section-hold {
+    display: grid;
+    grid-template-columns: 1fr;
+    // display: flex;
+    // justify-content: start;
+    // align-items: start;
+    // gap: 15px;
+    // overflow: auto hidden;
+  }
+`;
+const StyledGridContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  padding-bottom: 10px;
+
+  @media (max-width: 968px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+`;
+
+const StyledNoSession = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  max-width: 300px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 10px 0;
+
+  img {
+    width: 75%;
+  }
+`;
+
+const StyledUserSessionStats = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  @media (max-width: 600px) {
+    width: 100%;
+    overflow: auto;
+    grid-template-columns: repeat(4, 70vw);
+    gap: 15px;
+    cursor: pointer;
+    padding-right: 20;
+  }
+`;
+
+const StyledSessionStatsCard = styled.div`
+  border-radius: 12px;
+  border: 1px solid #cecece40;
+  background: #d9d9d91c;
+  padding: 25px;
+
+  .stats-topics {
+    display: flex;
+    justify-content: start;
+    align-item: center;
+
+    .stats-info-icon {
+      margin: 0 10px 0 8px;
+      font-size: 18px;
+    }
+  }
+
+  .block-right {
+    height: 100px;
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+
+    @media (max-width: 600px) {
+      height: 100px;
+    }
+
+    img {
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
+
+      @media (max-width: 600px) {
+        width: 25px;
+        height: 25px;
+      }
+    }
+  }
+
+  .flex-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .stats {
+      display: flex;
+      justify-content: start;
+      align-items: center;
+
+      .stats-value {
+        font-size: 18px;
+        color: red;
+      }
+
+      .arrow-green {
+        border-radius: 50%;
+        padding: 5px 6px 3px 6px;
+        margin: 5px 10px;
+        font-size: 1rem;
+        color: #00c45a;
+        background: #04de0026;
+      }
+
+      .arrow-red {
+        border-radius: 50%;
+        padding: 5px 6px 3px 6px;
+        margin: 5px 10px;
+        font-size: 1rem;
+        color: red;
+        background: #ffefef;
+      }
+
+      .icon {
+        font-size: 20px;
+      }
+    }
+
+    .sub-title {
+      color: grey;
+    }
+  }
+`;
+
+const StyledTimeReminder = styled.div`
+  margin-bottom: 20px;
+
+  > div {
+    border-radius: 8px;
+    // border: 1px solid #eae8e5;
+    // background: rgba(78, 126, 0, 0.2);
+    // box-shadow: 0px 1px 8px 0px rgba(31, 103, 251, 0.05);
+    width: fit-content;
+    display: flex;
+    gap: 10px;
+
+    p {
+      color: var(--black, #ff1a1a);
+      font-family: "Inter";
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+
+      b {
+        text-transform: lowercase;
+      }
+    }
+  }
+`;
+
+export default SubscribedUserSession;
