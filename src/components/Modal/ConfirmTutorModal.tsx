@@ -277,6 +277,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
         meetingId,
         cost: cost,
         demoClass: isDemoClass,
+        timelogs: null,
       });
 
       setLoading(false);
