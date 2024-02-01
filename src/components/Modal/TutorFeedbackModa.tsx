@@ -112,7 +112,6 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                                 ? "tag-variant-one success"
                                 : "tag-variant-one"
                             }
-                            onClick={() => setFieldValue("status", "COMPLETED")}
                           >
                             Joined
                           </span>
@@ -122,7 +121,6 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                                 ? "tag-variant-one error"
                                 : "tag-variant-one"
                             }
-                            onClick={() => setFieldValue("status", "MISSED")}
                           >
                             Missed
                           </span>
@@ -145,7 +143,6 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                                         : ""
                                     }
                                     key={i.toString()}
-                                    onClick={() => setFieldValue(`skills.${k}`, i + 1)}
                                   >
                                     {i + 1}
                                   </span>
@@ -171,7 +168,6 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                                     <span
                                       className={i + 1 <= values.fluency.rating ? "active" : ""}
                                       key={i.toString()}
-                                      onClick={() => setFieldValue("fluency.rating", i + 1)}
                                     >
                                       <StarIcon />
                                     </span>
@@ -190,9 +186,6 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                                   <div
                                     className={values.fluency.feedback === data ? "active" : ""}
                                     key={j.toString()}
-                                    onClick={() => {
-                                      setFieldValue("fluency.feedback", data);
-                                    }}
                                   >
                                     <p>{data}</p>
                                   </div>
@@ -216,7 +209,6 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                                         i + 1 <= values.pronunciation.rating ? "active" : ""
                                       }
                                       key={i.toString()}
-                                      onClick={() => setFieldValue("pronunciation.rating", i + 1)}
                                     >
                                       <StarIcon />
                                     </span>
@@ -237,9 +229,6 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                                       values.pronunciation.feedback === data.name ? "active" : ""
                                     }
                                     key={j.toString()}
-                                    onClick={() => {
-                                      setFieldValue("pronunciation.feedback", data.name);
-                                    }}
                                   >
                                     <p>{data.name}</p>
                                   </div>
@@ -264,9 +253,6 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                                 <div
                                   className={values.vocabulary.general === data ? "active" : ""}
                                   key={j.toString()}
-                                  onClick={() => {
-                                    setFieldValue("vocabulary.general", data);
-                                  }}
                                 >
                                   <p>{data}</p>
                                 </div>
@@ -286,9 +272,6 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                                 <div
                                   className={values.vocabulary.range === data ? "active" : ""}
                                   key={j.toString()}
-                                  onClick={() => {
-                                    setFieldValue("vocabulary.range", data);
-                                  }}
                                 >
                                   <p>{data}</p>
                                 </div>
@@ -310,9 +293,6 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                                     values.vocabulary.wordChoicePrecision === data ? "active" : ""
                                   }
                                   key={j.toString()}
-                                  onClick={() => {
-                                    setFieldValue("vocabulary.wordChoicePrecision", data);
-                                  }}
                                 >
                                   <p>{data}</p>
                                 </div>
@@ -338,9 +318,6 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                                   <div
                                     className={values.grammar.mostErrors === data ? "active" : ""}
                                     key={j.toString()}
-                                    onClick={() => {
-                                      setFieldValue("grammar.mostErrors", data);
-                                    }}
                                   >
                                     <p>{data}</p>
                                   </div>
@@ -365,9 +342,6 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                                           : ""
                                       }
                                       key={j.toString()}
-                                      onClick={() => {
-                                        setFieldValue(`grammar.${title.value}`, data);
-                                      }}
                                     >
                                       <p>{data}</p>
                                     </div>
@@ -383,29 +357,19 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                           </div>
                           <div className="flex-column">
                             <label htmlFor="feedback title">Grammar feedback</label>
-                            <textarea
-                              readOnly={Boolean(feedbackFromTutor)}
-                              value={values.grammar.other}
-                              onChange={(e) => setFieldValue("grammar.other", e.target.value)}
-                              name="grammar.other"
-                              id="grammar.other"
-                              placeholder="give us some feedback to improve ourself"
-                            />
+                            <textarea readOnly style={{ height: "auto", minHeight: 200 }}>
+                              {values.grammar.other}
+                            </textarea>
                           </div>
 
                           {/** -------- GRAMMER FEEDBACK --------*/}
 
-                          <div className="flex-column">
-                            <h5>Feedback</h5>
-                            <textarea
-                              readOnly={Boolean(feedbackFromTutor)}
-                              name="generalFeedback"
-                              id="generalFeedback"
-                              value={values.generalFeedback}
-                              onChange={(e) => setFieldValue("generalFeedback", e.target.value)}
-                              placeholder="give us some feedback to improve ourself"
-                            />
-                          </div>
+                          {values.generalFeedback && (
+                            <div className="flex-column">
+                              <h5>General Feedback</h5>
+                              <p>{values.generalFeedback}</p>
+                            </div>
+                          )}
                         </>
                       )}
                       <div className="flex-between place-center">
@@ -476,7 +440,7 @@ const StlyedFeedbackForm = styled.div`
   align-items: flex-start;
   gap: 30px;
   padding: 30px;
-  pointer-events: none;
+  // pointer-events: none;
 
   .flex-column {
     width: 100%;
@@ -506,6 +470,7 @@ const StlyedFeedbackForm = styled.div`
     outline-color: rgba(247, 148, 31, 0.2);
     resize: none;
     font-family: Inter;
+    overflow-y: auto;
   }
 `;
 
@@ -521,7 +486,6 @@ const StyledEmojiList = styled.div`
     border-radius: 20px;
     border: 1px solid var(--gray-2, #62635e);
     padding: 5px 14px;
-    cursor: pointer;
     text-transform: capitalize;
     background-color: transparent;
     transition: background-color 100ms linear;
@@ -541,8 +505,6 @@ const StyledStarList = styled.div`
   display: flex;
 
   > span {
-    cursor: pointer;
-
     &.active {
       svg path {
         fill: var(--primary);
@@ -564,7 +526,6 @@ const StyledNumberList = styled.div`
     line-height: 32px;
     border-radius: 50%;
     border: 1px solid var(--primary);
-    cursor: pointer;
 
     &.active {
       background-color: var(--primary);
@@ -591,7 +552,6 @@ const StyledTagList = styled.div`
     line-height: normal;
     padding: 10px 20px;
     transition: all 200ms linear;
-    cursor: pointer;
     text-align: center;
     font-weight: 600;
 
