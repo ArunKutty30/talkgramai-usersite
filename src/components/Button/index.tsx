@@ -1,13 +1,14 @@
-import React, { ButtonHTMLAttributes, ReactNode } from "react";
+import React, { ReactNode } from "react";
 import styled from "styled-components";
+import Button, { ButtonProps } from "@mui/material/Button";
 
-interface IButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface IButtonProps extends Omit<ButtonProps, "variant"> {
   variant?: "primary" | "secondary" | "error" | "error-filled";
   size?: "small" | "medium" | "large";
   children: ReactNode;
 }
 
-const StyledButton = styled.button`
+const StyledButton = styled(Button)`
   font-family: "Inter";
   border: 1px solid transparent;
   outline: none;
@@ -25,6 +26,7 @@ const StyledButton = styled.button`
     font-size: 14px;
     line-height: 22px;
     color: white;
+    border-radius: 8px;
   }
 
   &.btn-secondary {
@@ -82,7 +84,7 @@ const StyledButton = styled.button`
   }
 `;
 
-const Button: React.FC<IButtonProps> = ({
+const MyButton: React.FC<IButtonProps> = ({
   children,
   variant = "primary",
   size = "medium",
@@ -95,4 +97,4 @@ const Button: React.FC<IButtonProps> = ({
   );
 };
 
-export default Button;
+export default MyButton;

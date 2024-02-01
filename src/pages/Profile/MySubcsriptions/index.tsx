@@ -133,16 +133,16 @@ const MySubscriptions = () => {
               <p>
                 No. of Sessions : <span>{m.noOfSession}</span>
               </p>
-              <p>
+              {/* <p>
                 Subscription Duration : <span>{m.plan}</span>
-              </p>
+              </p> */}
             </div>
             <div className="grid">
               <p>
                 Start Date : <span>{customFormat(m.startDate.toDate(), "DD/MM/YYYY")}</span>
               </p>
               <p>
-                Number of Sessions per Week: <span>{m.sessionPerWeek}</span>
+                Number of Sessions /Week: <span>{m.sessionPerWeek}</span>
               </p>
             </div>
             <div className="grid">
