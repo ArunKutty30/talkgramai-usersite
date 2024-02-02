@@ -303,6 +303,7 @@ export const getBookingSessionDoc = async (docId: string) => {
 
 export const getUserBookedSessionOnThisWeekDoc = async (
   userId: string,
+  subscriptionId: string,
   startDate: Date,
   endDate: Date
 ) => {
@@ -310,6 +311,7 @@ export const getUserBookedSessionOnThisWeekDoc = async (
   const q = query(
     colRef,
     where("user", "==", userId),
+    where("subscriptionId", "==", subscriptionId),
     where("startTime", ">=", startDate),
     where("startTime", "<=", endDate)
   );
@@ -327,11 +329,17 @@ export const getUserBookedSessionOnThisWeekDoc = async (
   return filterTutorCancelledResults.length;
 };
 
-export const getUserBookedSessionDoc = async (userId: string, startDate: Date, endDate: Date) => {
+export const getUserBookedSessionDoc = async (
+  userId: string,
+  subscriptionId: string,
+  startDate: Date,
+  endDate: Date
+) => {
   const colRef = collection(db, BOOKINGS_COLLECTION_NAME);
   const q = query(
     colRef,
     where("user", "==", userId),
+    where("subscriptionId", "==", subscriptionId),
     where("startTime", ">=", startDate),
     where("startTime", "<=", endDate)
   );

@@ -211,6 +211,8 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
     try {
       if (!user || !profileData) return;
 
+      console.log(slotFormat(selectedDate));
+
       if (!tempSubscriptionData) {
         if (!subscriptionData && !profileData.demoClassBooked) {
           setLoading(true);

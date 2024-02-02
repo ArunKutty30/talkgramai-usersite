@@ -65,6 +65,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
     if (subscriptionData.demoClass === true) {
       const sessionInfo = await getUserBookedSessionOnThisWeekDoc(
         subscriptionData.user,
+        subscriptionData.id,
         subscriptionData.startDate.toDate(),
         subscriptionData.endDate.toDate()
       );
@@ -87,6 +88,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
     console.log("current", currentInfo);
     const sessionInfo = await getUserBookedSessionOnThisWeekDoc(
       subscriptionData.user,
+      subscriptionData.id,
       currentInfo.currentWeekStartDate,
       currentInfo.currentWeekEndDate
     );
@@ -94,6 +96,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
     if (currentInfo.currentWeek > 1) {
       const lastWeekSessionInfo = await getUserBookedSessionOnThisWeekDoc(
         subscriptionData.user,
+        subscriptionData.id,
         subscriptionData.startDate.toDate(),
         currentInfo.lastWeekEndDate
       );
@@ -118,6 +121,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
 
     const overallBookedSession = await getUserBookedSessionDoc(
       subscriptionData.user,
+      subscriptionData.id,
       subscriptionData.startDate.toDate(),
       new Date()
     );
@@ -232,7 +236,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
     const isFinished = dayjs(subscriptionData.endDate.toDate()).isBefore(dayjs());
 
     if (isFinished) {
-      await updateUserDoc(subscriptionData.user, { currentSubscriptionId: "" });
+      await updateUserDoc(subscriptionData.user, { currentSubscriptionId: null });
       setOutdated();
       window.location.reload();
     }
@@ -241,7 +245,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
       subscriptionData["allSessionsCompleted"] &&
       subscriptionData["allSessionsCompleted"] === true
     ) {
-      await updateUserDoc(subscriptionData.user, { currentSubscriptionId: "" });
+      await updateUserDoc(subscriptionData.user, { currentSubscriptionId: null });
       setOutdated();
       // window.location.href = "/";
     }
