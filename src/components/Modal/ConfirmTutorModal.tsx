@@ -207,6 +207,8 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
     handleConfirmSession(tempValues.current, tempSubscriptionData);
   };
 
+  console.log(slotFormat(selectedDate));
+
   const handleConfirmSession = async (values: IFormType, tempSubscriptionData?: any) => {
     try {
       if (!user || !profileData) return;

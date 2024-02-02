@@ -100,6 +100,7 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
         backlogSession: 0,
         bookedSession: 0,
         status: "PENDING",
+        subscriptionStatus: "SUBSCRIBED",
         recording: onRecordings,
         chargesBreakdown: {
           sessionsFee: selectedPlan.total,
