@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import styled from "styled-components";
 
 import { ReactComponent as DownArrowIcon } from "../../../assets/icons/arrow_down.svg";
@@ -8,6 +8,7 @@ import Pronuciation from "../../../components/Profile/FeedbackAnalysis/Pronuncia
 import Grammar from "../../../components/Profile/FeedbackAnalysis/Grammar";
 import { userStore } from "../../../store/userStore";
 import { INewTutorFeedback } from "../../../constants/types";
+import StatsCard from "../../../components/StatsCard";
 
 const dropdownItems = ["item 1", "item 2"];
 
@@ -37,6 +38,30 @@ const FeedbackAnalysis: React.FC = () => {
     setlatestSessionDrop(item);
     setIsDropdown(false);
   };
+
+  const sessionLists = useMemo(() => {
+    if (!overallBookedSession.length) return [];
+
+    const list = overallBookedSession.map((b) => {
+      if (b.feedbackFromTutor) {
+        return {
+          confidence: b.feedbackFromTutor.skills?.confidence || 0,
+          passion: b.feedbackFromTutor.skills?.passion || 0,
+          listeningComprehension: b.feedbackFromTutor.skills?.listeningComprehension || 0,
+          conversationBuilding: b.feedbackFromTutor.skills?.conversationBuilding || 0,
+        };
+      }
+
+      return {
+        confidence: 0,
+        passion: 0,
+        listeningComprehension: 0,
+        conversationBuilding: 0,
+      };
+    });
+
+    return list;
+  }, [overallBookedSession]);
 
   return (
     <>
@@ -85,6 +110,60 @@ const FeedbackAnalysis: React.FC = () => {
           </DropDownContainer>
         </div>
       </FeedbackAnalysisWrapper>
+      <StyledUserSessionStats>
+        <StatsCard
+          title="Confidence"
+          tooltipContent="Here’s everything at once. Let today be the reason you look back and smile on tomorrow."
+          total={
+            sessionLists.length
+              ? sessionLists.slice(sessionLists.length - 1).map((m) => m.confidence)
+              : 0
+          }
+          chartData={sessionLists.map((s, i) => ({
+            name: `Session ${i + 1}`,
+            score: s.confidence,
+          }))}
+        />
+        <StatsCard
+          title="Passion"
+          tooltipContent="Here’s everything at once. Let today be the reason you look back and smile on tomorrow."
+          total={
+            sessionLists.length
+              ? sessionLists.slice(sessionLists.length - 1).map((m) => m.passion)
+              : 0
+          }
+          chartData={sessionLists.map((s, i) => ({
+            name: `Session ${i + 1}`,
+            score: s.passion,
+          }))}
+        />
+        <StatsCard
+          title="Listening Comprehension"
+          tooltipContent="Here’s everything at once. Let today be the reason you look back and smile on tomorrow."
+          total={
+            sessionLists.length
+              ? sessionLists.slice(sessionLists.length - 1).map((m) => m.listeningComprehension)
+              : 0
+          }
+          chartData={sessionLists.map((s, i) => ({
+            name: `Session ${i + 1}`,
+            score: s.listeningComprehension,
+          }))}
+        />
+        <StatsCard
+          title="Conversation Building"
+          tooltipContent="Here’s everything at once. Let today be the reason you look back and smile on tomorrow."
+          total={
+            sessionLists.length
+              ? sessionLists.slice(sessionLists.length - 1).map((m) => m.conversationBuilding)
+              : 0
+          }
+          chartData={sessionLists.map((s, i) => ({
+            name: `Session ${i + 1}`,
+            score: s.conversationBuilding,
+          }))}
+        />
+      </StyledUserSessionStats>
       {!subscriptionData ? (
         <div
           style={{ height: "300px", display: "grid", placeItems: "center", textAlign: "center" }}
@@ -237,6 +316,27 @@ const SelectListText = styled.p`
   font-size: 14px;
   padding: 7px 12px;
   cursor: pointer;
+`;
+
+const StyledUserSessionStats = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  @media (max-width: 600px) {
+    width: 100%;
+    overflow: auto;
+    grid-template-columns: repeat(4, 70vw);
+    gap: 15px;
+    cursor: pointer;
+    padding-right: 20;
+  }
 `;
 
 export default FeedbackAnalysis;

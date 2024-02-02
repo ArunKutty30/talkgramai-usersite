@@ -6,7 +6,6 @@ import ReactCountdown, { CountdownRenderProps } from "react-countdown";
 import { Box } from "@mui/material";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 import SectionHeader from "../SectionHeader";
 import Button from "../Button";
@@ -18,8 +17,7 @@ import { IBookingSession } from "../../constants/types";
 import { reminderStore } from "../../store/reminderStore";
 import { addPrefixZero } from "../../utils/helpers";
 import DashboardSessionCard from "../SessionCards/DashboardSessionCard";
-import AreaChart from "../Chart/AreaChart";
-import Tooltip from "../Tooltip";
+import StatsCard from "../StatsCard";
 
 dayjs.extend(relativeTime);
 
@@ -90,7 +88,7 @@ const SessionReminder = () => {
               <b style={{ display: "inline-block", minWidth: "67px" }}>
                 {addPrefixZero(days)}D : {addPrefixZero(hours)}H : {addPrefixZero(minutes)}M :{" "}
                 {addPrefixZero(seconds)}S
-              </b>{" "}
+              </b>
             </p>
           </div>
         </Box>
@@ -230,8 +228,6 @@ const SubscribedUserSession: React.FC = () => {
     return list;
   }, [overallBookedSession]);
 
-  console.log("test", sessions);
-
   return (
     <>
       <div className="pad">
@@ -242,141 +238,58 @@ const SubscribedUserSession: React.FC = () => {
           handlePopup={handlePopup}
         />
         <StyledUserSessionStats>
-          <StyledSessionStatsCard>
-            <h6 className="s-16 mb-8 stats-topics">
-              Confidence
-              <Tooltip title="Here’s everything at once. Let today be the reason you look back and smile on tomorrow.">
-                <InfoOutlinedIcon className="stats-info-icon" />
-              </Tooltip>
-            </h6>
-            <div className="flex-between">
-              <div className="flex-column">
-                <div className="stats">
-                  <h3>
-                    {sessionLists.length
-                      ? sessionLists.slice(sessionLists.length - 1).map((m) => m.confidence)
-                      : 0}
-                  </h3>
-                  {/* <div className="arrow-red">
-                    <SouthIcon className="icon" />
-                  </div>
-                  <p className="stats-value">15 %</p> */}
-                </div>
-                <p className="sub-title">compared to last session</p>
-              </div>
-              <div className="block-right">
-                {/* <img src={checked} alt="" /> */}
-                <AreaChart
-                  data={sessionLists.map((s, i) => ({
-                    name: `Session ${i + 1}`,
-                    score: s.confidence,
-                  }))}
-                />
-              </div>
-            </div>
-          </StyledSessionStatsCard>
-          <StyledSessionStatsCard>
-            <h6 className="s-16 mb-8 stats-topics">
-              Passion{" "}
-              <Tooltip title="Here’s everything at once. Let today be the reason you look back and smile on tomorrow.">
-                <InfoOutlinedIcon className="stats-info-icon" />
-              </Tooltip>
-            </h6>
-            <div className="flex-between">
-              <div className="flex-column">
-                <div className="stats">
-                  <h3>
-                    <h3>
-                      {sessionLists.length
-                        ? sessionLists.slice(sessionLists.length - 1).map((m) => m.passion)
-                        : 0}
-                    </h3>
-                  </h3>
-                  {/* <div className="arrow-red">
-                    <SouthIcon className="icon" />
-                  </div>
-                  <p className="stats-value">15 %</p> */}
-                </div>
-                <p className="sub-title">compared to last session</p>
-              </div>
-              <div className="block-right">
-                <AreaChart
-                  data={sessionLists.map((s, i) => ({
-                    name: `Session ${i + 1}`,
-                    score: s.passion,
-                  }))}
-                />
-              </div>
-            </div>
-          </StyledSessionStatsCard>
-          <StyledSessionStatsCard>
-            <h6 className="s-16 mb-8 stats-topics">
-              Listening Comprehension{" "}
-              <Tooltip title="Here’s everything at once. Let today be the reason you look back and smile on tomorrow.">
-                <InfoOutlinedIcon className="stats-info-icon" />
-              </Tooltip>
-            </h6>
-            <div className="flex-between">
-              <div className="flex-column">
-                <div className="stats">
-                  <h3>
-                    {sessionLists.length
-                      ? sessionLists
-                          .slice(sessionLists.length - 1)
-                          .map((m) => m.listeningComprehension)
-                      : 0}
-                  </h3>
-                  {/* <div className="arrow-red">
-                    <SouthIcon className="icon" />
-                  </div>
-                  <p className="stats-value">15 %</p> */}
-                </div>
-                <p className="sub-title">compared to last session</p>
-              </div>
-              <div className="block-right">
-                <AreaChart
-                  data={sessionLists.map((s, i) => ({
-                    name: `Session ${i + 1}`,
-                    score: s.listeningComprehension,
-                  }))}
-                />
-              </div>
-            </div>
-          </StyledSessionStatsCard>
-          <StyledSessionStatsCard>
-            <h6 className="s-16 mb-8 stats-topics">
-              Conversation Building{" "}
-              <Tooltip title="Here’s everything at once. Let today be the reason you look back and smile on tomorrow.">
-                <InfoOutlinedIcon className="stats-info-icon" />
-              </Tooltip>
-            </h6>
-            <div className="flex-between">
-              <div className="flex-column">
-                <div className="stats">
-                  <h3>
-                    {sessionLists.length
-                      ? sessionLists
-                          .slice(sessionLists.length - 1)
-                          .map((m) => m.conversationBuilding)
-                      : 0}
-                  </h3>
-                  {/* <div className="arrow-red">
-                    <SouthIcon className="icon" />
-                  </div>
-                  <p className="stats-value">15 %</p> */}
-                </div>
-                <p className="sub-title">compared to last session</p>
-              </div>
-              <div className="block-right">
-                <AreaChart
-                  data={sessionLists.map((s, i) => ({
-                    name: `Session ${i + 1}`,
-                    score: s.conversationBuilding,
-                  }))}
-                />
-              </div>
-            </div>
-          </StyledSessionStatsCard>
+          <StatsCard
+            title="Confidence"
+            tooltipContent="Here’s everything at once. Let today be the reason you look back and smile on tomorrow."
+            total={
+              sessionLists.length
+                ? sessionLists.slice(sessionLists.length - 1).map((m) => m.confidence)
+                : 0
+            }
+            chartData={sessionLists.map((s, i) => ({
+              name: `Session ${i + 1}`,
+              score: s.confidence,
+            }))}
+          />
+          <StatsCard
+            title="Passion"
+            tooltipContent="Here’s everything at once. Let today be the reason you look back and smile on tomorrow."
+            total={
+              sessionLists.length
+                ? sessionLists.slice(sessionLists.length - 1).map((m) => m.passion)
+                : 0
+            }
+            chartData={sessionLists.map((s, i) => ({
+              name: `Session ${i + 1}`,
+              score: s.passion,
+            }))}
+          />
+          <StatsCard
+            title="Listening Comprehension"
+            tooltipContent="Here’s everything at once. Let today be the reason you look back and smile on tomorrow."
+            total={
+              sessionLists.length
+                ? sessionLists.slice(sessionLists.length - 1).map((m) => m.listeningComprehension)
+                : 0
+            }
+            chartData={sessionLists.map((s, i) => ({
+              name: `Session ${i + 1}`,
+              score: s.listeningComprehension,
+            }))}
+          />
+          <StatsCard
+            title="Conversation Building"
+            tooltipContent="Here’s everything at once. Let today be the reason you look back and smile on tomorrow."
+            total={
+              sessionLists.length
+                ? sessionLists.slice(sessionLists.length - 1).map((m) => m.conversationBuilding)
+                : 0
+            }
+            chartData={sessionLists.map((s, i) => ({
+              name: `Session ${i + 1}`,
+              score: s.conversationBuilding,
+            }))}
+          />
         </StyledUserSessionStats>
         <StyledGridContainer>
           <StyledUpComingSessionContainer>
@@ -695,90 +608,6 @@ const StyledUserSessionStats = styled.div`
     gap: 15px;
     cursor: pointer;
     padding-right: 20;
-  }
-`;
-
-const StyledSessionStatsCard = styled.div`
-  border-radius: 12px;
-  border: 1px solid #cecece40;
-  background: #d9d9d91c;
-  padding: 25px;
-
-  .stats-topics {
-    display: flex;
-    justify-content: start;
-    align-item: center;
-
-    .stats-info-icon {
-      margin: 0 10px 0 8px;
-      font-size: 18px;
-    }
-  }
-
-  .block-right {
-    height: 100px;
-    aspect-ratio: 1;
-    display: grid;
-    place-items: center;
-    border-radius: 50%;
-
-    @media (max-width: 600px) {
-      height: 100px;
-    }
-
-    img {
-      width: 50px;
-      height: 50px;
-      object-fit: contain;
-
-      @media (max-width: 600px) {
-        width: 25px;
-        height: 25px;
-      }
-    }
-  }
-
-  .flex-column {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-
-    .stats {
-      display: flex;
-      justify-content: start;
-      align-items: center;
-
-      .stats-value {
-        font-size: 18px;
-        color: red;
-      }
-
-      .arrow-green {
-        border-radius: 50%;
-        padding: 5px 6px 3px 6px;
-        margin: 5px 10px;
-        font-size: 1rem;
-        color: #00c45a;
-        background: #04de0026;
-      }
-
-      .arrow-red {
-        border-radius: 50%;
-        padding: 5px 6px 3px 6px;
-        margin: 5px 10px;
-        font-size: 1rem;
-        color: red;
-        background: #ffefef;
-      }
-
-      .icon {
-        font-size: 20px;
-      }
-    }
-
-    .sub-title {
-      color: grey;
-    }
   }
 `;
 

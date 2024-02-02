@@ -112,7 +112,8 @@ const SubscriptionCard: React.FC<ISubscriptionCard> = (props) => {
         ) : (
           <>
             <span className="offer-price">
-              ₹{noOfSessions * perSessionCost}/<span style={{ fontSize: "75%" }}>mo</span>
+              ₹{noOfSessions * perSessionCost}
+              {/* /<span style={{ fontSize: "75%" }}>mo</span> */}
             </span>
             <span className="price-offer-tag">-{50}% off applicable</span>
           </>

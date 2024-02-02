@@ -1,7 +1,9 @@
 import React from "react";
+
 import SubscribePage from "./SubscriptionPage";
 import { userStore } from "../../store/userStore";
 import SubscriptionDetails from "./SubscriptionDetails";
+import SubscriptionLoader from "../../components/Loader/SubscriptionLoader";
 
 const Subscribe = () => {
   const profileData = userStore((store) => store.profileData);
@@ -9,7 +11,7 @@ const Subscribe = () => {
   return (
     <div>
       {!profileData ? (
-        <div>Loading...</div>
+        <SubscriptionLoader />
       ) : profileData.currentSubscriptionId ? (
         <SubscriptionDetails subsciptionId={profileData.currentSubscriptionId} />
       ) : (

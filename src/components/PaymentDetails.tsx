@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import dayjs from "dayjs";
 import { User } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
+import Modal from "@mui/material/Modal";
+import { CheckCircleFill } from "styled-icons/bootstrap";
+import { Checkbox, FormControlLabel } from "@mui/material";
+
 import Button from "./Button";
 import logo from "../assets/logo/logo_short.png";
 import { ReactComponent as DiscountIcon } from "../assets/icons/noto_confetti.svg";
@@ -14,13 +18,11 @@ import { loadScript } from "../services/paymentService";
 import { formatCurrency } from "../constants/formatter";
 import { BACKEND_URL } from "../utils/api";
 import { ICategory, ISelectedPlan } from "../constants/types";
-import Modal from "@mui/material/Modal";
 import CustomModal from "./Modal";
-import { endOfDay } from "date-fns";
 import TemporaryPaymentModal from "./Modal/TemporaryPaymentModal";
-import { CheckCircleFill } from "styled-icons/bootstrap";
+import { config } from "../constants/config";
 
-const perSessionCost = 300;
+const perSessionCost = config.PER_SESSION_COST;
 
 interface IPaymentDetailsProps {
   selectedPlan: ISelectedPlan;
@@ -36,6 +38,7 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
   console.log(selectedPlan);
   const user = userStore((store) => store.user);
   const [loading, setLoading] = useState(false);
+  const [onRecordings, setOnRecordings] = useState(false);
   const [payemntModalOpen, setPaymentModalOpen] = useState(false);
 
   const handleStoreData = async (docId: string, userData: User) => {
@@ -64,12 +67,8 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
         return;
       }
 
-      const payableamount = applyOffer
-        ? selectedPlan.noOfSessions * perSessionCost * ((100 - 50) / 100)
-        : selectedPlan.noOfSessions * perSessionCost * ((100 - 0) / 100);
-
       const result = await axios.post(`${BACKEND_URL}/payment/orders`, {
-        amount: payableamount * 100,
+        amount: grandTotal * 100,
       });
 
       if (!result) {
@@ -83,23 +82,29 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
         process.env.REACT_APP_MODE === "LOCAL"
           ? dayjs(new Date()).add(selectedPlan.durationInMonth, "day").toDate()
           : dayjs(new Date()).add(selectedPlan.durationInMonth, "month").toDate();
+
       await createSubscriptionDocWithOrderId(order_id, {
         user: user.uid,
         type: ICategory.TUTOR_TALK,
         plan: selectedPlan.title,
         offer: selectedPlan.offerPrice,
         startDate: Timestamp.now(),
-        endDate: Timestamp.fromDate(endOfDay(endDate)),
+        endDate: Timestamp.fromDate(endDate),
         sessionPerWeek: selectedPlan.sessionPerWeek,
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
-        totalPrice: selectedPlan.total,
+        totalPrice: grandTotal,
         noOfSession: selectedPlan.noOfSessions,
         completedSession: 0,
         cancelledSession: 0,
         backlogSession: 0,
         bookedSession: 0,
         status: "PENDING",
+        recording: onRecordings,
+        chargesBreakdown: {
+          sessionsFee: selectedPlan.total,
+          recordingFee: selectedPlan.noOfSessions * config.PER_SESSION_RECORDING_FEE,
+        },
       });
 
       const options = {
@@ -154,6 +159,21 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
     }
   };
 
+  const grandTotal = useMemo(() => {
+    let total = 0;
+    if (applyOffer) {
+      total += selectedPlan.noOfSessions * perSessionCost * ((100 - 50) / 100);
+    } else {
+      total += selectedPlan.noOfSessions * perSessionCost * ((100 - 0) / 100);
+    }
+
+    if (onRecordings) {
+      total += selectedPlan.noOfSessions * config.PER_SESSION_RECORDING_FEE;
+    }
+
+    return total;
+  }, [applyOffer, onRecordings, selectedPlan]);
+
   return (
     <StyledPaymentDetails id="checkout">
       <h4 style={{ textTransform: "uppercase" }}>Checkout</h4>
@@ -204,15 +224,15 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
         </div>
         <input type="checkbox" />
       </div> */}
-      <div className="form-input">
+      {/* <div className="form-input">
         <input
           type="number"
           name="pincode"
           id="pincode"
           placeholder="Enter your pincode here (needed only once)"
         />
-        {/* <p>To be required in bill receipt</p> */}
-      </div>
+        <p>To be required in bill receipt</p>
+      </div> */}
       <div className="cost-split">
         <div className="flex-between mb-10">
           <p>Plan Price :</p>
@@ -236,6 +256,25 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
               : formatCurrency(selectedPlan.noOfSessions * perSessionCost * ((100 - 0) / 100))}
           </p>
         </div>
+        <div className="flex-between mb-10">
+          <p>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={onRecordings}
+                  onChange={(e) => setOnRecordings(e.target.checked)}
+                />
+              }
+              label="Recordings"
+            />
+          </p>
+          {onRecordings && (
+            <p>
+              {selectedPlan.noOfSessions} sessions X ₹ {config.PER_SESSION_RECORDING_FEE} =&gt;
+              &nbsp; Rs {formatCurrency(selectedPlan.noOfSessions * 30)}{" "}
+            </p>
+          )}
+        </div>
         {/* <div className="flex-between">
           <p>Discount ( 25%) :</p>
           <p>Rs {formatCurrency(0)}</p>
@@ -243,12 +282,7 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
       </div>
       <div className="flex-between">
         <p>Grand Total :</p>
-        <p>
-          Rs{" "}
-          {applyOffer
-            ? formatCurrency(selectedPlan.noOfSessions * perSessionCost * ((100 - 50) / 100))
-            : formatCurrency(selectedPlan.noOfSessions * perSessionCost * ((100 - 0) / 100))}
-        </p>
+        <p>Rs {formatCurrency(grandTotal)}</p>
       </div>
       <Button
         onClick={() => {
@@ -256,10 +290,7 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
           // setPaymentModalOpen(true);
         }}
       >
-        Pay Rs{" "}
-        {applyOffer
-          ? formatCurrency(selectedPlan.noOfSessions * perSessionCost * ((100 - 50) / 100))
-          : formatCurrency(selectedPlan.noOfSessions * perSessionCost * ((100 - 0) / 100))}
+        Pay Rs {formatCurrency(grandTotal)}
       </Button>
       <CustomModal isOpen={loading}>
         <StyledPaymentProcessing>
