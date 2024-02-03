@@ -86,7 +86,7 @@ const Step1: React.FC<IStep1Props> = ({ handleSubmit, handleGoogleSignin, emailE
               </FormInput>
               {emailError && <div className="error-text">{emailError}</div>}
             </FormInputWrapper>
-            <Button size="large" disabled={isSubmitting}>
+            <Button size="large" type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Verifing mail..." : "Lets Start Creating Your Account"}
             </Button>
           </Form>

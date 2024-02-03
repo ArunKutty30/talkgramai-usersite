@@ -124,7 +124,7 @@ const Login = () => {
                     </FormInput>
                     {!isSubmitting && error && <p className="error-text">{error}</p>}
                   </FormInputWrapper>
-                  <Button size="large" disabled={isSubmitting}>
+                  <Button size="large" type="submit" disabled={isSubmitting}>
                     {isSubmitting ? "Please wait..." : "Login"}
                   </Button>
                 </Form>
