@@ -225,6 +225,7 @@ export interface ISubscriptionDB {
   offer: number;
   sessionPerWeek?: number;
   allSessionsCompleted?: boolean;
+  recording?: boolean;
   transactionDetails?: {
     captured: boolean;
     contact: string;

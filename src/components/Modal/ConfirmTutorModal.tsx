@@ -261,7 +261,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
 
       const endTime = dayjs(selectedDate).add(30, "minute").toDate();
 
-      const meetingId = await createMeeting();
+      const meetingId = await createMeeting(Boolean(subscriptionData?.recording));
 
       const useBacklogSession = session <= 0 && (subscriptionData?.backlogSession ?? 0) > 0;
 
