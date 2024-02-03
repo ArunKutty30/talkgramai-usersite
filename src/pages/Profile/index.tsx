@@ -53,7 +53,7 @@ const Profile = () => {
           <NavLink to="my-subscriptions">My Subscriptions</NavLink>
           <NavLink to="transactions">Transactions</NavLink>
           <NavLink to="favourite-tutors">Favourite Tutors</NavLink>
-          <NavLink to="feedback-analysis">Feedback Analysis</NavLink>
+          {/* <NavLink to="feedback-analysis">Feedback Analysis</NavLink> */}
         </StyledProfileLinks>
         <Routes>
           <Route path="/" element={<Navigate to="my-details" />} />

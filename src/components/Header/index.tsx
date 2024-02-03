@@ -303,7 +303,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
               <NavLink to="/dispute">Disputes</NavLink>
             </li>
             <li>
-              <NavLink to="/profile/feedback-analysis">Feedback analysis</NavLink>
+              <NavLink to="/feedback-analysis">Feedback analysis</NavLink>
             </li>
           </StyledNavLinks>
         </StyledHeaderLeft>

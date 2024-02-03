@@ -25,6 +25,7 @@ import OnBoarding from "./pages/Auth/OnBoarding";
 import Dispute from "./pages/Dispute";
 import Copyright from "./components/Copyright";
 import LessonPlan from "./pages/lessonPlan";
+import UserFeedbackReportPage from "./pages/UserFeedbackReportPage";
 
 const theme = createTheme({
   palette: {
@@ -64,6 +65,7 @@ const App: React.FC = () => {
             <Route path="/verify-mail" element={<VerifyMail />} />
             <Route path="/dispute" element={<Dispute />} />
             <Route path="/lesson-plan" element={<LessonPlan />} />
+            <Route path="/feedback-analysis" element={<UserFeedbackReportPage />} />
 
             <Route path="*" element={<PageNotFound />} />
           </Route>
