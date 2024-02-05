@@ -15,7 +15,9 @@ const dropdownItems = ["item 1", "item 2"];
 const FeedbackAnalysis: React.FC = () => {
   const [latestSession, setlatestSession] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  const [latestSessionDrop, setlatestSessionDrop] = useState<string | null>(null);
+  const [latestSessionDrop, setlatestSessionDrop] = useState<string | null>(
+    null
+  );
   const [isDropdown, setIsDropdown] = useState<boolean>(false);
   const overallBookedSession = userStore((store) => store.overallBookedSession);
   const isAllSessionFetching = userStore((store) => store.isAllSessionFetching);
@@ -47,8 +49,10 @@ const FeedbackAnalysis: React.FC = () => {
         return {
           confidence: b.feedbackFromTutor.skills?.confidence || 0,
           passion: b.feedbackFromTutor.skills?.passion || 0,
-          listeningComprehension: b.feedbackFromTutor.skills?.listeningComprehension || 0,
-          conversationBuilding: b.feedbackFromTutor.skills?.conversationBuilding || 0,
+          listeningComprehension:
+            b.feedbackFromTutor.skills?.listeningComprehension || 0,
+          conversationBuilding:
+            b.feedbackFromTutor.skills?.conversationBuilding || 0,
         };
       }
 
@@ -73,7 +77,9 @@ const FeedbackAnalysis: React.FC = () => {
           <DropDownContainer>
             <div className="container">
               <SelectContent onClick={toggleDropdown}>
-                <SelectText>{latestSession || "Latest Session (15-20)"}</SelectText>
+                <SelectText>
+                  {latestSession || "Latest Session (15-20)"}
+                </SelectText>
                 <div>
                   <DownArrowIcon width={14} height={14} />
                 </div>
@@ -92,7 +98,9 @@ const FeedbackAnalysis: React.FC = () => {
           <DropDownContainer>
             <div className="container">
               <SelectContent onClick={handleDropdownToggle} className="drop">
-                <SelectText>{latestSessionDrop || "Latest Session (15-20)"}</SelectText>
+                <SelectText>
+                  {latestSessionDrop || "Latest Session (15-20)"}
+                </SelectText>
                 <div>
                   <DownArrowIcon width={14} height={14} />
                 </div>
@@ -113,10 +121,12 @@ const FeedbackAnalysis: React.FC = () => {
       <StyledUserSessionStats>
         <StatsCard
           title="Confidence"
-          tooltipContent="Here’s everything at once. Let today be the reason you look back and smile on tomorrow."
+          tooltipContent="How assured the learner appears while speaking."
           total={
             sessionLists.length
-              ? sessionLists.slice(sessionLists.length - 1).map((m) => m.confidence)
+              ? sessionLists
+                  .slice(sessionLists.length - 1)
+                  .map((m) => m.confidence)
               : 0
           }
           chartData={sessionLists.map((s, i) => ({
@@ -126,10 +136,12 @@ const FeedbackAnalysis: React.FC = () => {
         />
         <StatsCard
           title="Passion"
-          tooltipContent="Here’s everything at once. Let today be the reason you look back and smile on tomorrow."
+          tooltipContent="The level of enthusiasm and interest showed by the learner."
           total={
             sessionLists.length
-              ? sessionLists.slice(sessionLists.length - 1).map((m) => m.passion)
+              ? sessionLists
+                  .slice(sessionLists.length - 1)
+                  .map((m) => m.passion)
               : 0
           }
           chartData={sessionLists.map((s, i) => ({
@@ -139,10 +151,12 @@ const FeedbackAnalysis: React.FC = () => {
         />
         <StatsCard
           title="Listening Comprehension"
-          tooltipContent="Here’s everything at once. Let today be the reason you look back and smile on tomorrow."
+          tooltipContent="The ability to understand and interpret spoken English effectively."
           total={
             sessionLists.length
-              ? sessionLists.slice(sessionLists.length - 1).map((m) => m.listeningComprehension)
+              ? sessionLists
+                  .slice(sessionLists.length - 1)
+                  .map((m) => m.listeningComprehension)
               : 0
           }
           chartData={sessionLists.map((s, i) => ({
@@ -152,10 +166,12 @@ const FeedbackAnalysis: React.FC = () => {
         />
         <StatsCard
           title="Conversation Building"
-          tooltipContent="Here’s everything at once. Let today be the reason you look back and smile on tomorrow."
+          tooltipContent="How well the learner sustains a conversation."
           total={
             sessionLists.length
-              ? sessionLists.slice(sessionLists.length - 1).map((m) => m.conversationBuilding)
+              ? sessionLists
+                  .slice(sessionLists.length - 1)
+                  .map((m) => m.conversationBuilding)
               : 0
           }
           chartData={sessionLists.map((s, i) => ({
@@ -166,13 +182,23 @@ const FeedbackAnalysis: React.FC = () => {
       </StyledUserSessionStats>
       {!subscriptionData ? (
         <div
-          style={{ height: "300px", display: "grid", placeItems: "center", textAlign: "center" }}
+          style={{
+            height: "300px",
+            display: "grid",
+            placeItems: "center",
+            textAlign: "center",
+          }}
         >
           <p>Subscribe to see your analytics</p>
         </div>
       ) : isAllSessionFetching ? (
         <div
-          style={{ height: "300px", display: "grid", placeItems: "center", textAlign: "center" }}
+          style={{
+            height: "300px",
+            display: "grid",
+            placeItems: "center",
+            textAlign: "center",
+          }}
         >
           <p>Fetching Analytics of your sessions</p>
         </div>
