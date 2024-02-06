@@ -6,6 +6,8 @@ import { ReactComponent as DownArrowIcon } from "../../assets/icons/arrow_down.s
 // import { generateTimeIntervalsWithDate } from "../../constants/formatter";
 // import Dropdown from "../Dropdown";
 import { TDropdownList } from "../../constants/types";
+import { reminderStore } from "../../store/reminderStore";
+import toast from "react-hot-toast";
 // import ButtonGroup from "../ButtonGroup";
 // import { meridianList } from "../../constants/data";
 
@@ -78,6 +80,11 @@ const BlockOne = styled.div`
         }
       }
 
+      &.invalid-date {
+        opacity: 0.5;
+        cursor: no-drop;
+      }
+
       p {
         color: var(--gray-2, #62635e);
         font-size: 16px;
@@ -137,6 +144,7 @@ interface ISelectTimeProps {
 const SelectTime: React.FC<ISelectTimeProps> = ({ selectedDate, setSelectedDate }) => {
   const [startDate, setStartDate] = useState(new Date());
   const [currentMonth, setCurrentMonth] = useState("");
+  const endDate = reminderStore((store) => store.endDate);
   // const [selectedMeridian, setSelectedMeridian] = useState<TDropdownList>(meridianList[0]);
 
   // const intervals = generateTimeIntervalsWithDate(selectedDate, 9, 24, 30);
@@ -232,9 +240,23 @@ const SelectTime: React.FC<ISelectTimeProps> = ({ selectedDate, setSelectedDate 
                 key={index.toString()}
                 className={
                   // selectedDate.toISOString() === new Date(data).toISOString() ? "active" : ""
-                  dayjs(selectedDate).isSame(data, "day") ? "active" : ""
+                  dayjs(selectedDate).isSame(data, "day")
+                    ? "active"
+                    : dayjs(data).isBefore(endDate, "day")
+                    ? "valid-date"
+                    : dayjs(data).isSame(endDate, "day")
+                    ? "valid-date"
+                    : "invalid-date"
                 }
-                onClick={() => setSelectedDate(new Date(data))}
+                onClick={() => {
+                  if (dayjs(data).isBefore(endDate, "day")) {
+                    setSelectedDate(new Date(data));
+                  } else if (dayjs(data).isSame(endDate, "day")) {
+                    setSelectedDate(new Date(data));
+                  } else {
+                    toast.error("Booking on this date is restricted");
+                  }
+                }}
               >
                 <p>{dayjs(data).format("ddd")}</p>
                 <span>{dayjs(data).format("DD")}</span>

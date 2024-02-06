@@ -146,7 +146,13 @@ export interface IBookingSession {
   };
   meetingId?: string;
   currentSession?: number;
-  status?: "COMPLETED" | "UPCOMING" | "USER_CANCELLED" | "TUTOR_CANCELLED";
+  status:
+    | "COMPLETED"
+    | "UPCOMING"
+    | "USER_CANCELLED"
+    | "TUTOR_CANCELLED"
+    | "TUTOR_MISSED"
+    | "MISSED";
   feedbackFromTutor?: INewTutorFeedback;
 }
 
@@ -173,6 +179,13 @@ export interface IBookingSessionDB {
   updatedAt: Timestamp;
   currentSession?: number;
   feedbackFromTutor?: INewTutorFeedback;
+  status:
+    | "COMPLETED"
+    | "UPCOMING"
+    | "USER_CANCELLED"
+    | "TUTOR_CANCELLED"
+    | "TUTOR_MISSED"
+    | "MISSED";
 }
 
 export interface IDispute {

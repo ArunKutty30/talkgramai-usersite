@@ -48,6 +48,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
   const updateProfileData = userStore((state) => state.updateProfileData);
   const updateSubscriptionData = userStore((state) => state.updateSubscriptionData);
   const updateCancelledSession = userStore((state) => state.updateCancelledSession);
+  const updateExpiredClass = userStore((state) => state.updateExpiredClass);
   const updateMissedClass = userStore((state) => state.updateMissedClass);
   const updateAllSessionFetching = userStore((state) => state.updateAllSessionFetching);
   const setOutdated = userStore((state) => state.setOutdated);
@@ -77,7 +78,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
       });
 
       updateAllSessionFetching(false);
-      updateMissedClass(0);
+      updateExpiredClass(0);
       return;
     }
 
@@ -114,9 +115,9 @@ const Header = ({ hide }: { hide?: boolean }) => {
       const missedClass = (currentInfo.currentWeek - 1) * sessionPerWeek - lastWeekSessionInfo;
 
       console.log("MISSED CLASS ", missedClass);
-      updateMissedClass(missedClass);
+      updateExpiredClass(missedClass);
     } else {
-      updateMissedClass(0);
+      updateExpiredClass(0);
     }
 
     const overallBookedSession = await getUserBookedSessionDoc(
@@ -128,9 +129,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
     updateOverallBookedSession(overallBookedSession);
     updateAllSessionFetching(false);
 
-    console.log(
-      overallBookedSession.filter((f) => f.endTime.toDate() < currentInfo.lastWeekEndDate)
-    );
+    updateMissedClass(overallBookedSession.filter((f) => f.status === "MISSED").length);
 
     const sessionPerWeek = subscriptionData?.sessionPerWeek ?? 0;
     setReminder({
@@ -141,9 +140,10 @@ const Header = ({ hide }: { hide?: boolean }) => {
   }, [
     subscriptionData,
     setReminder,
-    updateMissedClass,
+    updateExpiredClass,
     updateOverallBookedSession,
     updateAllSessionFetching,
+    updateMissedClass,
   ]);
 
   useEffect(() => {

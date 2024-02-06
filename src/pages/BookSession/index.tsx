@@ -66,7 +66,7 @@ const BookSession = () => {
   const [selectedCategory, setSelectedCategory] = useState<ICategory>(ICategory.TUTOR_TALK);
   const navigate = useNavigate();
   const subscriptionData = userStore((store) => store.subscriptionData);
-  const missedClass = userStore((store) => store.missedClass);
+  const expiredClass = userStore((store) => store.expiredClass);
   const profileData = userStore((store) => store.profileData);
   const fetching = reminderStore((store) => store.fetching);
   const endDate = reminderStore((store) => store.endDate);
@@ -127,7 +127,7 @@ const BookSession = () => {
         <BookSessionWrapper />
       </div>
       {!subscriptionData && profileData?.demoClassBooked && <SubscriptionEndedModal isOpen />}
-      {(subscriptionData?.bookedSession || 0) + (missedClass || 0) ===
+      {(subscriptionData?.bookedSession || 0) + (expiredClass || 0) ===
         subscriptionData?.noOfSession &&
         subscriptionData?.backlogSession === 0 && (
           <Modal isOpen rootClassName="z-90">
@@ -147,7 +147,7 @@ const BookSession = () => {
       {!fetching &&
         session <= 0 &&
         subscriptionData?.backlogSession === 0 &&
-        (subscriptionData?.bookedSession || 0) + (missedClass || 0) !==
+        (subscriptionData?.bookedSession || 0) + (expiredClass || 0) !==
           subscriptionData?.noOfSession && (
           <Modal isOpen rootClassName="z-90">
             <StyledModalDiv>

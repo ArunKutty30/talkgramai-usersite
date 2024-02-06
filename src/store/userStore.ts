@@ -11,7 +11,8 @@ type State = {
   overallBookedSession: IBookingSessionDB[];
   isOutdated: boolean;
   userCancelledSession?: number;
-  missedClass?: number;
+  expiredClass: number;
+  missedClass: number;
 };
 
 type Action = {
@@ -23,6 +24,7 @@ type Action = {
   refetchUser: () => void;
   setOutdated: () => void;
   updateCancelledSession: (value: number) => void;
+  updateExpiredClass: (value: number) => void;
   updateMissedClass: (value: number) => void;
   updateOverallBookedSession: (value: IBookingSessionDB[]) => void;
 };
@@ -35,6 +37,8 @@ export const userStore = create<State & Action>((set) => ({
   subscriptionData: null,
   overallBookedSession: [],
   isOutdated: false,
+  expiredClass: 0,
+  missedClass: 0,
   updateFetching: (fetching) => set(() => ({ isFetching: fetching })),
   updateAllSessionFetching: (fetching) => set(() => ({ isAllSessionFetching: fetching })),
   updateUser: (user) => set(() => ({ user })),
@@ -43,6 +47,7 @@ export const userStore = create<State & Action>((set) => ({
   refetchUser: () => set(() => ({ isOutdated: true })),
   setOutdated: () => set(() => ({ isOutdated: false })),
   updateCancelledSession: (data) => set(() => ({ userCancelledSession: data })),
+  updateExpiredClass: (data) => set(() => ({ expiredClass: data })),
   updateMissedClass: (data) => set(() => ({ missedClass: data })),
   updateOverallBookedSession: (data) => set(() => ({ overallBookedSession: data })),
 }));
