@@ -95,7 +95,7 @@ const ForgetPassword = () => {
                         </FormInput>
                         {!isSubmitting && error && <p className="error-text">{error}</p>}
                       </FormInputWrapper>
-                      <Button size="large" disabled={isSubmitting}>
+                      <Button type="submit" size="large" disabled={isSubmitting}>
                         {isSubmitting ? "Please wait..." : "Reset Password"}
                       </Button>
                     </>

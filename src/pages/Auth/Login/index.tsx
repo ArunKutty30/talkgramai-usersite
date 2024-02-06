@@ -118,7 +118,7 @@ const Login = () => {
                       <ErrorMessage name="password" component="div" className="error-text" />
                       <div className="flex justify-end">
                         <Link to="/forget-password" className="text-primary">
-                          Forget Password?
+                          Forgot Password?
                         </Link>
                       </div>
                     </FormInput>
