@@ -500,7 +500,11 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
                             type="submit"
                             style={{ pointerEvents: "auto" }}
                           >
-                            {type === "CONFRIM"
+                            {loading
+                              ? type === "CONFRIM"
+                                ? "Confirming session..."
+                                : "Loading..."
+                              : type === "CONFRIM"
                               ? "Confirm Session"
                               : type === "EDIT"
                               ? "Confirm Changes"

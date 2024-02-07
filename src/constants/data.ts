@@ -34,10 +34,10 @@ export const bookSessionFilters: TDropdownList[] = [
     name: "Favourite Teacher",
     value: "Favourite Teacher",
   },
-  {
-    name: "Select Time and Date",
-    value: "Select Time and Date",
-  },
+  // {
+  //   name: "Select Time and Date",
+  //   value: "Select Time and Date",
+  // },
 ];
 
 export const meridianList = [
