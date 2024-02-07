@@ -32,8 +32,11 @@ export const StyledHeaderRight = styled.div`
   }
 
   .book-session-link {
+    white-space: nowrap;
+
     @media (max-width: 768px) {
-      display: none;
+      // display: none;
+      transform: scale(0.8);
     }
   }
 `;

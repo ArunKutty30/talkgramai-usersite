@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import styled from "styled-components";
 
@@ -8,6 +8,26 @@ import UpcomingSessions from "./UpcomingSessions";
 import MissedSessions from "./MissedSessions";
 
 import { ReactComponent as DownArrowIcon } from "../../assets/icons/arrow_down.svg";
+import CancelledSession from "./CancelledSessions";
+
+const sessionTabs = [
+  {
+    name: "Upcoming Sessions",
+    value: ISession.UPCOMING,
+  },
+  {
+    name: "Previous Sessions",
+    value: ISession.PREVIOUS,
+  },
+  {
+    name: "Missed Sessions",
+    value: ISession.MISSED,
+  },
+  {
+    name: "Cancelled Sessions",
+    value: ISession.CANCELLED,
+  },
+];
 
 const Sessions = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -26,6 +46,21 @@ const Sessions = () => {
     }
   });
 
+  const renderComponent = useMemo(() => {
+    switch (selectedSession) {
+      case ISession.MISSED:
+        return <MissedSessions />;
+      case ISession.PREVIOUS:
+        return <PreviousSessions />;
+      case ISession.UPCOMING:
+        return <UpcomingSessions />;
+      case ISession.CANCELLED:
+        return <CancelledSession />;
+      default:
+        return <UpcomingSessions />;
+    }
+  }, [selectedSession]);
+
   return (
     <SessionsContainer>
       <div className="pad">
@@ -37,42 +72,21 @@ const Sessions = () => {
         </div>
         <SessionCategory>
           <div>
-            <button
-              onClick={() => {
-                setSelectedSession(ISession.UPCOMING);
-                setSearchParams({ type: ISession.UPCOMING });
-              }}
-              className={selectedSession === ISession.UPCOMING ? "active" : ""}
-            >
-              Upcoming Sessions
-            </button>
-            <button
-              onClick={() => {
-                setSelectedSession(ISession.PREVIOUS);
-                setSearchParams({ type: ISession.PREVIOUS });
-              }}
-              className={selectedSession === ISession.PREVIOUS ? "active" : ""}
-            >
-              Previous Sessions
-            </button>
-            <button
-              onClick={() => {
-                setSelectedSession(ISession.MISSED);
-                setSearchParams({ type: ISession.MISSED });
-              }}
-              className={selectedSession === ISession.MISSED ? "active" : ""}
-            >
-              Missed Sessions
-            </button>
+            {sessionTabs.map((m) => (
+              <button
+                key={m.name}
+                onClick={() => {
+                  setSelectedSession(m.value);
+                  setSearchParams({ type: m.value });
+                }}
+                className={selectedSession === m.value ? "active" : ""}
+              >
+                {m.name}
+              </button>
+            ))}
           </div>
         </SessionCategory>
-        {selectedSession === ISession.UPCOMING ? (
-          <UpcomingSessions />
-        ) : selectedSession === ISession.PREVIOUS ? (
-          <PreviousSessions />
-        ) : (
-          <MissedSessions />
-        )}
+        {renderComponent}
       </div>
     </SessionsContainer>
   );
@@ -108,6 +122,7 @@ const SessionCategory = styled.div`
       border-radius: 8px;
       cursor: pointer;
       transition: all 200ms linear;
+      white-space: nowrap;
 
       @media (max-width: 600px) {
         text-align: center;

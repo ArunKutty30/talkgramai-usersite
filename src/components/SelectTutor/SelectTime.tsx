@@ -277,9 +277,23 @@ const SelectTime: React.FC<ISelectTimeProps> = ({ selectedDate, setSelectedDate 
                 key={index.toString()}
                 className={
                   // selectedDate.toISOString() === new Date(data).toISOString() ? "active" : ""
-                  dayjs(selectedDate).isSame(data, "day") ? "active" : ""
+                  dayjs(selectedDate).isSame(data, "day")
+                    ? "active"
+                    : dayjs(data).isBefore(endDate, "day")
+                    ? "valid-date"
+                    : dayjs(data).isSame(endDate, "day")
+                    ? "valid-date"
+                    : "invalid-date"
                 }
-                onClick={() => setSelectedDate(new Date(data))}
+                onClick={() => {
+                  if (dayjs(data).isBefore(endDate, "day")) {
+                    setSelectedDate(new Date(data));
+                  } else if (dayjs(data).isSame(endDate, "day")) {
+                    setSelectedDate(new Date(data));
+                  } else {
+                    toast.error("Booking on this date is restricted");
+                  }
+                }}
               >
                 <p>{dayjs(data).format("ddd")}</p>
                 <span>{dayjs(data).format("DD")}</span>

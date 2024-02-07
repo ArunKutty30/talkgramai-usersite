@@ -10,7 +10,7 @@ import NoSession from "../../components/NoSession";
 import SessionCardLoader from "../../components/Loader/SessionCardLoader";
 import DashboardSessionCard from "../../components/SessionCards/DashboardSessionCard";
 
-const PreviousSessions = () => {
+const CancelledSession = () => {
   const user = userStore((store) => store.user);
   const [sessions, setSessions] = useState<IBookingSession[]>([]);
   const [loading, setLoading] = useState(true);
@@ -21,9 +21,8 @@ const PreviousSessions = () => {
     const q = query(
       colRef,
       where("user", "==", user.uid),
-      where("endTime", "<", new Date()),
-      where("status", "in", [EBookingStatus.COMPLETED, EBookingStatus.UPCOMING]),
-      orderBy("endTime", "desc")
+      where("status", "in", [EBookingStatus.TUTOR_CANCELLED, EBookingStatus.USER_CANCELLED]),
+      orderBy("endTime", "asc")
     );
 
     const unsubscribe = onSnapshot(
@@ -32,16 +31,14 @@ const PreviousSessions = () => {
         const slots: any[] = [];
         snapshot.forEach((doc) => {
           const data = doc.data();
-          if (data.status !== "MISSED") {
-            slots.push({
-              id: doc.id,
-              ...data,
-              startTime: data.startTime.toDate(),
-              endTime: data.endTime.toDate(),
-              createdAt: data.createdAt.toDate(),
-              updatedAt: data.updatedAt.toDate(),
-            });
-          }
+          slots.push({
+            id: doc.id,
+            ...data,
+            startTime: data.startTime.toDate(),
+            endTime: data.endTime.toDate(),
+            createdAt: data.createdAt.toDate(),
+            updatedAt: data.updatedAt.toDate(),
+          });
         });
         setSessions(slots);
         setLoading(false);
@@ -56,33 +53,31 @@ const PreviousSessions = () => {
     };
   }, [user]);
 
-  console.table(sessions);
-
   if (loading)
     return (
-      <StyledPreviousSessionsWrapper style={{ gap: 10 }}>
+      <StyledCancelledSessionWrapper style={{ gap: 10 }}>
         <SessionCardLoader count={3} />
-      </StyledPreviousSessionsWrapper>
+      </StyledCancelledSessionWrapper>
     );
 
   if (!sessions.length) {
-    return <NoSession message="You do not have any Previous Sessions" />;
+    return <NoSession message="You do not have any Missed Sessions" />;
   }
 
   return (
-    <StyledPreviousSessionsWrapper>
+    <StyledCancelledSessionWrapper>
       {sessions.map((sessionDetails) => (
         <DashboardSessionCard key={sessionDetails.id} type="previous" {...sessionDetails} />
       ))}
-    </StyledPreviousSessionsWrapper>
+    </StyledCancelledSessionWrapper>
   );
 };
 
-const StyledPreviousSessionsWrapper = styled.div`
+const StyledCancelledSessionWrapper = styled.div`
   display: flex;
   flex-direction: column;
   padding-bottom: 30px;
-  max-width: 1000px;
+  max-width: 900px;
   width: 100%;
   min-height: 70vh;
 
@@ -95,4 +90,4 @@ const StyledPreviousSessionsWrapper = styled.div`
   }
 `;
 
-export default PreviousSessions;
+export default CancelledSession;

@@ -15,6 +15,7 @@ export enum ISession {
   UPCOMING = "upcoming",
   PREVIOUS = "previous",
   MISSED = "missed",
+  CANCELLED = "cancelled",
 }
 
 export enum ITransactionStatus {
