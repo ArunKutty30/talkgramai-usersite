@@ -120,7 +120,7 @@ const UnsubscribedUserBookedSession = () => {
               {!sessions.length ? (
                 <StyledNoSession>
                   <img src={NoSessionIllustration} alt="no session illustration" />
-                  <p>You do not have any Previous Sessions</p>
+                  <p>You do not have any upcoming sessions</p>
                   {subscriptionData ? (
                     <Link to="/book-session">
                       <Button>+ Book Session</Button>
@@ -140,7 +140,7 @@ const UnsubscribedUserBookedSession = () => {
                 ))
               )}
             </StyledUpComingSessionContainer>
-            <StyledPreviousSessionContainer>
+            {/* <StyledPreviousSessionContainer>
               <div className="flex-between">
                 <h5 className="section-title">Your Previous Sessions</h5>
                 <StyledViewAllLink to="/sessions">View all</StyledViewAllLink>
@@ -152,7 +152,7 @@ const UnsubscribedUserBookedSession = () => {
                   <Button>+ Book Session</Button>
                 </Link>
               </StyledNoSession>
-            </StyledPreviousSessionContainer>
+            </StyledPreviousSessionContainer> */}
           </StyledGridOne>
           <StyledGridTwo>
             <StickyNotesCard
@@ -199,11 +199,12 @@ const StyledUpComingSessionContainer = styled.section`
   margin-bottom: 30px;
 `;
 
-const StyledPreviousSessionContainer = styled.section`
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 30px;
-`;
+// const StyledPreviousSessionContainer = styled.section`
+//   display: flex;
+//   flex-direction: column;
+//   margin-bottom: 30px;
+// `;
+
 const StyledGridContainer = styled.div`
   display: grid;
   grid-template-columns: auto 400px;
