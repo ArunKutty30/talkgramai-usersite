@@ -1,7 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { collection, limit, onSnapshot, orderBy, query, where } from "firebase/firestore";
+import {
+  collection,
+  limit,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 import ReactCountdown, { CountdownRenderProps } from "react-countdown";
 import { Box } from "@mui/material";
 import dayjs from "dayjs";
@@ -17,7 +24,7 @@ import { IBookingSession } from "../../constants/types";
 import { reminderStore } from "../../store/reminderStore";
 import { addPrefixZero } from "../../utils/helpers";
 import DashboardSessionCard from "../SessionCards/DashboardSessionCard";
-import StatsCard from "../StatsCard";
+import UserSessionStats from "../UserSessionStats";
 
 dayjs.extend(relativeTime);
 
@@ -28,7 +35,13 @@ const SessionReminder = () => {
   const remainingSession = reminderStore((store) => store.session);
   const subscriptionData = userStore((store) => store.subscriptionData);
 
-  const renderer = ({ completed, hours, minutes, seconds, days }: CountdownRenderProps) => {
+  const renderer = ({
+    completed,
+    hours,
+    minutes,
+    seconds,
+    days,
+  }: CountdownRenderProps) => {
     if (completed) {
       return null;
     } else {
@@ -52,8 +65,8 @@ const SessionReminder = () => {
               {/* Your {session} session{session > 1 ? "s" : ""} for this week ends in{" "} */}
               ends in{" "}
               <b style={{ display: "inline-block", minWidth: "67px" }}>
-                {addPrefixZero(days)}D : {addPrefixZero(hours)}H : {addPrefixZero(minutes)}M :{" "}
-                {addPrefixZero(seconds)}S
+                {addPrefixZero(days)}D : {addPrefixZero(hours)}H :{" "}
+                {addPrefixZero(minutes)}M : {addPrefixZero(seconds)}S
               </b>{" "}
               !!
             </p>
@@ -63,7 +76,13 @@ const SessionReminder = () => {
     }
   };
 
-  const nextWeekRenderer = ({ completed, hours, minutes, seconds, days }: CountdownRenderProps) => {
+  const nextWeekRenderer = ({
+    completed,
+    hours,
+    minutes,
+    seconds,
+    days,
+  }: CountdownRenderProps) => {
     if (completed) {
       return null;
     } else {
@@ -85,8 +104,8 @@ const SessionReminder = () => {
               {/* Your next week session booking starts in{" "} */}
               starts in{" "}
               <b style={{ display: "inline-block", minWidth: "67px" }}>
-                {addPrefixZero(days)}D : {addPrefixZero(hours)}H : {addPrefixZero(minutes)}M :{" "}
-                {addPrefixZero(seconds)}S
+                {addPrefixZero(days)}D : {addPrefixZero(hours)}H :{" "}
+                {addPrefixZero(minutes)}M : {addPrefixZero(seconds)}S
               </b>
             </p>
           </div>
@@ -114,7 +133,9 @@ const SessionReminder = () => {
 const SubscribedUserSession: React.FC = () => {
   const user = userStore((store) => store.user);
   const [sessions, setSessions] = useState<IBookingSession[]>([]);
-  const [previousSessions, setPreviousSessionss] = useState<IBookingSession[]>([]);
+  const [previousSessions, setPreviousSessionss] = useState<IBookingSession[]>(
+    []
+  );
   const subscriptionData = userStore((store) => store.subscriptionData);
   const [showPopup, setShowPopup] = useState(false);
   const expiredClass = userStore((state) => state.expiredClass);
@@ -204,30 +225,6 @@ const SubscribedUserSession: React.FC = () => {
     setShowPopup(!showPopup);
   };
 
-  const sessionLists = useMemo(() => {
-    if (!overallBookedSession.length) return [];
-
-    const list = overallBookedSession.map((b) => {
-      if (b.feedbackFromTutor) {
-        return {
-          confidence: b.feedbackFromTutor.skills?.confidence || 0,
-          passion: b.feedbackFromTutor.skills?.passion || 0,
-          listeningComprehension: b.feedbackFromTutor.skills?.listeningComprehension || 0,
-          conversationBuilding: b.feedbackFromTutor.skills?.conversationBuilding || 0,
-        };
-      }
-
-      return {
-        confidence: 0,
-        passion: 0,
-        listeningComprehension: 0,
-        conversationBuilding: 0,
-      };
-    });
-
-    return list;
-  }, [overallBookedSession]);
-
   return (
     <>
       <div className="pad">
@@ -237,60 +234,9 @@ const SubscribedUserSession: React.FC = () => {
           isPopupOpen={showPopup}
           handlePopup={handlePopup}
         />
-        <StyledUserSessionStats>
-          <StatsCard
-            title="Confidence"
-            tooltipContent="How assured the learner appears while speaking."
-            total={
-              sessionLists.length
-                ? sessionLists.slice(sessionLists.length - 1).map((m) => m.confidence)
-                : 0
-            }
-            chartData={sessionLists.map((s, i) => ({
-              name: `Session ${i + 1}`,
-              score: s.confidence,
-            }))}
-          />
-          <StatsCard
-            title="Passion"
-            tooltipContent="The level of enthusiasm and interest showed by the learner."
-            total={
-              sessionLists.length
-                ? sessionLists.slice(sessionLists.length - 1).map((m) => m.passion)
-                : 0
-            }
-            chartData={sessionLists.map((s, i) => ({
-              name: `Session ${i + 1}`,
-              score: s.passion,
-            }))}
-          />
-          <StatsCard
-            title="Listening Comprehension"
-            tooltipContent="The ability to understand and interpret spoken English effectively."
-            total={
-              sessionLists.length
-                ? sessionLists.slice(sessionLists.length - 1).map((m) => m.listeningComprehension)
-                : 0
-            }
-            chartData={sessionLists.map((s, i) => ({
-              name: `Session ${i + 1}`,
-              score: s.listeningComprehension,
-            }))}
-          />
-          <StatsCard
-            title="Conversation Building"
-            tooltipContent="How well the learner sustains a conversation."
-            total={
-              sessionLists.length
-                ? sessionLists.slice(sessionLists.length - 1).map((m) => m.conversationBuilding)
-                : 0
-            }
-            chartData={sessionLists.map((s, i) => ({
-              name: `Session ${i + 1}`,
-              score: s.conversationBuilding,
-            }))}
-          />
-        </StyledUserSessionStats>
+
+        <UserSessionStats overallBookedSession={overallBookedSession} />
+
         <StyledGridContainer>
           <StyledUpComingSessionContainer>
             <div className="flex-between mb-20">
@@ -304,7 +250,10 @@ const SubscribedUserSession: React.FC = () => {
               ))
             ) : (
               <StyledNoSession>
-                <img src={NoSessionIllustration} alt="no session illustration" />
+                <img
+                  src={NoSessionIllustration}
+                  alt="no session illustration"
+                />
                 <p>You do not have any Upcoming Sessions</p>
               </StyledNoSession>
             )}
@@ -322,7 +271,10 @@ const SubscribedUserSession: React.FC = () => {
               ))
             ) : (
               <StyledNoSession>
-                <img src={NoSessionIllustration} alt="no session illustration" />
+                <img
+                  src={NoSessionIllustration}
+                  alt="no session illustration"
+                />
                 <p>You do not have any Previous Sessions</p>
               </StyledNoSession>
             )}
@@ -347,7 +299,10 @@ const SubscribedUserSession: React.FC = () => {
           </Box>
 
           <Box className="sec-last-card-hold">
-            <CurrentPlanCards title="Total Sessions" count={subscriptionData?.noOfSession || 0} />
+            <CurrentPlanCards
+              title="Total Sessions"
+              count={subscriptionData?.noOfSession || 0}
+            />
             <CurrentPlanCards
               title="Sessions Left"
               count={
@@ -364,7 +319,10 @@ const SubscribedUserSession: React.FC = () => {
               count={subscriptionData?.cancelledSession || 0}
             />
             <CurrentPlanCards title="Missed Session" count={missedClass || 0} />
-            <CurrentPlanCards title="Expired Session" count={expiredClass || 0} />
+            <CurrentPlanCards
+              title="Expired Session"
+              count={expiredClass || 0}
+            />
           </Box>
           <Box
             sx={{
@@ -377,7 +335,9 @@ const SubscribedUserSession: React.FC = () => {
             className="book-session-two"
           >
             <Link to="/book-session">
-              <Button style={{ whiteSpace: "nowrap", width: "100%" }}>+ Book Session</Button>
+              <Button style={{ whiteSpace: "nowrap", width: "100%" }}>
+                + Book Session
+              </Button>
             </Link>
           </Box>
         </StyledCurrentPlan>
@@ -386,7 +346,13 @@ const SubscribedUserSession: React.FC = () => {
   );
 };
 
-const CurrentPlanCards = ({ title, count }: { title: string; count: number }) => {
+const CurrentPlanCards = ({
+  title,
+  count,
+}: {
+  title: string;
+  count: number;
+}) => {
   return (
     <Box
       sx={{
@@ -508,7 +474,11 @@ const StyledUpComingSessionContainer = styled.section`
     right: 0px;
     width: 100%;
     height: 100%;
-    background: linear-gradient(274deg, #eeeeee 0%, rgba(251, 251, 251, 0) 100%);
+    background: linear-gradient(
+      274deg,
+      #eeeeee 0%,
+      rgba(251, 251, 251, 0) 100%
+    );
     border-radius: 11px;
   }
 
@@ -546,7 +516,11 @@ const StyledPreviousSessionContainer = styled.section`
     right: 0px;
     width: 100%;
     height: 100%;
-    background: linear-gradient(274deg, #eeeeee 0%, rgba(251, 251, 251, 0) 100%);
+    background: linear-gradient(
+      274deg,
+      #eeeeee 0%,
+      rgba(251, 251, 251, 0) 100%
+    );
     border-radius: 11px;
   }
 
@@ -588,27 +562,6 @@ const StyledNoSession = styled.div`
 
   img {
     width: 75%;
-  }
-`;
-
-const StyledUserSessionStats = styled.div`
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
-  margin-bottom: 20px;
-
-  @media (max-width: 1200px) {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-  }
-
-  @media (max-width: 600px) {
-    width: 100%;
-    overflow: auto;
-    grid-template-columns: repeat(4, 70vw);
-    gap: 15px;
-    cursor: pointer;
-    padding-right: 20;
   }
 `;
 

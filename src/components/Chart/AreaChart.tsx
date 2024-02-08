@@ -29,7 +29,7 @@ const AreaChart: React.FC<IAreaChartProps> = ({ data }) => {
         }}
       >
         <XAxis dataKey="name" />
-        <Tooltip />
+        <Tooltip position={{ x: 0, y: -75 }} />
 
         <Area
           type="monotone"

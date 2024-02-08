@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import NorthIcon from "@mui/icons-material/North";
+import SouthIcon from "@mui/icons-material/South";
+
 import { useNavigate } from "react-router-dom";
 
 import Tooltip from "./Tooltip";
@@ -57,9 +60,14 @@ const StyledSessionStatsCard = styled.div`
       justify-content: start;
       align-items: center;
 
-      .stats-value {
+      .stats-value-red {
         font-size: 18px;
         color: red;
+      }
+
+      .stats-value-green {
+        font-size: 18px;
+        color: #00c45a;
       }
 
       .arrow-green {
@@ -101,11 +109,35 @@ interface IStatsCardProps {
   total: number | number[];
 }
 
-const StatsCard: React.FC<IStatsCardProps> = ({ title, tooltipContent, total, chartData }) => {
+const StatsCard: React.FC<IStatsCardProps> = ({
+  title,
+  tooltipContent,
+  total,
+  chartData,
+}) => {
   const navigate = useNavigate();
 
+  const percent = useMemo(() => {
+    if (!chartData || chartData.length <= 1) {
+      return 0;
+    }
+
+    const [lastSessionSocre, lastPreviousSessionScore] = [
+      chartData[chartData.length - 1].score,
+      chartData[chartData.length - 2].score,
+    ];
+
+    return Math.floor(
+      ((lastSessionSocre - lastPreviousSessionScore) /
+        lastPreviousSessionScore) *
+        100
+    );
+  }, []);
+
   return (
-    <StyledSessionStatsCard onClick={() => navigate("/profile/feedback-analysis")}>
+    <StyledSessionStatsCard
+      onClick={() => navigate("/profile/feedback-analysis")}
+    >
       <h6 className="s-16 mb-8 stats-topics">
         {title}
         {tooltipContent && (
@@ -118,10 +150,21 @@ const StatsCard: React.FC<IStatsCardProps> = ({ title, tooltipContent, total, ch
         <div className="flex-column">
           <div className="stats">
             <h3>{Array.isArray(total) ? total.map((t) => t) : total}</h3>
-            {/* <div className="arrow-red">
-            <SouthIcon className="icon" />
-          </div>
-          <p className="stats-value">15 %</p> */}
+            {percent >= 0 ? (
+              <>
+                <div className="arrow-green">
+                  <NorthIcon className="icon" />
+                </div>
+                <p className="stats-value-green">{percent}%</p>
+              </>
+            ) : (
+              <>
+                <div className="arrow-red">
+                  <SouthIcon className="icon" />
+                </div>
+                <p className="stats-value-red">{Math.abs(percent)}%</p>
+              </>
+            )}
           </div>
           <p className="sub-title">compared to last session</p>
         </div>
