@@ -132,7 +132,6 @@ const Grammar: React.FC<{ data: INewTutorFeedback[] }> = ({ data }) => {
             {/* <p style={{ marginTop: "12px" }}>
               Scores between <b>3-5</b> showcase that you
             </p> */}
-            <h5>Good at your grammar skills</h5>
           </div>
           <div id="chart">
             <ReactApexChart
