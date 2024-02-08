@@ -341,20 +341,15 @@ export const getUserBookedSessionDoc = async (
     where("user", "==", userId),
     where("subscriptionId", "==", subscriptionId),
     where("startTime", ">=", startDate),
-    where("startTime", "<=", endDate)
+    where("startTime", "<=", endDate),
+    where("status", "in", [EBookingStatus.UPCOMING, EBookingStatus.COMPLETED])
   );
 
   const collectionResult = await getDocs(q);
 
-  const userCancelledResults = collectionResult.docs.filter((doc) => {
-    return doc.data().status !== EBookingStatus.USER_CANCELLED;
-  });
+  console.log("collectionResult.size", collectionResult.size);
 
-  const filterTutorCancelledResults = userCancelledResults.filter((doc) => {
-    return doc.data().status !== EBookingStatus.TUTOR_CANCELLED;
-  });
-
-  return filterTutorCancelledResults.map((d) => ({ id: d.id, ...d.data() })) as IBookingSessionDB[];
+  return collectionResult.docs.map((d) => ({ id: d.id, ...d.data() })) as IBookingSessionDB[];
 };
 
 export const updateFeedback = async (docId: string, data: DocumentData, rating: number) => {

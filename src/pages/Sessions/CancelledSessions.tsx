@@ -22,7 +22,7 @@ const CancelledSession = () => {
       colRef,
       where("user", "==", user.uid),
       where("status", "in", [EBookingStatus.TUTOR_CANCELLED, EBookingStatus.USER_CANCELLED]),
-      orderBy("endTime", "asc")
+      orderBy("endTime", "desc")
     );
 
     const unsubscribe = onSnapshot(

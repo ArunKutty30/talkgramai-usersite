@@ -22,7 +22,7 @@ const MissedSession = () => {
       colRef,
       where("user", "==", user.uid),
       where("status", "==", "MISSED"),
-      orderBy("endTime", "asc")
+      orderBy("endTime", "desc")
     );
 
     const unsubscribe = onSnapshot(

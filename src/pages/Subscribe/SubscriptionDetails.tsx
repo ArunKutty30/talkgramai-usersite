@@ -1,95 +1,62 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { doc, onSnapshot } from "firebase/firestore";
+import React from "react";
 import styled from "styled-components";
-import { db } from "../../utils/firebase";
-import { SUBSCRIPTION_COLLECTION_NAME } from "../../constants/data";
-import { ISubscriptionDB } from "../../constants/types";
 import { customFormat } from "../../constants/formatDate";
+import { userStore } from "../../store/userStore";
 // import { initiateAccessKey, loadScript } from "../../services/paymentService";
 // import axios from "axios";
 
-const SubscriptionDetails = ({ subsciptionId }: { subsciptionId: string }) => {
-  const [subscriptionData, setSubscriptionData] = useState<ISubscriptionDB | null>(null);
-
-  const handleGetSubscriptionData = useCallback(async () => {
-    const docRef = doc(db, SUBSCRIPTION_COLLECTION_NAME, subsciptionId);
-
-    const unsubscribe = onSnapshot(
-      docRef,
-      (snapshot) => {
-        if (snapshot.exists()) {
-          setSubscriptionData(snapshot.data() as ISubscriptionDB);
-        }
-      },
-      (error) => {
-        console.error("Error fetching upcoming sessions:", error);
-      }
-    );
-
-    return () => {
-      unsubscribe();
-    };
-  }, [subsciptionId]);
-
-  useEffect(() => {
-    handleGetSubscriptionData();
-  }, [handleGetSubscriptionData]);
-
-  // const test = async () => {
-  //   try {
-  //     await loadScript(
-  //       "https://ebz-static.s3.ap-south-1.amazonaws.com/easecheckout/easebuzz-checkout.js"
-  //     );
-  //     const razorpayWindow = window as any;
-  //     await initiateAccessKey();
-  //     // const easebuzzCheckout = new razorpayWindow.EasebuzzCheckout("2PBP7IABZ2", "prod");
-  //     // const options = {
-  //     //   access_key: "2PBP7IABZ2", // access key received via Initiate Payment
-  //     //   onResponse: (response: any) => {
-  //     //     console.log(response);
-  //     //   },
-  //     //   theme: "#123456", // color hex
-  //     // };
-  //     // easebuzzCheckout.initiatePayment(options);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+const SubscriptionDetails: React.FC = () => {
+  const subscriptionData = userStore((store) => store.subscriptionData);
+  const overallBookedSession = userStore((store) => store.overallBookedSession);
+  const expiredClass = userStore((state) => state.expiredClass);
+  const missedClass = userStore((state) => state.missedClass);
 
   return (
     <div>
       <StyledSubscribeContainer>
         <StyledContainer>
           <div className="mx pad">
-            <StyledHeader>
-              <h5 className="section-title">Your Subscription Details</h5>
-            </StyledHeader>
-            {!subscriptionData ? null : (
-              <StyledFlexContainer>
-                <div className="flex-between">
-                  <p>Total Sessions</p>
-                  <b>{subscriptionData.noOfSession}</b>
-                </div>
-                <div className="flex-between">
-                  <p>Booked Sessions</p>
-                  <b>{subscriptionData?.bookedSession ?? 0}</b>
-                </div>
-                <div className="flex-between">
-                  <p>Completed Sessions</p>
-                  <b>
-                    {subscriptionData["completedSession"] ? subscriptionData.completedSession : 0}
-                  </b>
-                </div>
-                <div className="flex-between">
-                  <p>Created At</p>
-                  <b>{customFormat(subscriptionData.startDate.toDate(), "DD MMM YYYY")}</b>
-                </div>
-                <div className="flex-between">
-                  <p>End Date</p>
-                  <b>{customFormat(subscriptionData.endDate.toDate(), "DD MMM YYYY")}</b>
-                </div>
-              </StyledFlexContainer>
-            )}
+            <StyledCard>
+              <StyledHeader>
+                <h5 className="section-title">Your Subscription Details</h5>
+              </StyledHeader>
+              {!subscriptionData ? null : (
+                <StyledFlexContainer>
+                  <div className="flex-between">
+                    <p>Total Sessions</p>
+                    <b>{subscriptionData.noOfSession}</b>
+                  </div>
+                  <div className="flex-between">
+                    <p>Booked Sessions</p>
+                    <b>{subscriptionData?.bookedSession ?? 0}</b>
+                  </div>
+                  <div className="flex-between">
+                    <p>Completed Sessions</p>
+                    <b>{overallBookedSession.length}</b>
+                  </div>
+                  <div className="flex-between">
+                    <p>Backlog Sessions</p>
+                    <b>{subscriptionData?.backlogSession ?? 0}</b>
+                  </div>
+                  <div className="flex-between">
+                    <p>Cancelled Sessions</p>
+                    <b>{subscriptionData?.cancelledSession ?? 0}</b>
+                  </div>
+                  <div className="flex-between">
+                    <p>Missed Sessions</p>
+                    <b>{missedClass || 0}</b>
+                  </div>
+                  <div className="flex-between">
+                    <p>Expired Sessions</p>
+                    <b>{expiredClass || 0}</b>
+                  </div>
+                  <div className="flex-between">
+                    <p>End Date</p>
+                    <b>{customFormat(subscriptionData.endDate.toDate(), "DD MMM YYYY")}</b>
+                  </div>
+                </StyledFlexContainer>
+              )}
+            </StyledCard>
           </div>
           {/* <button onClick={() => test()}>test</button> */}
         </StyledContainer>
@@ -127,8 +94,20 @@ const StyledFlexContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
+`;
+
+const StyledCard = styled.div`
+  display: flex;
+  flex-direction: column;
   max-width: 600px;
   width: 100%;
+  border-radius: 8px;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  background: rgba(255, 255, 255, 0.11);
+  box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.18);
 `;
 
 export default SubscriptionDetails;

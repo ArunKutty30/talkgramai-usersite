@@ -13,7 +13,7 @@ const Subscribe = () => {
       {!profileData ? (
         <SubscriptionLoader />
       ) : profileData.currentSubscriptionId ? (
-        <SubscriptionDetails subsciptionId={profileData.currentSubscriptionId} />
+        <SubscriptionDetails />
       ) : (
         <SubscribePage />
       )}
