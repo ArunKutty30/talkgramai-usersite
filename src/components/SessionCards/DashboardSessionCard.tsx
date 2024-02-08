@@ -194,6 +194,7 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
                 backgroundColor: "transparent",
                 padding: 0,
                 whiteSpace: "nowrap",
+                fontSize: 12,
               }}
               size="small"
               onClick={() => setOpenDisputeModal(true)}
@@ -237,7 +238,7 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
         {/* row-3 */}
         <BlockLeft type={type}>
           <div className="align-start content">
-            <h4 className="s-16">
+            <h4 className="s-16 mb-8">
               {topicInfo
                 ? `${topicInfo.category} - ${topicInfo.title}`
                 : typeof topic === "string"
@@ -581,7 +582,6 @@ const StyledSessionControls = styled.div`
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  margin-top: 10px;
   flex-wrap: wrap;
 
   @media (max-width: 768px) {
