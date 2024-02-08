@@ -77,7 +77,7 @@ const SelectTutorFilterContainer = styled.div`
 
 const SelectTutorCardWrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 280px));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 20px 60px;
 
   @media (max-width: 768px) {

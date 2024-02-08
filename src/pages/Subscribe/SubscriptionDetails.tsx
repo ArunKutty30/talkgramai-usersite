@@ -15,7 +15,7 @@ const SubscriptionDetails: React.FC = () => {
     <div>
       <StyledSubscribeContainer>
         <StyledContainer>
-          <div className="mx pad">
+          <div className="pad">
             <StyledCard>
               <StyledHeader>
                 <h5 className="section-title">Your Subscription Details</h5>
