@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 import { ReactComponent as DownArrowIcon } from "../../../assets/icons/arrow_down.svg";
@@ -15,9 +15,7 @@ const dropdownItems = ["item 1", "item 2"];
 const FeedbackAnalysis: React.FC = () => {
   const [latestSession, setlatestSession] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  const [latestSessionDrop, setlatestSessionDrop] = useState<string | null>(
-    null
-  );
+  const [latestSessionDrop, setlatestSessionDrop] = useState<string | null>(null);
   const [isDropdown, setIsDropdown] = useState<boolean>(false);
   const overallBookedSession = userStore((store) => store.overallBookedSession);
   const isAllSessionFetching = userStore((store) => store.isAllSessionFetching);
@@ -41,32 +39,6 @@ const FeedbackAnalysis: React.FC = () => {
     setIsDropdown(false);
   };
 
-  const sessionLists = useMemo(() => {
-    if (!overallBookedSession.length) return [];
-
-    const list = overallBookedSession.map((b) => {
-      if (b.feedbackFromTutor) {
-        return {
-          confidence: b.feedbackFromTutor.skills?.confidence || 0,
-          passion: b.feedbackFromTutor.skills?.passion || 0,
-          listeningComprehension:
-            b.feedbackFromTutor.skills?.listeningComprehension || 0,
-          conversationBuilding:
-            b.feedbackFromTutor.skills?.conversationBuilding || 0,
-        };
-      }
-
-      return {
-        confidence: 0,
-        passion: 0,
-        listeningComprehension: 0,
-        conversationBuilding: 0,
-      };
-    });
-
-    return list;
-  }, [overallBookedSession]);
-
   return (
     <>
       <FeedbackAnalysisWrapper>
@@ -77,9 +49,7 @@ const FeedbackAnalysis: React.FC = () => {
           <DropDownContainer>
             <div className="container">
               <SelectContent onClick={toggleDropdown}>
-                <SelectText>
-                  {latestSession || "Latest Session (15-20)"}
-                </SelectText>
+                <SelectText>{latestSession || "Latest Session (15-20)"}</SelectText>
                 <div>
                   <DownArrowIcon width={14} height={14} />
                 </div>
@@ -98,9 +68,7 @@ const FeedbackAnalysis: React.FC = () => {
           <DropDownContainer>
             <div className="container">
               <SelectContent onClick={handleDropdownToggle} className="drop">
-                <SelectText>
-                  {latestSessionDrop || "Latest Session (15-20)"}
-                </SelectText>
+                <SelectText>{latestSessionDrop || "Latest Session (15-20)"}</SelectText>
                 <div>
                   <DownArrowIcon width={14} height={14} />
                 </div>

@@ -109,12 +109,7 @@ interface IStatsCardProps {
   total: number | number[];
 }
 
-const StatsCard: React.FC<IStatsCardProps> = ({
-  title,
-  tooltipContent,
-  total,
-  chartData,
-}) => {
+const StatsCard: React.FC<IStatsCardProps> = ({ title, tooltipContent, total, chartData }) => {
   const navigate = useNavigate();
 
   const percent = useMemo(() => {
@@ -128,16 +123,12 @@ const StatsCard: React.FC<IStatsCardProps> = ({
     ];
 
     return Math.floor(
-      ((lastSessionSocre - lastPreviousSessionScore) /
-        lastPreviousSessionScore) *
-        100
+      ((lastSessionSocre - lastPreviousSessionScore) / lastPreviousSessionScore) * 100
     );
-  }, []);
+  }, [chartData]);
 
   return (
-    <StyledSessionStatsCard
-      onClick={() => navigate("/profile/feedback-analysis")}
-    >
+    <StyledSessionStatsCard onClick={() => navigate("/profile/feedback-analysis")}>
       <h6 className="s-16 mb-8 stats-topics">
         {title}
         {tooltipContent && (

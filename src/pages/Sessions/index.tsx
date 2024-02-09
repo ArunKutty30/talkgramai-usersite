@@ -16,7 +16,7 @@ const sessionTabs = [
     value: ISession.UPCOMING,
   },
   {
-    name: "Previous Sessions",
+    name: "Completed Sessions",
     value: ISession.PREVIOUS,
   },
   {

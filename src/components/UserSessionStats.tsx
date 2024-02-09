@@ -14,10 +14,8 @@ const UserSessionStats: React.FC<{
         return {
           confidence: b.feedbackFromTutor.skills?.confidence || 0,
           passion: b.feedbackFromTutor.skills?.passion || 0,
-          listeningComprehension:
-            b.feedbackFromTutor.skills?.listeningComprehension || 0,
-          conversationBuilding:
-            b.feedbackFromTutor.skills?.conversationBuilding || 0,
+          listeningComprehension: b.feedbackFromTutor.skills?.listeningComprehension || 0,
+          conversationBuilding: b.feedbackFromTutor.skills?.conversationBuilding || 0,
         };
       }
 
@@ -39,9 +37,7 @@ const UserSessionStats: React.FC<{
         tooltipContent="How assured the learner appears while speaking."
         total={
           sessionLists.length
-            ? sessionLists
-                .slice(sessionLists.length - 1)
-                .map((m) => m.confidence)
+            ? sessionLists.slice(sessionLists.length - 1).map((m) => m.confidence)
             : 0
         }
         chartData={sessionLists.map((s, i) => ({
@@ -67,9 +63,7 @@ const UserSessionStats: React.FC<{
         tooltipContent="The ability to understand and interpret spoken English effectively."
         total={
           sessionLists.length
-            ? sessionLists
-                .slice(sessionLists.length - 1)
-                .map((m) => m.listeningComprehension)
+            ? sessionLists.slice(sessionLists.length - 1).map((m) => m.listeningComprehension)
             : 0
         }
         chartData={sessionLists.map((s, i) => ({
@@ -82,9 +76,7 @@ const UserSessionStats: React.FC<{
         tooltipContent="How well the learner sustains a conversation."
         total={
           sessionLists.length
-            ? sessionLists
-                .slice(sessionLists.length - 1)
-                .map((m) => m.conversationBuilding)
+            ? sessionLists.slice(sessionLists.length - 1).map((m) => m.conversationBuilding)
             : 0
         }
         chartData={sessionLists.map((s, i) => ({
