@@ -21,3 +21,17 @@ export const sendBookingConfirmationMail = async ({
     time,
   });
 };
+
+export const sendBookingCancellationMail = async ({
+  userId,
+  tutorId,
+  date,
+  time,
+}: ISendBookingConfirmationMail) => {
+  await axios.post(`${config.BACKEND_URL}/mail/session-cancellation`, {
+    userId,
+    tutorId,
+    date,
+    time,
+  });
+};

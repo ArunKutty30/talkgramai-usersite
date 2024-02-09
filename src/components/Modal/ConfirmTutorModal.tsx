@@ -28,7 +28,10 @@ import { db } from "../../utils/firebase";
 import { createMeeting } from "../../utils/api";
 import { config } from "../../constants/config";
 import { reminderStore } from "../../store/reminderStore";
-import { sendBookingConfirmationMail } from "../../services/mailService";
+import {
+  sendBookingCancellationMail,
+  sendBookingConfirmationMail,
+} from "../../services/mailService";
 import ReactModal from "./ReactModal";
 import TopicAccordion from "../TopicAccordion";
 import { topicsData } from "../../utils/updatedtopic";
@@ -162,7 +165,14 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
       setMessage("Your Session has been Cancelled !!");
       setTimeout(() => {
         if (handleClose) handleClose();
-      }, 3000);
+      }, 1500);
+
+      sendBookingCancellationMail({
+        userId: user.uid,
+        tutorId: tutorId,
+        date: dayjs(selectedDate).format("DD-MM-YYYY"),
+        time: dayjs(selectedDate).format("hh-mm a"),
+      });
     } catch (error) {
       console.log(error);
     } finally {
@@ -191,7 +201,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
       setMessage("Your Changes have been made !!");
       setTimeout(() => {
         if (handleClose) handleClose();
-      }, 3000);
+      }, 2000);
     } catch (error) {
       console.log(error);
     } finally {
@@ -290,7 +300,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
       setTimeout(() => {
         refetchUser();
         navigate("/");
-      }, 3000);
+      }, 2000);
 
       sendBookingConfirmationMail({
         userId: user.uid,
