@@ -26,6 +26,7 @@ import Dispute from "./pages/Dispute";
 import Copyright from "./components/Copyright";
 import LessonPlan from "./pages/lessonPlan";
 import UserFeedbackReportPage from "./pages/UserFeedbackReportPage";
+import Faq from "./pages/Faq";
 
 const theme = createTheme({
   palette: {
@@ -63,9 +64,10 @@ const App: React.FC = () => {
             <Route path="/profile/*" element={<Profile />} />
             <Route path="/lessonplan/:id" element={<QuestionSlider />} />
             <Route path="/verify-mail" element={<VerifyMail />} />
-            <Route path="/dispute" element={<Dispute />} />
+            <Route path="/disputes" element={<Dispute />} />
             <Route path="/lesson-plan" element={<LessonPlan />} />
             <Route path="/feedback-analysis" element={<UserFeedbackReportPage />} />
+            <Route path="/faqs" element={<Faq />} />
 
             <Route path="*" element={<PageNotFound />} />
           </Route>

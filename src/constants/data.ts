@@ -133,3 +133,36 @@ export const skillsLable = {
   listeningComprehension: "listening comprehension",
   conversationBuilding: "conversation Building",
 };
+
+export const faqs = [
+  {
+    question: "What is a backlog session?",
+    answer:
+      "A backlog session is an additional session provided when a scheduled session couldn't be conducted due to technical glitches or errors on our part. It's arranged to compensate for any missed sessions beyond the user's control.",
+  },
+  {
+    question: "How can I cancel a booked session?",
+    answer:
+      "You can cancel booked sessions up to 3 hours before the scheduled start time. However, there's a limit of up to 2 cancellations per subscription month. Subscription month refers to the period from your initial subscription date to the date that comes after 30 days from the initial subscription date. ",
+  },
+  {
+    question: "What is an expired session?",
+    answer:
+      "An expired session occurs when the allocated sessions for a week haven't been booked within the specified timeframe. For example, if you subscribe to 3 sessions per week starting on a Tuesday, all 3 sessions should be utilized by the following Tuesday",
+  },
+  {
+    question: "What happens if there's a technical/signal error from the tutor's side?",
+    answer:
+      "In such cases, users can report the issue by raising a dispute and providing relevant evidence, such as screenshots. Upon verification, a backlog session will be added to compensate for the missed session.",
+  },
+  {
+    question: "What if the tutor misses my booked session?",
+    answer:
+      "If the tutor misses a session, it will also be added as a backlog session to ensure users receive the full value of their subscription.",
+  },
+  {
+    question: "What will happen if I miss a booked session?",
+    answer:
+      "If you miss a session, it will be considered a missed session with no backlog provided. It's strongly advised to attend sessions at the scheduled times to avoid missing out. ",
+  },
+];

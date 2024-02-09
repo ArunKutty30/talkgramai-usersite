@@ -51,7 +51,7 @@ const Sidebar: React.FC<ISidebarProps> = ({ openSidebar, handleClose }) => {
                 </NavLink>
               </li>
               <li>
-                <NavLink onClick={handleClose} to="/dispute">
+                <NavLink onClick={handleClose} to="/disputes">
                   Disputes
                 </NavLink>
               </li>
@@ -59,8 +59,8 @@ const Sidebar: React.FC<ISidebarProps> = ({ openSidebar, handleClose }) => {
                 <NavLink to="/feedback-analysis">Feedback analysis</NavLink>
               </li>
               <li>
-                <NavLink onClick={handleClose} to="/help">
-                  Help & Support
+                <NavLink onClick={handleClose} to="/faqs">
+                  Faqs
                 </NavLink>
               </li>
             </ul>

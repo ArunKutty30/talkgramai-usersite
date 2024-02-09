@@ -37,6 +37,7 @@ import {
   getUserBookedSessionOnThisWeekDoc,
 } from "../../services/bookSessionService";
 import { reminderStore } from "../../store/reminderStore";
+import MenuDropdown from "../MenuDropdown";
 // import VerifyPhoneNumberModal from "../Modal/VerifyPhoneNumberModal";
 
 const Header = ({ hide }: { hide?: boolean }) => {
@@ -294,17 +295,12 @@ const Header = ({ hide }: { hide?: boolean }) => {
               <NavLink to="/sessions">Sessions</NavLink>
             </li>
             <li>
-              <NavLink to="/refer-and-earn">Refer</NavLink>
-            </li>
-            <li>
               <NavLink to="/subscribe">Subscribe</NavLink>
-            </li>
-            <li>
-              <NavLink to="/dispute">Disputes</NavLink>
             </li>
             <li>
               <NavLink to="/feedback-analysis">Feedback analysis</NavLink>
             </li>
+            <MenuDropdown />
           </StyledNavLinks>
         </StyledHeaderLeft>
         <StyledHeaderRight>
