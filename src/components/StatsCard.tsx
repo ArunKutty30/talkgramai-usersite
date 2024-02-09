@@ -117,13 +117,13 @@ const StatsCard: React.FC<IStatsCardProps> = ({ title, tooltipContent, total, ch
       return 0;
     }
 
-    const [lastSessionSocre, lastPreviousSessionScore] = [
+    const [lastSessionScore, lastPreviousSessionScore] = [
       chartData[chartData.length - 1].score,
       chartData[chartData.length - 2].score,
     ];
 
     return Math.floor(
-      ((lastSessionSocre - lastPreviousSessionScore) / lastPreviousSessionScore) * 100
+      ((lastSessionScore - lastPreviousSessionScore) / lastPreviousSessionScore) * 100
     );
   }, [chartData]);
 
