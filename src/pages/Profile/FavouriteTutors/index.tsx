@@ -42,7 +42,9 @@ const FavouriteTutors = () => {
 
   return (
     <StyledContainer>
-      {!profileData || !profileData["favouriteTutors"] ? (
+      {!profileData ||
+      !profileData["favouriteTutors"] ||
+      !profileData["favouriteTutors"]?.length ? (
         <StyledNoFavouriteTutors>
           <p>No Favourite tutors</p>
         </StyledNoFavouriteTutors>
