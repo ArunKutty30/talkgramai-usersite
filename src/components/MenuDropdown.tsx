@@ -76,6 +76,11 @@ export default function MenuDropdown() {
           "& a": {
             color: "rgb(98, 99, 94)",
             fontFamily: "Inter, sans-serif",
+            fontSize: "14px",
+
+            "& li": {
+              fontSize: "14px",
+            },
           },
         }}
         anchorEl={anchorEl}
