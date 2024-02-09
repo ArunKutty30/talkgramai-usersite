@@ -13,7 +13,7 @@ import NoSessionIllustration from "../../assets/images/no_sessions.svg";
 import { userStore } from "../../store/userStore";
 import { BOOKINGS_COLLECTION_NAME } from "../../constants/data";
 import { db } from "../../utils/firebase";
-import { IBookingSession } from "../../constants/types";
+import { EBookingStatus, IBookingSession } from "../../constants/types";
 import { reminderStore } from "../../store/reminderStore";
 import { addPrefixZero } from "../../utils/helpers";
 import DashboardSessionCard from "../SessionCards/DashboardSessionCard";
@@ -167,6 +167,7 @@ const SubscribedUserSession: React.FC = () => {
       colRef,
       where("user", "==", user.uid),
       where("endTime", "<", new Date()),
+      where("status", "in", [EBookingStatus.UPCOMING, EBookingStatus.COMPLETED]),
       orderBy("endTime", "desc"),
       limit(1)
     );
