@@ -54,6 +54,8 @@ export const createBookSessionDoc = async (
       throw new Error("Time slot does not exist.");
     }
 
+    const sessionData = { ...data };
+
     const slotData = timeSlotData.data();
     const updatedArray = slotData.tutors.map((tutor: any) => {
       if (tutor.tutorId === tutorId) {
@@ -81,6 +83,7 @@ export const createBookSessionDoc = async (
       transaction.update(subscriptionRef, {
         backlogSession: increment(-1),
       });
+      sessionData.sessionType = "backlog";
     } else {
       transaction.update(subscriptionRef, {
         bookedSession: increment(1),
@@ -93,12 +96,12 @@ export const createBookSessionDoc = async (
 
     if (!isDemoClass) {
       transaction.set(bookDocRef, {
-        ...data,
+        ...sessionData,
         currentSession: userData.data()?.totalClassBooked + 1 ?? 0,
       });
     } else {
       transaction.set(bookDocRef, {
-        ...data,
+        ...sessionData,
       });
     }
   });
