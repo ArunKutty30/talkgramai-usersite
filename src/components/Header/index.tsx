@@ -150,10 +150,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
     try {
       if (!user) return;
 
-      const overallBookedSession = await getUserCompletedSessionDoc(
-        "5hKpz1HcFvcB4NoS5xVbRqE9buG2",
-        new Date()
-      );
+      const overallBookedSession = await getUserCompletedSessionDoc(user.uid, new Date());
       updateOverallBookedSession(overallBookedSession);
     } catch (error) {
       console.log(error);
