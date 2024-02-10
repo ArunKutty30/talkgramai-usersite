@@ -18,8 +18,8 @@ const analyzeFeedback = (
 ): TGrammar => {
   const feedbackCounts: { [key: string]: number } = {};
 
-  grammar.forEach(() => {
-    feedbackCounts[key] = (feedbackCounts[key] || 0) + 1;
+  grammar.forEach((f) => {
+    feedbackCounts[f[key]] = feedbackCounts[f[key]] + 1;
   });
 
   // Find the most common feedback
@@ -56,8 +56,6 @@ const Grammar: React.FC<{ data: INewTutorFeedback[] }> = ({ data }) => {
     const nextFiveSessionData = data
       .map((m) => m.grammar)
       .slice(roundOffLength - 10, roundOffLength - 5);
-
-    console.log(lastFiveSessionData);
 
     const grammarRatings = {
       tenses: getGrammarRating(analyzeFeedback(lastFiveSessionData, "tenses")),
