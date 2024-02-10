@@ -97,13 +97,13 @@ const Grammar: React.FC<{ data: INewTutorFeedback[] }> = ({ data }) => {
         (grammarRatings.tenses +
           grammarRatings.articlesAndPrepositions +
           grammarRatings.pronounUsage +
-          grammarRatings.pronounUsage) /
+          grammarRatings.subjectVerb) /
         4,
       nextrating:
         (nextGrammarRatings.tenses +
           nextGrammarRatings.articlesAndPrepositions +
           nextGrammarRatings.pronounUsage +
-          nextGrammarRatings.pronounUsage) /
+          nextGrammarRatings.subjectVerb) /
         4,
     };
   }, [data]);
