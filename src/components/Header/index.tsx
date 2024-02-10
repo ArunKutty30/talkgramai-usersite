@@ -35,6 +35,7 @@ import { getCurrentWeekInfo } from "../../utils/helpers";
 import {
   getUserBookedSessionDoc,
   getUserBookedSessionOnThisWeekDoc,
+  getUserCompletedSessionDoc,
 } from "../../services/bookSessionService";
 import { reminderStore } from "../../store/reminderStore";
 import MenuDropdown from "../MenuDropdown";
@@ -127,7 +128,6 @@ const Header = ({ hide }: { hide?: boolean }) => {
       subscriptionData.startDate.toDate(),
       new Date()
     );
-    updateOverallBookedSession(overallBookedSession);
     updateAllSessionFetching(false);
 
     updateMissedClass(overallBookedSession.filter((f) => f.status === "MISSED").length);
@@ -142,14 +142,25 @@ const Header = ({ hide }: { hide?: boolean }) => {
     subscriptionData,
     setReminder,
     updateExpiredClass,
-    updateOverallBookedSession,
     updateAllSessionFetching,
     updateMissedClass,
   ]);
 
+  const handleGetOverallSessionData = useCallback(async () => {
+    try {
+      if (!user) return;
+
+      const overallBookedSession = await getUserCompletedSessionDoc(user.uid, new Date());
+      updateOverallBookedSession(overallBookedSession);
+    } catch (error) {
+      console.log(error);
+    }
+  }, [user, updateOverallBookedSession]);
+
   useEffect(() => {
     handleCheckCurrentData();
-  }, [handleCheckCurrentData]);
+    handleGetOverallSessionData();
+  }, [handleCheckCurrentData, handleGetOverallSessionData]);
 
   const getUserData = useCallback(async (user: User) => {
     try {

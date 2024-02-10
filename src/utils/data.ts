@@ -117,6 +117,6 @@ export const vocabulary = {
 export const grammerTitles = [
   { name: "Tenses", value: "tenses" },
   { name: "Articles & Prepositions", value: "articlesAndPrepositions" },
-  { name: "Subject Verb", value: "subjectVerb" },
+  { name: "Subject Verb Agreement", value: "subjectVerb" },
   { name: "Pronoun usage", value: "pronounUsage" },
 ];

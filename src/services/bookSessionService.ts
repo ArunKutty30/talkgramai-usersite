@@ -7,6 +7,7 @@ import {
   getDoc,
   getDocs,
   increment,
+  orderBy,
   query,
   runTransaction,
   Timestamp,
@@ -371,4 +372,21 @@ export const updateFeedback = async (docId: string, data: DocumentData, rating: 
       totalRatingsCount: increment(1),
     });
   });
+};
+
+export const getUserCompletedSessionDoc = async (userId: string, endDate: Date) => {
+  const colRef = collection(db, BOOKINGS_COLLECTION_NAME);
+  const q = query(
+    colRef,
+    where("user", "==", userId),
+    where("startTime", "<", endDate),
+    where("status", "in", [EBookingStatus.COMPLETED]),
+    orderBy("startTime", "asc")
+  );
+
+  const collectionResult = await getDocs(q);
+
+  console.log("collectionResultOverall.size", collectionResult.size);
+
+  return collectionResult.docs.map((d) => ({ id: d.id, ...d.data() })) as IBookingSessionDB[];
 };

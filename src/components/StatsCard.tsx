@@ -122,9 +122,9 @@ const StatsCard: React.FC<IStatsCardProps> = ({ title, tooltipContent, total, ch
       chartData[chartData.length - 2].score,
     ];
 
-    return Math.floor(
-      ((lastSessionScore - lastPreviousSessionScore) / lastPreviousSessionScore) * 100
-    );
+    const score = (lastSessionScore - lastPreviousSessionScore) / 10;
+
+    return Math.floor(score * 100);
   }, [chartData]);
 
   return (
