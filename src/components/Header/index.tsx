@@ -57,6 +57,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
   const showHeader = generalStore((state) => state.showHeader);
   const isOutdated = userStore((state) => state.isOutdated);
   const updateOverallBookedSession = userStore((state) => state.updateOverallBookedSession);
+  const updateCurrentPlanSession = userStore((state) => state.updateCurrentPlanSession);
   const subscriptionData = userStore((state) => state.subscriptionData);
   const [openSidebar, setOpenSidebar] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -122,15 +123,16 @@ const Header = ({ hide }: { hide?: boolean }) => {
       updateExpiredClass(0);
     }
 
-    const overallBookedSession = await getUserBookedSessionDoc(
+    const currentPlanSession = await getUserBookedSessionDoc(
       subscriptionData.user,
       subscriptionData.id,
       subscriptionData.startDate.toDate(),
       new Date()
     );
+    updateCurrentPlanSession(currentPlanSession);
     updateAllSessionFetching(false);
 
-    updateMissedClass(overallBookedSession.filter((f) => f.status === "MISSED").length);
+    updateMissedClass(currentPlanSession.filter((f) => f.status === "MISSED").length);
 
     const sessionPerWeek = subscriptionData?.sessionPerWeek ?? 0;
     setReminder({
@@ -144,6 +146,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
     updateExpiredClass,
     updateAllSessionFetching,
     updateMissedClass,
+    updateCurrentPlanSession,
   ]);
 
   const handleGetOverallSessionData = useCallback(async () => {

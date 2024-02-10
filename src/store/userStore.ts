@@ -9,6 +9,7 @@ type State = {
   profileData: IUserProfileData | null;
   subscriptionData: ISubscriptionDB | null;
   overallBookedSession: IBookingSessionDB[];
+  currentPlanSessions: IBookingSessionDB[];
   isOutdated: boolean;
   userCancelledSession?: number;
   expiredClass: number;
@@ -26,6 +27,7 @@ type Action = {
   updateCancelledSession: (value: number) => void;
   updateExpiredClass: (value: number) => void;
   updateMissedClass: (value: number) => void;
+  updateCurrentPlanSession: (value: IBookingSessionDB[]) => void;
   updateOverallBookedSession: (value: IBookingSessionDB[]) => void;
 };
 
@@ -39,6 +41,7 @@ export const userStore = create<State & Action>((set) => ({
   isOutdated: false,
   expiredClass: 0,
   missedClass: 0,
+  currentPlanSessions: [],
   updateFetching: (fetching) => set(() => ({ isFetching: fetching })),
   updateAllSessionFetching: (fetching) => set(() => ({ isAllSessionFetching: fetching })),
   updateUser: (user) => set(() => ({ user })),
@@ -50,4 +53,5 @@ export const userStore = create<State & Action>((set) => ({
   updateExpiredClass: (data) => set(() => ({ expiredClass: data })),
   updateMissedClass: (data) => set(() => ({ missedClass: data })),
   updateOverallBookedSession: (data) => set(() => ({ overallBookedSession: data })),
+  updateCurrentPlanSession: (data) => set(() => ({ currentPlanSessions: data })),
 }));

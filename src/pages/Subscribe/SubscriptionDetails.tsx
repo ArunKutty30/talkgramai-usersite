@@ -7,7 +7,7 @@ import { userStore } from "../../store/userStore";
 
 const SubscriptionDetails: React.FC = () => {
   const subscriptionData = userStore((store) => store.subscriptionData);
-  const overallBookedSession = userStore((store) => store.overallBookedSession);
+  const currentPlanSessions = userStore((store) => store.currentPlanSessions);
   const expiredClass = userStore((state) => state.expiredClass);
   const missedClass = userStore((state) => state.missedClass);
 
@@ -32,7 +32,7 @@ const SubscriptionDetails: React.FC = () => {
                   </div> */}
                   <div className="flex-between">
                     <p>Completed Sessions</p>
-                    <b>{overallBookedSession.length}</b>
+                    <b>{currentPlanSessions?.length}</b>
                   </div>
                   <div className="flex-between">
                     <p>Backlog Sessions</p>
