@@ -22,9 +22,10 @@ const Faq = () => {
           <StyledVideoWrapper>
             <div className="video-card">
               <ReactPlayer
-                url="https://www.youtube.com/watch?v=YgIf43KJ24c"
+                url="https://youtu.be/XORBrgA3PDc"
                 width="100%"
                 height="100%"
+                controls={true}
               />
             </div>
           </StyledVideoWrapper>
