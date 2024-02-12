@@ -61,6 +61,10 @@ const StyledTransactionCard = styled.div`
       background: rgba(25, 128, 0, 0.1);
       color: #198000;
     }
+    &.COMPLETED {
+      background: rgba(25, 128, 0, 0.1);
+      color: #198000;
+    }
     &.FAILED {
       color: var(--error);
       background: rgba(204, 44, 61, 0.1);

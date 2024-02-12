@@ -294,6 +294,9 @@ export interface ITransactionDB {
   user: string;
   completedSession?: number;
   missedSession?: number;
+  cancelledSession?: number;
+  backlogSession?: number;
+  bookedSession?: number;
   offer: number;
   transactionDetails?: {
     captured: boolean;

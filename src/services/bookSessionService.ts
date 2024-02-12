@@ -317,20 +317,39 @@ export const getUserBookedSessionOnThisWeekDoc = async (
     where("user", "==", userId),
     where("subscriptionId", "==", subscriptionId),
     where("startTime", ">=", startDate),
-    where("startTime", "<=", endDate)
+    where("startTime", "<=", endDate),
+    where("status", "in", [EBookingStatus.COMPLETED, EBookingStatus.UPCOMING])
   );
 
   const collectionResult = await getDocs(q);
 
-  const userCancelledResults = collectionResult.docs.filter((doc) => {
-    return doc.data().status !== EBookingStatus.USER_CANCELLED;
-  });
+  console.log(
+    "lastWeekSessionInfo",
+    collectionResult.forEach((m) => m.data())
+  );
 
-  const filterTutorCancelledResults = userCancelledResults.filter((doc) => {
-    return doc.data().status !== EBookingStatus.TUTOR_CANCELLED;
-  });
+  return collectionResult.size;
+};
 
-  return filterTutorCancelledResults.length;
+export const getUserCompletedSessionOnSubscriptionDoc = async (
+  userId: string,
+  subscriptionId: string,
+  startDate: Date,
+  endDate: Date
+) => {
+  const colRef = collection(db, BOOKINGS_COLLECTION_NAME);
+  const q = query(
+    colRef,
+    where("user", "==", userId),
+    where("subscriptionId", "==", subscriptionId),
+    where("startTime", ">=", startDate),
+    where("startTime", "<=", endDate),
+    where("status", "in", [EBookingStatus.COMPLETED, EBookingStatus.UPCOMING])
+  );
+
+  const collectionResult = await getDocs(q);
+
+  return collectionResult.docs.map((d) => ({ id: d.id, ...d.data() })) as IBookingSessionDB[];
 };
 
 export const getUserBookedSessionDoc = async (

@@ -15,7 +15,8 @@ function separateIntoWeeks(startDate: Date, endDate: Date): number {
 
 export function getCurrentWeekInfo(
   startDate: Date,
-  endDate: Date
+  endDate: Date,
+  currentDate = new Date()
 ): {
   totalWeeks: number;
   currentWeek: number;
@@ -27,7 +28,6 @@ export function getCurrentWeekInfo(
   console.log(startDate);
   console.log(endDate);
   const weeks = separateIntoWeeks(startDate, endDate);
-  const currentDate = new Date();
 
   // Calculate the number of milliseconds from the start date to the current date
   const timeDiff = currentDate.getTime() - startDate.getTime();
