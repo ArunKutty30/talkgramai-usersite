@@ -14,7 +14,6 @@ import {
 import { BOOKINGS_COLLECTION_NAME, USER_COLLECTION_NAME } from "../constants/data";
 import { db } from "../utils/firebase";
 import { IUserProfileData } from "../constants/types";
-import { startOfMonth } from "date-fns";
 
 export const getUserDoc = async (id: string) => {
   const docRef = doc(db, USER_COLLECTION_NAME, id);

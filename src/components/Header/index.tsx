@@ -154,6 +154,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
     updateAllSessionFetching,
     updateMissedClass,
     updateCurrentPlanSession,
+    updateCancelledSession,
   ]);
 
   const handleGetOverallSessionData = useCallback(async () => {
