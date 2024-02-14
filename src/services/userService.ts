@@ -47,13 +47,13 @@ export const updateUserFavouriteTutorsDoc = async (id: string, tutorId: string) 
   }
 };
 
-export const getUserCancelledSessionOnCurrentMonth = async (id: string) => {
+export const getUserCancelledSessionOnCurrentMonth = async (id: string, startDate: Date) => {
   const colRef = collection(db, BOOKINGS_COLLECTION_NAME);
   const q = query(
     colRef,
     where("user", "==", id),
     where("status", "==", "USER_CANCELLED"),
-    where("startTime", ">", startOfMonth(new Date()))
+    where("startTime", ">", startDate)
   );
 
   const data = await getDocs(q);

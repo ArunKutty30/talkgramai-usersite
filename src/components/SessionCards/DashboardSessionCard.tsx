@@ -168,6 +168,18 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
     </Button>
   );
 
+  const renderUserMissedTab = (
+    <Button variant="error" size="small" style={{ pointerEvents: "none" }}>
+      You missed session
+    </Button>
+  );
+
+  const renderTutorMissedTab = (
+    <Button variant="error" size="small" style={{ pointerEvents: "none" }}>
+      Tutor missed
+    </Button>
+  );
+
   return (
     <StyledSessionCard type={type} ref={parent}>
       <StyledSessionHeader>
@@ -340,6 +352,15 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
               </Button>
             </>
           )}
+        </StyledSessionControls>
+      )}
+      {type === "missed" && (
+        <StyledSessionControls>
+          {status && status === "MISSED"
+            ? renderUserMissedTab
+            : status && status === "TUTOR_MISSED"
+            ? renderTutorMissedTab
+            : null}
         </StyledSessionControls>
       )}
       {userFeedback && openFeedbackDropdown && (

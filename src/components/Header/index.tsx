@@ -66,6 +66,13 @@ const Header = ({ hide }: { hide?: boolean }) => {
   const handleCheckCurrentData = useCallback(async () => {
     if (!subscriptionData) return;
 
+    updateCancelledSession(
+      await getUserCancelledSessionOnCurrentMonth(
+        subscriptionData.user,
+        subscriptionData.startDate.toDate()
+      )
+    );
+
     if (subscriptionData.demoClass === true) {
       const sessionInfo = await getUserBookedSessionOnThisWeekDoc(
         subscriptionData.user,
@@ -178,7 +185,6 @@ const Header = ({ hide }: { hide?: boolean }) => {
         const userData = userSnapshot.data() as IUserProfileData;
         console.log(userData);
         updateProfileData(userData);
-        updateCancelledSession(await getUserCancelledSessionOnCurrentMonth(user.uid));
 
         if (userData.currentSubscriptionId) {
           updateSubscriptionData(await getSubscriptionDoc(userData.currentSubscriptionId));

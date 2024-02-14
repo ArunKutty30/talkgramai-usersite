@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
 
 import { BOOKINGS_COLLECTION_NAME } from "../../constants/data";
-import { IBookingSession } from "../../constants/types";
+import { EBookingStatus, IBookingSession } from "../../constants/types";
 import { userStore } from "../../store/userStore";
 import { db } from "../../utils/firebase";
 import NoSession from "../../components/NoSession";
@@ -21,7 +21,7 @@ const MissedSession = () => {
     const q = query(
       colRef,
       where("user", "==", user.uid),
-      where("status", "==", "MISSED"),
+      where("status", "in", [EBookingStatus.MISSED, EBookingStatus.TUTOR_MISSED]),
       orderBy("endTime", "desc")
     );
 
