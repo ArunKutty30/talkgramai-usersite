@@ -61,6 +61,10 @@ a {
   text-decoration: none;
 }
 
+.primary-link {
+  color: var(--primary);
+}
+
 .mx {
   max-width: 1400px;
   margin: 0 auto;

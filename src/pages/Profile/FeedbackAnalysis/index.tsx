@@ -86,7 +86,9 @@ const FeedbackAnalysis: React.FC = () => {
           </DropDownContainer>
         </div>
       </FeedbackAnalysisWrapper>
-      <UserSessionStats overallBookedSession={overallBookedSession} />
+      <UserSessionStats
+        overallBookedSession={overallBookedSession.filter((m) => m.feedbackFromTutor !== undefined)}
+      />
       {!subscriptionData ? (
         <div
           style={{

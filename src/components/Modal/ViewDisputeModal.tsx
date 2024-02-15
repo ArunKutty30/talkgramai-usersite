@@ -1,25 +1,25 @@
-import React from "react";
-import { Paper, Typography } from "@mui/material";
-import Input from "../Input";
-import { Form, Formik } from "formik";
-import styled from "styled-components";
-import CloseIcon from "../../assets/icons/close.svg";
+import React from 'react';
+import { Paper, Typography } from '@mui/material';
+import Input from '../Input';
+import { Form, Formik } from 'formik';
+import styled from 'styled-components';
+import CloseIcon from '../../assets/icons/close.svg';
 
 const paperStyle = {
   width: 600,
-  padding: "2rem 5rem",
-  borderRadius: "8px",
-  background: "white",
-  border: "1px solid #EDE7DF",
-  position: "relative",
+  padding: '2rem 5rem',
+  borderRadius: '8px',
+  background: 'white',
+  border: '1px solid #EDE7DF',
+  position: 'relative',
 };
 
 const headingStyle = {
-  fontSize: "24px",
+  fontSize: '24px',
   fontWeight: 600,
-  fontFamily: "Inter",
-  wordWrap: "break-word",
-  textAlign: "center",
+  fontFamily: 'Inter',
+  wordWrap: 'break-word',
+  textAlign: 'center',
 };
 
 const ViewDisputeModal = ({
@@ -35,13 +35,13 @@ const ViewDisputeModal = ({
       <img
         src={CloseIcon}
         alt="close-icon"
-        style={{ position: "absolute", top: "20px", right: "20px", cursor: "pointer" }}
+        style={{ position: 'absolute', top: '20px', right: '20px', cursor: 'pointer' }}
         onClick={closeDisputeModal}
       />
       <Formik
         initialValues={{}}
         onSubmit={() => {
-          console.log("submitted");
+          console.log('submitted');
         }}
       >
         {() => (
@@ -58,7 +58,7 @@ const ViewDisputeModal = ({
               <DescriptionContainer>
                 <p>Description</p>
                 <DescriptionInputContainer>
-                  <textarea readOnly placeholder={""} value={dispute.description} rows={5} />
+                  <textarea readOnly placeholder={''} value={dispute.description} rows={5} />
                 </DescriptionInputContainer>
               </DescriptionContainer>
               {dispute.response ? (
@@ -69,7 +69,7 @@ const ViewDisputeModal = ({
                   readOnly
                 />
               ) : (
-                <div style={{ color: "var(--error)", fontWeight: "500" }}>
+                <div style={{ color: 'var(--error)', fontWeight: '500' }}>
                   We are figuring out a way to solve your dispute. We will get back to you soon.
                 </div>
               )}
@@ -120,7 +120,7 @@ const DescriptionInputContainer = styled.div`
     line-height: normal;
     padding: 8px 15px;
     resize: none;
-    font-family: "Inter", sans-serif;
+    font-family: 'Inter', sans-serif;
 
     &:placeholder {
       color: var(--gray-3);
