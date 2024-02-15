@@ -1,64 +1,64 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import styled from "styled-components";
-import { AnimatePresence, motion } from "framer-motion";
-import { Timestamp, doc, getDoc } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
-import dayjs from "dayjs";
-import { Field, Form, Formik } from "formik";
-import _ from "lodash";
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Timestamp, doc, getDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+import dayjs from 'dayjs';
+import { Field, Form, Formik } from 'formik';
+import _ from 'lodash';
 
-import Backdrop from "./Backdrop";
-import Button from "../Button";
-import CloseIcon from "../../assets/icons/close.svg";
-import ClockIcon from "../../assets/icons/clock.svg";
-import CalendarIcon from "../../assets/icons/calendar.svg";
-import { customFormat, slotFormat } from "../../constants/formatDate";
-import Avatar from "../Avatar";
-import { EnumTopic, ILessonPlanDB, ITutorProfileData } from "../../constants/types";
-import { TUTOR_COLLECTION_NAME, topicList } from "../../constants/data";
-import { userStore } from "../../store/userStore";
-import { getCompletedLessonPlan, updateUserDoc } from "../../services/userService";
+import Backdrop from './Backdrop';
+import Button from '../Button';
+import CloseIcon from '../../assets/icons/close.svg';
+import ClockIcon from '../../assets/icons/clock.svg';
+import CalendarIcon from '../../assets/icons/calendar.svg';
+import { customFormat, slotFormat } from '../../constants/formatDate';
+import Avatar from '../Avatar';
+import { EnumTopic, ILessonPlanDB, ITutorProfileData } from '../../constants/types';
+import { TUTOR_COLLECTION_NAME, topicList } from '../../constants/data';
+import { userStore } from '../../store/userStore';
+import { getCompletedLessonPlan, updateUserDoc } from '../../services/userService';
 import {
   createBookSessionDoc,
   deleteBookSessionDoc,
   deleteDemoBookSessionDoc,
   updateBookSessionDoc,
-} from "../../services/bookSessionService";
-import { db } from "../../utils/firebase";
-import { createMeeting } from "../../utils/api";
-import { config } from "../../constants/config";
-import { reminderStore } from "../../store/reminderStore";
+} from '../../services/bookSessionService';
+import { db } from '../../utils/firebase';
+import { createMeeting } from '../../utils/api';
+import { config } from '../../constants/config';
+import { reminderStore } from '../../store/reminderStore';
 import {
   sendBookingCancellationMail,
   sendBookingConfirmationMail,
-} from "../../services/mailService";
-import ReactModal from "./ReactModal";
-import TopicAccordion from "../TopicAccordion";
-import { topicsData } from "../../utils/updatedtopic";
-import { bookSessionValidationSchema } from "../../constants/validationSchema";
-import { getRandomUniqueTopic } from "../../constants/formatter";
-import toast from "react-hot-toast";
-import { handlePayForDemoClass } from "../../services/paymentService";
+} from '../../services/mailService';
+import ReactModal from './ReactModal';
+import TopicAccordion from '../TopicAccordion';
+import { topicsData } from '../../utils/updatedtopic';
+import { bookSessionValidationSchema } from '../../constants/validationSchema';
+import { getRandomUniqueTopic } from '../../constants/formatter';
+import toast from 'react-hot-toast';
+import { handlePayForDemoClass } from '../../services/paymentService';
 
 const modalVaraints = {
   initial: {
     opacity: 0,
     scale: 0.5,
-    x: "-50%",
-    y: "-50%",
+    x: '-50%',
+    y: '-50%',
   },
   animate: {
     opacity: 1,
     transition: { duration: 0.3 },
     scale: 1,
-    x: "-50%",
-    y: "-50%",
+    x: '-50%',
+    y: '-50%',
   },
   exit: {
     opacity: 0,
     scale: 0,
-    x: "-50%",
-    y: "-50%",
+    x: '-50%',
+    y: '-50%',
   },
 };
 
@@ -67,7 +67,7 @@ interface IConfirmTutorModal {
   handleClose?: () => void;
   selectedDate: Date;
   tutorId: string;
-  type?: "CONFRIM" | "EDIT" | "CANCEL";
+  type?: 'CONFRIM' | 'EDIT' | 'CANCEL';
   formData?: {
     id: string;
     topic: string;
@@ -89,12 +89,12 @@ interface IFormType {
 }
 
 const initialValues: IFormType = {
-  topic: "",
+  topic: '',
   topicInfo: {
-    title: "",
-    category: "",
+    title: '',
+    category: '',
   },
-  description: "",
+  description: '',
 };
 
 const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
@@ -102,17 +102,18 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
   handleClose,
   selectedDate,
   tutorId,
-  type = "CONFRIM",
+  type = 'CONFRIM',
   formData,
 }) => {
   const [message, setMessage] = useState<string>();
   const [loading, setLoading] = useState(false);
-  const [openAccordion, setOpenAccordion] = useState("");
+  const [openAccordion, setOpenAccordion] = useState('');
   const navigate = useNavigate();
   const user = userStore((store) => store.user);
   const profileData = userStore((store) => store.profileData);
   const subscriptionData = userStore((store) => store.subscriptionData);
   const refetchUser = userStore((store) => store.refetchUser);
+  const sessionLeft = userStore((store) => store.sessionLeft);
   const [tutorData, setTutorData] = useState<ITutorProfileData>();
   const session = reminderStore((store) => store.session);
   const [completedLessonPlan, setCompletedLessonPlan] = useState<ILessonPlanDB[]>([]);
@@ -150,10 +151,10 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
 
   const handleCancelSession = async () => {
     try {
-      console.log("gjkgkjg");
+      console.log('gjkgkjg');
       if (!user || !profileData) return;
       if (!formData) return;
-      console.log("ENTER");
+      console.log('ENTER');
       setLoading(true);
 
       if (subscriptionData?.demoClass === true) {
@@ -162,7 +163,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
         await deleteBookSessionDoc(formData.id, formData.topicInfo);
       }
 
-      setMessage("Your Session has been Cancelled !!");
+      setMessage('Your Session has been Cancelled !!');
       setTimeout(() => {
         if (handleClose) handleClose();
       }, 1500);
@@ -170,8 +171,8 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
       sendBookingCancellationMail({
         userId: user.uid,
         tutorId: tutorId,
-        date: dayjs(selectedDate).format("DD-MM-YYYY"),
-        time: dayjs(selectedDate).format("hh-mm a"),
+        date: dayjs(selectedDate).format('DD-MM-YYYY'),
+        time: dayjs(selectedDate).format('hh-mm a'),
       });
     } catch (error) {
       console.log(error);
@@ -198,7 +199,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
         formData.topicInfo,
         user.uid
       );
-      setMessage("Your Changes have been made !!");
+      setMessage('Your Changes have been made !!');
       setTimeout(() => {
         if (handleClose) handleClose();
       }, 2000);
@@ -210,9 +211,9 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
   };
 
   const handleConfirmClass = (tempSubscriptionData: any) => {
-    console.log("ssss");
+    console.log('ssss');
     if (!tempValues.current) return;
-    console.log("ddd");
+    console.log('ddd');
 
     handleConfirmSession(tempValues.current, tempSubscriptionData);
   };
@@ -224,6 +225,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
       if (!user || !profileData) return;
 
       console.log(slotFormat(selectedDate));
+      console.log('sessionLeft', sessionLeft);
 
       if (!tempSubscriptionData) {
         if (!subscriptionData && !profileData.demoClassBooked) {
@@ -232,7 +234,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
           try {
             await handlePayForDemoClass(user, handleConfirmClass);
           } catch (error) {
-            toast.error("something went wrong");
+            toast.error('something went wrong');
             setLoading(false);
           }
           return;
@@ -253,8 +255,8 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
         const randomTopic = getRandomUniqueTopic(topicsData, uniqTopics);
         console.log(randomTopic);
         values.topicInfo = {
-          category: randomTopic?.category || "",
-          title: randomTopic?.title || "",
+          category: randomTopic?.category || '',
+          title: randomTopic?.title || '',
         };
       }
 
@@ -269,13 +271,13 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
         await updateUserDoc(user.uid, { demoClassBooked: true });
       }
 
-      const endTime = dayjs(selectedDate).add(30, "minute").toDate();
+      const endTime = dayjs(selectedDate).add(30, 'minute').toDate();
 
       const meetingId = await createMeeting(Boolean(subscriptionData?.recording));
 
       const useBacklogSession = session <= 0 && (subscriptionData?.backlogSession ?? 0) > 0;
 
-      await createBookSessionDoc(tutorId, isDemoClass, useBacklogSession, {
+      const bookSessionData: { [key: string]: any } = {
         startTime: Timestamp.fromDate(selectedDate),
         endTime: Timestamp.fromDate(endTime),
         slotId: slotFormat(selectedDate),
@@ -287,40 +289,44 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
         description: values.description,
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
-        status: "UPCOMING",
+        status: 'UPCOMING',
         meetingId,
         cost: cost,
         demoClass: isDemoClass,
         timelogs: null,
-      });
+      };
+
+      if (sessionLeft === 1) bookSessionData.isLastSession = true;
+
+      await createBookSessionDoc(tutorId, isDemoClass, useBacklogSession, bookSessionData);
 
       setLoading(false);
-      setMessage("Your Session has been Booked !!");
+      setMessage('Your Session has been Booked !!');
 
       setTimeout(() => {
         refetchUser();
-        navigate("/");
+        navigate('/');
       }, 2000);
 
       sendBookingConfirmationMail({
         userId: user.uid,
         tutorId: tutorId,
-        date: dayjs(selectedDate).format("DD-MM-YYYY"),
-        time: dayjs(selectedDate).format("hh-mm a"),
+        date: dayjs(selectedDate).format('DD-MM-YYYY'),
+        time: dayjs(selectedDate).format('hh-mm a'),
       });
     } catch (error) {
       console.log(error);
       setLoading(false);
-      toast.error("something went wrong");
+      toast.error('something went wrong');
     }
   };
 
   const handleSubmit = async (values: IFormType) => {
     if (!user || !profileData) return;
 
-    if (type === "EDIT") return handleEditSession(values);
-    if (type === "CANCEL") return handleCancelSession();
-    if (type === "CONFRIM") return handleConfirmSession(values);
+    if (type === 'EDIT') return handleEditSession(values);
+    if (type === 'CANCEL') return handleCancelSession();
+    if (type === 'CONFRIM') return handleConfirmSession(values);
   };
 
   const getQuestions = (category: string, title: string) => {
@@ -379,7 +385,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
                     <div>
                       <p>About</p>
                       <p className="head">
-                        {subscriptionData?.demoClass ? "Demo Session" : "Subscribed Session"}
+                        {subscriptionData?.demoClass ? 'Demo Session' : 'Subscribed Session'}
                       </p>
                     </div>
                   </SessionDetails>
@@ -393,27 +399,27 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
                   {({ values, setValues, errors, setFieldValue, touched }) => (
                     <Form>
                       <ConfirmBookingSection
-                        style={{ pointerEvents: type === "CANCEL" ? "none" : "auto" }}
+                        style={{ pointerEvents: type === 'CANCEL' ? 'none' : 'auto' }}
                       >
                         <div className="flex-between">
                           <h3>
-                            {type === "CONFRIM"
-                              ? "Confirm Booking"
-                              : type === "EDIT"
-                              ? "Edit your Session Details"
-                              : "Cancel Your Session"}
+                            {type === 'CONFRIM'
+                              ? 'Confirm Booking'
+                              : type === 'EDIT'
+                              ? 'Edit your Session Details'
+                              : 'Cancel Your Session'}
                           </h3>
                         </div>
                         <div className="flex-parent">
                           <div className="flex">
                             <img src={CalendarIcon} alt="" />
-                            <p>{customFormat(selectedDate, "DD MMM YYYY")}</p>
+                            <p>{customFormat(selectedDate, 'DD MMM YYYY')}</p>
                           </div>
                           <div className="flex">
                             <img src={ClockIcon} alt="" />
                             <p>
-                              {customFormat(selectedDate, "hh:mm A")} -{" "}
-                              {dayjs(selectedDate).add(30, "minute").format("hh:mm A")}
+                              {customFormat(selectedDate, 'hh:mm A')} -{' '}
+                              {dayjs(selectedDate).add(30, 'minute').format('hh:mm A')}
                             </p>
                           </div>
                         </div>
@@ -437,13 +443,13 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
                           {values.topic === EnumTopic.CUSTOM_TOPIC && (
                             <SelectTopicWrapper>
                               <div className="topic-header">
-                                <p style={{ borderRight: "1px solid #ccc" }}>Choose a Topic</p>
+                                <p style={{ borderRight: '1px solid #ccc' }}>Choose a Topic</p>
                                 <p>Questions</p>
                               </div>
                               <div className="topic-content">
                                 <div className="topic-content-left">
                                   {_.chain(topicsData)
-                                    .groupBy("category")
+                                    .groupBy('category')
                                     .map((value, key) => ({ category: key, topics: value }))
                                     .value()
                                     .map((topic, index) => (
@@ -482,11 +488,11 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
                           <p>Add some description to make your session more effective</p>
                           <DescriptionInputContainer>
                             <textarea
-                              readOnly={type === "CANCEL"}
+                              readOnly={type === 'CANCEL'}
                               // placeholder="Keep your description crisp and short. Here are few tips:"
                               placeholder={`1. Keep your doubts specific\n2. Make sure you have your doubts ready before the session\n3. Share your goal for the session`}
                               value={values.description}
-                              onChange={(e) => setFieldValue("description", e.target.value)}
+                              onChange={(e) => setFieldValue('description', e.target.value)}
                               rows={5}
                             />
                             {/* <ol>
@@ -498,27 +504,27 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
                         </AddDescriptionContainer>
                         {message ? (
                           <StyledSessionConfirmed
-                            style={{ color: type === "CANCEL" ? "var(--error)" : "var(--primary)" }}
+                            style={{ color: type === 'CANCEL' ? 'var(--error)' : 'var(--primary)' }}
                             className="session-confirmed"
                           >
                             {message}
                           </StyledSessionConfirmed>
                         ) : (
                           <Button
-                            variant={type === "CANCEL" ? "error" : "primary"}
+                            variant={type === 'CANCEL' ? 'error' : 'primary'}
                             disabled={loading}
                             type="submit"
-                            style={{ pointerEvents: "auto" }}
+                            style={{ pointerEvents: 'auto' }}
                           >
                             {loading
-                              ? type === "CONFRIM"
-                                ? "Confirming session..."
-                                : "Loading..."
-                              : type === "CONFRIM"
-                              ? "Confirm Session"
-                              : type === "EDIT"
-                              ? "Confirm Changes"
-                              : "Cancel  Session"}
+                              ? type === 'CONFRIM'
+                                ? 'Confirming session...'
+                                : 'Loading...'
+                              : type === 'CONFRIM'
+                              ? 'Confirm Session'
+                              : type === 'EDIT'
+                              ? 'Confirm Changes'
+                              : 'Cancel  Session'}
                           </Button>
                         )}
                       </ConfirmBookingSection>
@@ -698,7 +704,7 @@ const DescriptionInputContainer = styled.div`
     padding: 8px 15px;
     background: rgba(229, 229, 229, 0.3);
     resize: none;
-    font-family: "Inter", sans-serif;
+    font-family: 'Inter', sans-serif;
 
     &:placeholder {
       color: var(--gray-3);

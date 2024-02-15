@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { onAuthStateChanged, User } from "firebase/auth";
-import { Timestamp, doc, getDoc, setDoc } from "firebase/firestore";
-import dayjs from "dayjs";
+import React, { useCallback, useEffect, useState } from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { Timestamp, doc, getDoc, setDoc } from 'firebase/firestore';
+import dayjs from 'dayjs';
 
 import {
   StyledHeader,
@@ -13,32 +13,32 @@ import {
   StyledNavLinks,
   StyledMenu,
   StyledMobileMenu,
-} from "./Header.styles";
-import Button from "../Button";
-import { userStore } from "../../store/userStore";
-import { auth, db } from "../../utils/firebase";
-import { IUserProfileData } from "../../constants/types";
-import Avatar from "../Avatar";
-import Sidebar from "./Sidebar";
+} from './Header.styles';
+import Button from '../Button';
+import { userStore } from '../../store/userStore';
+import { auth, db } from '../../utils/firebase';
+import { IUserProfileData } from '../../constants/types';
+import Avatar from '../Avatar';
+import Sidebar from './Sidebar';
 
-import logo from "../../assets/logo/logo_short.png";
-import { ReactComponent as MenuIcon } from "../../assets/icons/menu.svg";
-import { ReactComponent as HomeIcon } from "../../assets/icons/home.svg";
-import { ReactComponent as BookSessionIcon } from "../../assets/icons/book-session.svg";
-import { ReactComponent as SessionIcon } from "../../assets/icons/session.svg";
-import { USER_COLLECTION_NAME } from "../../constants/data";
-import { getSubscriptionDoc } from "../../services/subscriptionService";
-import { getUserCancelledSessionOnCurrentMonth, updateUserDoc } from "../../services/userService";
-import SubscriptionEndedModal from "../Modal/SubscriptionEndedModal";
-import { generalStore } from "../../store/generalStore";
-import { getCurrentWeekInfo } from "../../utils/helpers";
+import logo from '../../assets/logo/logo_short.png';
+import { ReactComponent as MenuIcon } from '../../assets/icons/menu.svg';
+import { ReactComponent as HomeIcon } from '../../assets/icons/home.svg';
+import { ReactComponent as BookSessionIcon } from '../../assets/icons/book-session.svg';
+import { ReactComponent as SessionIcon } from '../../assets/icons/session.svg';
+import { USER_COLLECTION_NAME } from '../../constants/data';
+import { getSubscriptionDoc } from '../../services/subscriptionService';
+import { getUserCancelledSessionOnCurrentMonth, updateUserDoc } from '../../services/userService';
+import SubscriptionEndedModal from '../Modal/SubscriptionEndedModal';
+import { generalStore } from '../../store/generalStore';
+import { getCurrentWeekInfo } from '../../utils/helpers';
 import {
   getUserBookedSessionDoc,
   getUserBookedSessionOnThisWeekDoc,
   getUserCompletedSessionDoc,
-} from "../../services/bookSessionService";
-import { reminderStore } from "../../store/reminderStore";
-import MenuDropdown from "../MenuDropdown";
+} from '../../services/bookSessionService';
+import { reminderStore } from '../../store/reminderStore';
+import MenuDropdown from '../MenuDropdown';
 // import VerifyPhoneNumberModal from "../Modal/VerifyPhoneNumberModal";
 
 const Header = ({ hide }: { hide?: boolean }) => {
@@ -52,6 +52,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
   const updateCancelledSession = userStore((state) => state.updateCancelledSession);
   const updateExpiredClass = userStore((state) => state.updateExpiredClass);
   const updateMissedClass = userStore((state) => state.updateMissedClass);
+  const updateSessionLeft = userStore((state) => state.updateSessionLeft);
   const updateAllSessionFetching = userStore((state) => state.updateAllSessionFetching);
   const setOutdated = userStore((state) => state.setOutdated);
   const showHeader = generalStore((state) => state.showHeader);
@@ -96,7 +97,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
       subscriptionData.startDate.toDate(),
       subscriptionData.endDate.toDate()
     );
-    console.log("current", currentInfo);
+    console.log('current', currentInfo);
     const sessionInfo = await getUserBookedSessionOnThisWeekDoc(
       subscriptionData.user,
       subscriptionData.id,
@@ -124,8 +125,13 @@ const Header = ({ hide }: { hide?: boolean }) => {
 
       const missedClass = (currentInfo.currentWeek - 1) * sessionPerWeek - lastWeekSessionInfo;
 
-      console.log("MISSED CLASS ", missedClass);
+      console.log('MISSED CLASS ', missedClass);
+      const sessionLeft =
+        (subscriptionData?.noOfSession || 0) -
+        ((subscriptionData?.bookedSession || 0) + missedClass);
+
       updateExpiredClass(missedClass);
+      updateSessionLeft(sessionLeft);
     } else {
       updateExpiredClass(0);
     }
@@ -139,7 +145,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
     updateCurrentPlanSession(currentPlanSession);
     updateAllSessionFetching(false);
 
-    updateMissedClass(currentPlanSession.filter((f) => f.status === "MISSED").length);
+    updateMissedClass(currentPlanSession.filter((f) => f.status === 'MISSED').length);
 
     const sessionPerWeek = subscriptionData?.sessionPerWeek ?? 0;
     setReminder({
@@ -155,6 +161,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
     updateMissedClass,
     updateCurrentPlanSession,
     updateCancelledSession,
+    updateSessionLeft,
   ]);
 
   const handleGetOverallSessionData = useCallback(async () => {
@@ -194,19 +201,19 @@ const Header = ({ hide }: { hide?: boolean }) => {
           updateFetching(false);
         }
       } else {
-        navigate("/");
+        navigate('/');
         const profileData = {
           completedSession: 0,
           demoClassBooked: false,
-          designation: "",
-          displayName: user.displayName || "",
-          email: user.email || "",
-          gender: "",
+          designation: '',
+          displayName: user.displayName || '',
+          email: user.email || '',
+          gender: '',
           goals: [],
           interests: [],
           isNewUser: false,
           issues: [],
-          profileImg: "",
+          profileImg: '',
           updatedAt: Timestamp.now(),
         };
         updateProfileData(profileData);
@@ -237,11 +244,11 @@ const Header = ({ hide }: { hide?: boolean }) => {
           setTimeout(() => {
             updateFetching(false);
           }, 0);
-          return navigate("/verify-mail");
+          return navigate('/verify-mail');
         }
         getUserData(data);
       } else {
-        navigate("/login");
+        navigate('/login');
         setTimeout(() => {
           updateFetching(false);
         }, 0);
@@ -264,8 +271,8 @@ const Header = ({ hide }: { hide?: boolean }) => {
     }
 
     if (
-      subscriptionData["allSessionsCompleted"] &&
-      subscriptionData["allSessionsCompleted"] === true
+      subscriptionData['allSessionsCompleted'] &&
+      subscriptionData['allSessionsCompleted'] === true
     ) {
       await updateUserDoc(subscriptionData.user, { currentSubscriptionId: null });
       setOutdated();

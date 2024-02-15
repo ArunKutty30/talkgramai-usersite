@@ -1,20 +1,20 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
-import { TIME_SLOTS_COLLECTION_NAME, TUTOR_COLLECTION_NAME } from "../../constants/data";
-import styled from "styled-components";
-import dayjs from "dayjs";
-import { useLockedBody } from "usehooks-ts";
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+import { TIME_SLOTS_COLLECTION_NAME, TUTOR_COLLECTION_NAME } from '../../constants/data';
+import styled from 'styled-components';
+import dayjs from 'dayjs';
+import { useLockedBody } from 'usehooks-ts';
 
-import { db } from "../../utils/firebase";
-import ConfirmTutorModal from "../../components/Modal/ConfirmTutorModal";
-import { Button } from "../../components";
-import BookTutorModal from "../../components/Modal/BookTutorModal";
-import { ReactComponent as ArrowLeftIcon } from "../../assets/icons/arrow-left.svg";
-import { ITutorProfileData, ITutorSlot } from "../../constants/types";
-import TutorProfileDetails from "./components/TutorProfileDetails";
-import { getLocaleDate } from "../../constants/formatDate";
-import { config } from "../../constants/config";
+import { db } from '../../utils/firebase';
+import ConfirmTutorModal from '../../components/Modal/ConfirmTutorModal';
+import { Button } from '../../components';
+import BookTutorModal from '../../components/Modal/BookTutorModal';
+import { ReactComponent as ArrowLeftIcon } from '../../assets/icons/arrow-left.svg';
+import { ITutorProfileData, ITutorSlot } from '../../constants/types';
+import TutorProfileDetails from './components/TutorProfileDetails';
+import { getLocaleDate } from '../../constants/formatDate';
+import { config } from '../../constants/config';
 
 const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
   const [openSelectedTutorModal, setOpenSelectedTutorModal] = useState(false);
@@ -35,7 +35,7 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
       const timeSlotsRef = collection(db, TIME_SLOTS_COLLECTION_NAME);
       const q = query(
         timeSlotsRef,
-        where("startTime", ">=", new Date())
+        where('startTime', '>=', new Date())
         // where("startTime", "<=", getEndOfTomorrow())
       );
 
@@ -88,7 +88,7 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
     handleGetData();
   }, [handleGetData]);
 
-  const availableSlots = tutorSlots.filter((f) => dayjs(f.day).isSame(selectedDate, "day"));
+  const availableSlots = tutorSlots.filter((f) => dayjs(f.day).isSame(selectedDate, 'day'));
   console.log(availableSlots);
 
   const confirmTutorBtnDisabled = useMemo(() => {
@@ -119,18 +119,18 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
                     {tutorSlots.slice(0, 3).map((slot, i) => (
                       <div
                         className={
-                          dayjs(slot.day).isSame(selectedDate, "day")
-                            ? "available-session active"
-                            : "available-session"
+                          dayjs(slot.day).isSame(selectedDate, 'day')
+                            ? 'available-session active'
+                            : 'available-session'
                         }
                         key={i.toString()}
                         onClick={() => setSelectedDate(slot.day)}
                       >
-                        <p className="mb-10">{dayjs(slot.day).format("ddd")}</p>
+                        <p className="mb-10">{dayjs(slot.day).format('ddd')}</p>
                         <p>{getLocaleDate(slot.day)}</p>
                       </div>
                     ))}
-                    {/* {tutorSlots.length > 3 && (
+                    {/* {tutorSlots.length > 2 && (
                       <button className="view-more" onClick={() => setSelectDateModal(true)}>
                         view more
                       </button>
@@ -148,7 +148,7 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
                 {availableSlots.length ? (
                   !availableSlots[0].slots.filter((f) =>
                     dayjs(f.startTime).isAfter(
-                      dayjs().add(config.SHOW_AVAILABLE_SLOTS_BEFORE, "minutes")
+                      dayjs().add(config.SHOW_AVAILABLE_SLOTS_BEFORE, 'minutes')
                     )
                   ).length ? (
                     <StyledNoDiv>
@@ -159,7 +159,7 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
                       {availableSlots[0].slots
                         .filter((f) =>
                           dayjs(f.startTime).isAfter(
-                            dayjs().add(config.SHOW_AVAILABLE_SLOTS_BEFORE, "minutes")
+                            dayjs().add(config.SHOW_AVAILABLE_SLOTS_BEFORE, 'minutes')
                           )
                         )
                         .map((slot, i) => (
@@ -167,15 +167,15 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
                             onClick={() => setSelectedDate(slot.startTime)}
                             className={
                               dayjs(slot.startTime).isSame(selectedDate)
-                                ? "available-timings active"
-                                : "available-timings"
+                                ? 'available-timings active'
+                                : 'available-timings'
                             }
                             key={i.toString()}
                             disabled={slot.tutors.some(
                               (s) => s.tutorId === tutorId && s.isReserved
                             )}
                           >
-                            <p>{dayjs(slot.startTime).format("hh:mm a")}</p>
+                            <p>{dayjs(slot.startTime).format('hh:mm a')}</p>
                             {slot.tutors.some((s) => s.tutorId === tutorId && s.isReserved) ? (
                               <span>Reserved</span>
                             ) : null}
