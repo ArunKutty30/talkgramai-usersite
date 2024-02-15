@@ -155,6 +155,7 @@ export interface IBookingSession {
     | "TUTOR_MISSED"
     | "MISSED";
   feedbackFromTutor?: INewTutorFeedback;
+  chats?: IChat[];
 }
 
 export interface ISubscription {
@@ -180,6 +181,7 @@ export interface IBookingSessionDB {
   updatedAt: Timestamp;
   currentSession?: number;
   feedbackFromTutor?: INewTutorFeedback;
+  chats?: IChat[];
   status:
     | "COMPLETED"
     | "UPCOMING"
@@ -492,4 +494,13 @@ export interface INewTutorFeedback {
     sessionsPerWeek: number;
   };
   generalFeedback: string;
+}
+
+export interface IChat {
+  peerId: string;
+  peerName: string;
+  message: string;
+  payload: string;
+  timestamp: string;
+  topic: string;
 }

@@ -9,6 +9,7 @@ import ReactCountdown from "react-countdown";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import ImportContactsIcon from "@mui/icons-material/ImportContacts";
+import MuiButton from "@mui/material/Button";
 
 import Button from "../Button";
 import FeedbackModal from "../Modal/FeedbackModal";
@@ -30,6 +31,7 @@ import { config } from "../../constants/config";
 import TutorFeedbackModal from "../Modal/TutorFeedbackModa";
 import Recordings from "../Recordings";
 import toast from "react-hot-toast";
+import ChatModal from "../Modal/ChatModal";
 
 type ISessionType = "upcoming" | "previous" | "missed";
 
@@ -52,6 +54,7 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
     status,
     feedbackFromTutor,
     topicInfo,
+    chats,
   } = props;
 
   const [openFeedbackModal, setOpenFeedbackModal] = useState(false);
@@ -67,6 +70,7 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
   const [disputeStatus, setDisputeStatus] = useState<"Raise" | "View">("Raise");
   const [recordingUrl, setRecordingUrl] = useState<string[]>();
   const [openRecordingModal, setOpenRecordingModal] = useState(false);
+  const [openChatModal, setOpenChatModal] = useState(false);
   const cancelledSession = userStore((store) => store.userCancelledSession);
   console.log(disputeStatus);
   const handleGetData = useCallback(async () => {
@@ -245,6 +249,7 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
               <ImportContactsIcon className="session-card-icon" /> Lesson Plan
             </div>
           )}
+          {chats && <MuiButton onClick={() => setOpenChatModal(true)}>view chat</MuiButton>}
         </BlockLeft>
 
         {/* row-3 */}
@@ -439,6 +444,13 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
           isOpen={openTutorFeedbackModal}
           handleClose={() => setOpenTutorFeedbackModal(false)}
           {...props}
+        />
+      )}
+      {openChatModal && chats && (
+        <ChatModal
+          isOpen={openChatModal}
+          handleClose={() => setOpenChatModal(false)}
+          chats={chats.filter((f) => f.topic === "CHAT")}
         />
       )}
     </StyledSessionCard>
