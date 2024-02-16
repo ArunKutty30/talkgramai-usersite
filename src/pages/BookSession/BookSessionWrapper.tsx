@@ -1,16 +1,16 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import _ from "lodash";
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import _ from 'lodash';
 
-import SelectTutor from "../../components/SelectTutor";
-import SelectTime from "../../components/SelectTutor/SelectTime";
-import { TIME_SLOTS_COLLECTION_NAME } from "../../constants/data";
-import { db } from "../../utils/firebase";
-import { getEndOfDay, getStartOfDay } from "../../constants/formatter";
-import { ITutorSlot, ITutorSlotDB, TDropdownList } from "../../constants/types";
-import { useBookingFilterStore } from "../../store/useBookingFilterStore";
-import { userStore } from "../../store/userStore";
-import dayjs from "dayjs";
+import SelectTutor from '../../components/SelectTutor';
+import SelectTime from '../../components/SelectTutor/SelectTime';
+import { TIME_SLOTS_COLLECTION_NAME } from '../../constants/data';
+import { db } from '../../utils/firebase';
+import { getEndOfDay, getStartOfDay } from '../../constants/formatter';
+import { ITutorSlot, ITutorSlotDB, TDropdownList } from '../../constants/types';
+import { useBookingFilterStore } from '../../store/useBookingFilterStore';
+import { userStore } from '../../store/userStore';
+import dayjs from 'dayjs';
 
 const BookSessionWrapper = () => {
   const [availableTutors, setAvailableTutors] = useState<ITutorSlot[]>([]);
@@ -21,48 +21,52 @@ const BookSessionWrapper = () => {
   const [loading, setLoading] = useState(false);
 
   const handleGetAvailableTutors = async (date: Date) => {
-    setLoading(true);
-    const timeSlotsRef = collection(db, TIME_SLOTS_COLLECTION_NAME);
+    try {
+      setLoading(true);
+      const timeSlotsRef = collection(db, TIME_SLOTS_COLLECTION_NAME);
 
-    const startData = dayjs().isSame(date, "day") ? new Date() : getStartOfDay(date);
+      const startData = dayjs().isSame(date, 'day') ? new Date() : getStartOfDay(date);
 
-    const q = query(
-      timeSlotsRef,
-      where("startTime", ">=", startData),
-      where("startTime", "<=", getEndOfDay(date))
-    );
+      const q = query(
+        timeSlotsRef,
+        where('startTime', '>=', startData),
+        where('startTime', '<=', getEndOfDay(date))
+      );
 
-    const querySnapshot = await getDocs(q);
+      const querySnapshot = await getDocs(q);
 
-    const bookedSlots: ITutorSlotDB[] = [];
-    querySnapshot.forEach((doc) => {
-      bookedSlots.push({ id: doc.id, ...(doc.data() as Omit<ITutorSlotDB, "id">) });
-    });
+      const bookedSlots: ITutorSlotDB[] = [];
+      querySnapshot.forEach((doc) => {
+        bookedSlots.push({ id: doc.id, ...(doc.data() as Omit<ITutorSlotDB, 'id'>) });
+      });
 
-    setAvailableTutors(
-      bookedSlots.map((b) => ({
-        ...b,
-        startTime: b.startTime.toDate(),
-        endTime: b.endTime.toDate(),
-      }))
-    );
+      setAvailableTutors(
+        bookedSlots.map((b) => ({
+          ...b,
+          startTime: b.startTime.toDate(),
+          endTime: b.endTime.toDate(),
+        }))
+      );
 
-    setLoading(false);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleGetFavouriteTutors = async (date: Date) => {
     const timeSlotsRef = collection(db, TIME_SLOTS_COLLECTION_NAME);
     const q = query(
       timeSlotsRef,
-      where("endTime", ">=", date),
-      where("endTime", "<=", getEndOfDay(date))
+      where('endTime', '>=', date),
+      where('endTime', '<=', getEndOfDay(date))
       // where("tutor", "in", profileData?.favouriteTutors)
     );
     const querySnapshot = await getDocs(q);
 
     const bookedSlots: ITutorSlotDB[] = [];
     querySnapshot.forEach((doc) => {
-      const docData = { id: doc.id, ...(doc.data() as Omit<ITutorSlotDB, "id">) };
+      const docData = { id: doc.id, ...(doc.data() as Omit<ITutorSlotDB, 'id'>) };
 
       for (const tutor of docData.tutors) {
         if (profileData?.favouriteTutors?.some((s) => s === tutor.tutorId)) {
@@ -86,20 +90,20 @@ const BookSessionWrapper = () => {
         await handleGetAvailableTutors(selectedDate);
         return;
       }
-      if (selectedFilter === "Select Time and Date") {
+      if (selectedFilter === 'Select Time and Date') {
         await handleGetAvailableTutors(selectedDate);
         return;
       }
-      if (selectedFilter === "Based on Interests") {
+      if (selectedFilter === 'Based on Interests') {
         await handleGetAvailableTutors(selectedDate);
         return;
       }
-      if (selectedFilter === "Favourite Teacher") {
+      if (selectedFilter === 'Favourite Teacher') {
         await handleGetFavouriteTutors(selectedDate);
         return;
       }
     } catch (error) {
-      console.error("Error getting booked slots:", error);
+      console.error('Error getting booked slots:', error);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -118,7 +122,7 @@ const BookSessionWrapper = () => {
       list.tutors.forEach((tutor: any) => tutors.push(tutor));
     });
 
-    return _.uniqBy(tutors, "tutorId");
+    return _.uniqBy(tutors, 'tutorId');
   }, [availableTutors]);
 
   return (

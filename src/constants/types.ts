@@ -1,57 +1,57 @@
-import { Timestamp } from "firebase/firestore";
+import { Timestamp } from 'firebase/firestore';
 
 export enum ICategory {
-  TUTOR_TALK = "TUTOR_TALK",
-  CURRICULUM = "CURRICULUM",
+  TUTOR_TALK = 'TUTOR_TALK',
+  CURRICULUM = 'CURRICULUM',
 }
 
 export enum IExperience {
-  GREAT = "GREAT",
-  AVERAGE = "AVERAGE",
-  CAN_BE_IMPROVED = "CAN BE IMPROVED",
+  GREAT = 'GREAT',
+  AVERAGE = 'AVERAGE',
+  CAN_BE_IMPROVED = 'CAN BE IMPROVED',
 }
 
 export enum ISession {
-  UPCOMING = "upcoming",
-  PREVIOUS = "previous",
-  MISSED = "missed",
-  CANCELLED = "cancelled",
+  UPCOMING = 'upcoming',
+  PREVIOUS = 'previous',
+  MISSED = 'missed',
+  CANCELLED = 'cancelled',
 }
 
 export enum ITransactionStatus {
-  SUCCESSFUL = "successful",
-  PENDING = "pending",
-  INFO = "info",
-  FAILED = "failed",
+  SUCCESSFUL = 'successful',
+  PENDING = 'pending',
+  INFO = 'info',
+  FAILED = 'failed',
 }
 
 export enum IStatus {
-  SUCCESS = "success",
-  LOADING = "loading",
-  ERROR = "error",
+  SUCCESS = 'success',
+  LOADING = 'loading',
+  ERROR = 'error',
 }
 
 export enum EBookingStatus {
-  UPCOMING = "UPCOMING",
-  TUTOR_MISSED = "TUTOR_MISSED",
-  TUTOR_CANCELLED = "TUTOR_CANCELLED",
-  USER_CANCELLED = "USER_CANCELLED",
-  MISSED = "MISSED",
-  CANCELLED = "CANCELLED",
-  COMPLETED = "COMPLETED",
+  UPCOMING = 'UPCOMING',
+  TUTOR_MISSED = 'TUTOR_MISSED',
+  TUTOR_CANCELLED = 'TUTOR_CANCELLED',
+  USER_CANCELLED = 'USER_CANCELLED',
+  MISSED = 'MISSED',
+  CANCELLED = 'CANCELLED',
+  COMPLETED = 'COMPLETED',
 }
 
 export enum IFluencyFeedback {
-  LONG_PAUSES = "long pauses",
-  INCOMPLETE_SENTENCES = "incomplete sentences",
-  FILLER_SOUNDS = "filler sounds",
+  LONG_PAUSES = 'long pauses',
+  INCOMPLETE_SENTENCES = 'incomplete sentences',
+  FILLER_SOUNDS = 'filler sounds',
 }
 
 export enum IPronunciationFeedback {
-  SH_SOUND = "Sh sound",
-  H_SOUND = "H sound",
-  DANDTH_SOUND = "D and TH sounds",
-  FANDP_SOUND = "F and P sounds",
+  SH_SOUND = 'Sh sound',
+  H_SOUND = 'H sound',
+  DANDTH_SOUND = 'D and TH sounds',
+  FANDP_SOUND = 'F and P sounds',
 }
 
 export interface IUserProfileData {
@@ -148,12 +148,12 @@ export interface IBookingSession {
   meetingId?: string;
   currentSession?: number;
   status:
-    | "COMPLETED"
-    | "UPCOMING"
-    | "USER_CANCELLED"
-    | "TUTOR_CANCELLED"
-    | "TUTOR_MISSED"
-    | "MISSED";
+    | 'COMPLETED'
+    | 'UPCOMING'
+    | 'USER_CANCELLED'
+    | 'TUTOR_CANCELLED'
+    | 'TUTOR_MISSED'
+    | 'MISSED';
   feedbackFromTutor?: INewTutorFeedback;
   chats?: IChat[];
 }
@@ -183,12 +183,12 @@ export interface IBookingSessionDB {
   feedbackFromTutor?: INewTutorFeedback;
   chats?: IChat[];
   status:
-    | "COMPLETED"
-    | "UPCOMING"
-    | "USER_CANCELLED"
-    | "TUTOR_CANCELLED"
-    | "TUTOR_MISSED"
-    | "MISSED";
+    | 'COMPLETED'
+    | 'UPCOMING'
+    | 'USER_CANCELLED'
+    | 'TUTOR_CANCELLED'
+    | 'TUTOR_MISSED'
+    | 'MISSED';
 }
 
 export interface IDispute {
@@ -198,7 +198,7 @@ export interface IDispute {
   issue: string;
   sessionId: string;
   solution: string;
-  status: "pending" | "resolved";
+  status: 'pending' | 'resolved';
   userId: string;
 }
 
@@ -228,7 +228,7 @@ export interface ISubscriptionDB {
   createdAt: Timestamp;
   demoClass?: boolean;
   plan: string;
-  status: "SUCCESS" | "PENDING" | "FAILED";
+  status: 'SUCCESS' | 'PENDING' | 'FAILED';
   startDate: Timestamp;
   noOfSession: number;
   totalPrice: number;
@@ -288,7 +288,7 @@ export interface ITransactionDB {
   demoClass?: boolean;
   plan: string;
   sessionPerWeek: number;
-  status: "SUCCESS" | "PENDING" | "FAILED";
+  status: 'SUCCESS' | 'PENDING' | 'FAILED';
   startDate: Timestamp;
   noOfSession: number;
   totalPrice: number;
@@ -391,7 +391,7 @@ export interface IRecordings {
       type: string;
       size: number;
       ratio: {
-        "720": number;
+        '720': number;
       };
       userStorage: null;
       createdAt: string;
@@ -449,16 +449,16 @@ export interface ITopic {
 }
 
 export enum EnumTopic {
-  CUSTOM_TOPIC = "Custom Topic",
-  RANDOM_TOPIC = "Random Topic",
+  CUSTOM_TOPIC = 'Custom Topic',
+  RANDOM_TOPIC = 'Random Topic',
 }
 
 export type TGrammar =
-  | "too many errors"
-  | "noticeable errors"
-  | "few errors"
-  | "Rarely noticeable"
-  | "no errors";
+  | 'too many errors'
+  | 'noticeable errors'
+  | 'few errors'
+  | 'Rarely noticeable'
+  | 'no errors';
 
 export interface INewTutorFeedback {
   status: string;
@@ -472,8 +472,8 @@ export interface INewTutorFeedback {
   };
   vocabulary: {
     general: string;
-    range: "limited" | "moderate" | "extensive";
-    wordChoicePrecision: "appropriate" | "occasionally inappropriate" | "inappropriate";
+    range: 'limited' | 'moderate' | 'extensive';
+    wordChoicePrecision: 'appropriate' | 'occasionally inappropriate' | 'inappropriate';
   };
   grammar: {
     tenses: TGrammar;
@@ -503,4 +503,9 @@ export interface IChat {
   payload: string;
   timestamp: string;
   topic: string;
+}
+
+export interface ITutorBlockedUserDoc {
+  id: string;
+  blockedUsers: string[];
 }

@@ -1,17 +1,18 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import styled from "styled-components";
-import { useSearchParams } from "react-router-dom";
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import styled from 'styled-components';
+import { useSearchParams } from 'react-router-dom';
 
-import SelectInput from "../SelectInput";
-import SearchIcon from "../../assets/icons/search.svg";
-import { ReactComponent as FilterIcon } from "../../assets/icons/filter.svg";
-import { bookSessionFilters } from "../../constants/data";
-import TutorProfile from "../../pages/Tutor/TutorProfile";
-import TutorCard from "../TutorCard";
-import { useBookingFilterStore } from "../../store/useBookingFilterStore";
-import { getTutorDoc } from "../../services/tutorService";
-import { ITutorProfileData } from "../../constants/types";
-import TutorCardLoader from "../Loader/TutorCardLoader";
+import SelectInput from '../SelectInput';
+import SearchIcon from '../../assets/icons/search.svg';
+import { ReactComponent as FilterIcon } from '../../assets/icons/filter.svg';
+import { bookSessionFilters } from '../../constants/data';
+import TutorProfile from '../../pages/Tutor/TutorProfile';
+import TutorCard from '../TutorCard';
+import { useBookingFilterStore } from '../../store/useBookingFilterStore';
+import { getTutorBlockedUsersDoc, getTutorDoc } from '../../services/tutorService';
+import { ITutorProfileData } from '../../constants/types';
+import TutorCardLoader from '../Loader/TutorCardLoader';
+import { userStore } from '../../store/userStore';
 
 const SessionCard = styled.div`
   border-radius: 20px;
@@ -105,7 +106,7 @@ interface ISelectTutorProps {
 
 const SelectTutor: React.FC<ISelectTutorProps> = ({ tutors, loading }) => {
   const [searchParams] = useSearchParams();
-  const tutorId = searchParams.get("tutor");
+  const tutorId = searchParams.get('tutor');
   const selectedFilter = useBookingFilterStore((store) => store.selectedFilter);
   const searchText = useBookingFilterStore((store) => store.searchText);
   const setSelectedFilter = useBookingFilterStore((store) => store.setSelectedFilter);
@@ -113,9 +114,12 @@ const SelectTutor: React.FC<ISelectTutorProps> = ({ tutors, loading }) => {
   const [tutorsData, setTutorsData] = useState<ITutorProfileData[]>([]);
   const [filteredTutorsData, setFilteredTutorsData] = useState<ITutorProfileData[]>([]);
   const [isFetching, setIsFetching] = useState(false);
+  const user = userStore((store) => store.user);
 
   const handleGetTutorData = useCallback(async () => {
     try {
+      if (!user) return;
+
       setIsFetching(true);
       const result = await Promise.all(
         tutors.map(async (tutor) => {
@@ -123,15 +127,19 @@ const SelectTutor: React.FC<ISelectTutorProps> = ({ tutors, loading }) => {
         })
       );
 
+      const blockedTutorsList = await getTutorBlockedUsersDoc(user.uid);
+
+      const filteredResult = result.filter((f) => !blockedTutorsList.some((s) => s.id === f.id));
+
       console.log(result);
-      setTutorsData(result);
-      setFilteredTutorsData(result);
+      setTutorsData(filteredResult);
+      setFilteredTutorsData(filteredResult);
     } catch (error) {
       console.log(error);
     } finally {
       setIsFetching(false);
     }
-  }, [tutors]);
+  }, [tutors, user]);
 
   useEffect(() => {
     handleGetTutorData();
@@ -177,7 +185,7 @@ const SelectTutor: React.FC<ISelectTutorProps> = ({ tutors, loading }) => {
             <SelectInput
               label={
                 <>
-                  <span>{selectedFilter ? selectedFilter : "Apply Filter"}</span>
+                  <span>{selectedFilter ? selectedFilter : 'Apply Filter'}</span>
                   <FilterIcon />
                 </>
               }
