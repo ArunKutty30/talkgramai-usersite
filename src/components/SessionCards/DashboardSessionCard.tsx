@@ -1,39 +1,40 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import autoAnimate from "@formkit/auto-animate";
-import dayjs from "dayjs";
-import Modal from "@mui/material/Modal";
-import axios from "axios";
-import ReactCountdown from "react-countdown";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import ImportContactsIcon from "@mui/icons-material/ImportContacts";
-import MuiButton from "@mui/material/Button";
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import autoAnimate from '@formkit/auto-animate';
+import dayjs from 'dayjs';
+import Modal from '@mui/material/Modal';
+import axios from 'axios';
+import ReactCountdown from 'react-countdown';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import ImportContactsIcon from '@mui/icons-material/ImportContacts';
+import MuiButton from '@mui/material/Button';
+import InfoIcon from '@mui/icons-material/InfoOutlined';
 
-import Button from "../Button";
-import FeedbackModal from "../Modal/FeedbackModal";
+import Button from '../Button';
+import FeedbackModal from '../Modal/FeedbackModal';
 import {
   IBookingSession,
   IRecordings,
   ITutorProfileData,
   IUserProfileData,
-} from "../../constants/types";
-import { customFormat, formatFromToDate, getLocaleDateWithYear } from "../../constants/formatDate";
-import ConfirmTutorModal from "../Modal/ConfirmTutorModal";
-import Rating from "../Rating";
-import { experienceList } from "../../constants/data";
-import { getUserDoc } from "../../services/userService";
-import { getTutorDoc } from "../../services/tutorService";
-import { userStore } from "../../store/userStore";
-import RaiseDisputeModal from "../Modal/RaiseDisputeModal";
-import { config } from "../../constants/config";
-import TutorFeedbackModal from "../Modal/TutorFeedbackModa";
-import Recordings from "../Recordings";
-import toast from "react-hot-toast";
-import ChatModal from "../Modal/ChatModal";
+} from '../../constants/types';
+import { customFormat, formatFromToDate, getLocaleDateWithYear } from '../../constants/formatDate';
+import ConfirmTutorModal from '../Modal/ConfirmTutorModal';
+import Rating from '../Rating';
+import { experienceList } from '../../constants/data';
+import { getUserDoc } from '../../services/userService';
+import { getTutorDoc } from '../../services/tutorService';
+import { userStore } from '../../store/userStore';
+import RaiseDisputeModal from '../Modal/RaiseDisputeModal';
+import { config } from '../../constants/config';
+import TutorFeedbackModal from '../Modal/TutorFeedbackModa';
+import Recordings from '../Recordings';
+import toast from 'react-hot-toast';
+import ChatModal from '../Modal/ChatModal';
 
-type ISessionType = "upcoming" | "previous" | "missed";
+type ISessionType = 'upcoming' | 'previous' | 'missed';
 
 interface ISessionCardProps extends IBookingSession {
   type: ISessionType;
@@ -55,19 +56,22 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
     feedbackFromTutor,
     topicInfo,
     chats,
+    demoClass,
   } = props;
+
+  console.log(props);
 
   const [openFeedbackModal, setOpenFeedbackModal] = useState(false);
   const [openTutorFeedbackModal, setOpenTutorFeedbackModal] = useState(false);
   const [openFeedbackDropdown, setOpenFeedbackDropdown] = useState(false);
-  const [openModal, setOpenModal] = useState<"CANCEL" | "EDIT">();
+  const [openModal, setOpenModal] = useState<'CANCEL' | 'EDIT'>();
   const [openDisputeModal, setOpenDisputeModal] = useState<boolean>(false);
   const parent = useRef(null);
   const [tutorData, setTutorData] = useState<ITutorProfileData | null>(null);
   const [userData, setUserData] = useState<IUserProfileData | null>(null);
   const profileData = userStore((store) => store.profileData);
   const subscriptionData = userStore((store) => store.subscriptionData);
-  const [disputeStatus, setDisputeStatus] = useState<"Raise" | "View">("Raise");
+  const [disputeStatus, setDisputeStatus] = useState<'Raise' | 'View'>('Raise');
   const [recordingUrl, setRecordingUrl] = useState<string[]>();
   const [openRecordingModal, setOpenRecordingModal] = useState(false);
   const [openChatModal, setOpenChatModal] = useState(false);
@@ -89,7 +93,7 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
   }, [parent]);
 
   const handleGetRecordingsData = useCallback(async () => {
-    if (type !== "previous") return;
+    if (type !== 'previous') return;
 
     const { data } = await axios.get<IRecordings>(config.RECORDING_API, {
       params: {
@@ -116,7 +120,7 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
   const sessionLink = `https://meet-talkgram.netlify.app/${meetingId}/?username=${profileData?.displayName}&uid=${user}`;
 
   const redirectToMeet = () => {
-    window.open(sessionLink, "_blank");
+    window.open(sessionLink, '_blank');
   };
 
   const maxCancelSession = subscriptionData?.demoClass
@@ -129,87 +133,95 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
     if (!canUserCancelSession) {
       toast.error(
         `You can only cancel ${maxCancelSession} session${
-          maxCancelSession === 1 ? "" : "s"
+          maxCancelSession === 1 ? '' : 's'
         } on your plan`
       );
       return;
     }
 
     const timeCheck =
-      dayjs(startTime).diff(dayjs(), "hour") >= config.CANCEL_SESSION_DURATION_IN_HRS;
+      dayjs(startTime).diff(dayjs(), 'hour') >= config.CANCEL_SESSION_DURATION_IN_HRS;
     if (!timeCheck) {
       toast.error(`You can only cancel before 2 hours of session starting`);
       return;
     }
-    setOpenModal("CANCEL");
+    setOpenModal('CANCEL');
   };
 
   const handleEditSession = () => {
     const canUserEdit =
-      dayjs(startTime).diff(dayjs(), "hour") >= config.EDIT_SESSION_DURATION_IN_HRS;
+      dayjs(startTime).diff(dayjs(), 'hour') >= config.EDIT_SESSION_DURATION_IN_HRS;
 
     if (!canUserEdit) {
       toast.error(
         `You can only make edits ${config.EDIT_SESSION_DURATION_IN_HRS} hour${
-          config.EDIT_SESSION_DURATION_IN_HRS === 1 ? "" : "s"
+          config.EDIT_SESSION_DURATION_IN_HRS === 1 ? '' : 's'
         } before the session starts.`
       );
       return;
     }
 
-    setOpenModal("EDIT");
+    setOpenModal('EDIT');
   };
 
   const renderUserCancelledTab = (
-    <Button variant="error" size="small" style={{ pointerEvents: "none" }}>
+    <Button variant="error" size="small" style={{ pointerEvents: 'none' }}>
       You cancelled session
     </Button>
   );
 
   const renderTutorCancelledTab = (
-    <Button variant="error" size="small" style={{ pointerEvents: "none" }}>
+    <Button variant="error" size="small" style={{ pointerEvents: 'none' }}>
       Cancelled by tutor
     </Button>
   );
 
   const renderUserMissedTab = (
-    <Button variant="error" size="small" style={{ pointerEvents: "none" }}>
+    <Button variant="error" size="small" style={{ pointerEvents: 'none' }}>
       You missed session
     </Button>
   );
 
   const renderTutorMissedTab = (
-    <Button variant="error" size="small" style={{ pointerEvents: "none" }}>
+    <Button variant="error" size="small" style={{ pointerEvents: 'none' }}>
       Tutor missed
     </Button>
   );
 
   return (
     <StyledSessionCard type={type} ref={parent}>
+      {demoClass && (
+        <StyledTag variant="info">
+          <p>
+            <InfoIcon color="info" />
+            Demo class
+          </p>
+        </StyledTag>
+      )}
       <StyledSessionHeader>
         <BlockLeft className="section-one" type={type}>
           <div className="flex">
             <div className="align-center" style={{ paddingLeft: 0 }}>
               <p className="s-14 flex">
-                <CalendarTodayIcon className="session-card-icon" /> {customFormat(startTime, "ddd")}
+                <CalendarTodayIcon className="session-card-icon" /> {customFormat(startTime, 'ddd')}
                 , {getLocaleDateWithYear(startTime)}
               </p>
             </div>
             <div className="align-center">
               <p className="s-14 flex">
                 <AccessTimeIcon className="session-card-icon" />
-                <span style={{ whiteSpace: "nowrap" }}>{formatFromToDate(startTime, endTime)}</span>
+                <span style={{ whiteSpace: 'nowrap' }}>{formatFromToDate(startTime, endTime)}</span>
               </p>
             </div>
           </div>
-          {type === "previous" && (
+          {type === 'previous' && (
             <Button
               variant="error"
               style={{
-                border: "none",
-                backgroundColor: "transparent",
+                border: 'none',
+                backgroundColor: 'transparent',
                 padding: 0,
-                whiteSpace: "nowrap",
+                whiteSpace: 'nowrap',
                 fontSize: 12,
               }}
               size="small"
@@ -237,10 +249,10 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
           {topicInfo && (
             <div
               style={{
-                display: "flex",
-                justifyContent: "start",
-                alignItems: "center",
-                cursor: "pointer",
+                display: 'flex',
+                justifyContent: 'start',
+                alignItems: 'center',
+                cursor: 'pointer',
               }}
               onClick={() => {
                 navigate(`/lesson-plan/?category=${topicInfo?.category}&title=${topicInfo?.title}`);
@@ -258,9 +270,9 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
             <h4 className="s-16 mb-8">
               {topicInfo
                 ? `${topicInfo.category} - ${topicInfo.title}`
-                : typeof topic === "string"
+                : typeof topic === 'string'
                 ? topic
-                : "Random Topic"}
+                : 'Random Topic'}
             </h4>
             <p className="s-12 description">{description}</p>
           </div>
@@ -268,11 +280,11 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
 
         {/* row-4 */}
         <BlockRight>
-          {type === "previous" && (
+          {type === 'previous' && (
             <StyledSessionControls>
-              {status && status === "USER_CANCELLED" ? (
+              {status && status === 'USER_CANCELLED' ? (
                 renderUserCancelledTab
-              ) : status && status === "TUTOR_CANCELLED" ? (
+              ) : status && status === 'TUTOR_CANCELLED' ? (
                 renderTutorCancelledTab
               ) : (
                 <>
@@ -318,11 +330,11 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
           )}
         </BlockRight>
       </StyledSessionHeader>
-      {type === "upcoming" && (
+      {type === 'upcoming' && (
         <StyledSessionControls>
-          {status && status === "USER_CANCELLED" ? (
+          {status && status === 'USER_CANCELLED' ? (
             renderUserCancelledTab
-          ) : status && status === "TUTOR_CANCELLED" ? (
+          ) : status && status === 'TUTOR_CANCELLED' ? (
             renderTutorCancelledTab
           ) : (
             <>
@@ -359,11 +371,11 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
           )}
         </StyledSessionControls>
       )}
-      {type === "missed" && (
+      {type === 'missed' && (
         <StyledSessionControls>
-          {status && status === "MISSED"
+          {status && status === 'MISSED'
             ? renderUserMissedTab
-            : status && status === "TUTOR_MISSED"
+            : status && status === 'TUTOR_MISSED'
             ? renderTutorMissedTab
             : null}
         </StyledSessionControls>
@@ -389,7 +401,7 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
       )}
       {openDisputeModal && (
         <Modal
-          sx={{ margin: "auto", display: "flex", justifyContent: "center", alignItems: "center" }}
+          sx={{ margin: 'auto', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
           open={openDisputeModal}
           onClose={() => {
             setOpenDisputeModal(!openDisputeModal);
@@ -412,24 +424,24 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
           {...props}
         />
       )}
-      {openModal === "CANCEL" && (
+      {openModal === 'CANCEL' && (
         <ConfirmTutorModal
           type="CANCEL"
-          isOpen={openModal === "CANCEL"}
+          isOpen={openModal === 'CANCEL'}
           handleClose={() => setOpenModal(undefined)}
           selectedDate={startTime}
           tutorId={tutor}
-          formData={{ id, topic, description, topicInfo: topicInfo || { category: "", title: "" } }}
+          formData={{ id, topic, description, topicInfo: topicInfo || { category: '', title: '' } }}
         />
       )}
-      {openModal === "EDIT" && (
+      {openModal === 'EDIT' && (
         <ConfirmTutorModal
           type="EDIT"
-          isOpen={openModal === "EDIT"}
+          isOpen={openModal === 'EDIT'}
           handleClose={() => setOpenModal(undefined)}
           selectedDate={startTime}
           tutorId={tutor}
-          formData={{ id, topic, description, topicInfo: topicInfo || { category: "", title: "" } }}
+          formData={{ id, topic, description, topicInfo: topicInfo || { category: '', title: '' } }}
         />
       )}
       {recordingUrl && openRecordingModal && (
@@ -450,7 +462,7 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
         <ChatModal
           isOpen={openChatModal}
           handleClose={() => setOpenChatModal(false)}
-          chats={chats.filter((f) => f.topic === "CHAT")}
+          chats={chats.filter((f) => f.topic === 'CHAT')}
         />
       )}
     </StyledSessionCard>
@@ -463,16 +475,17 @@ const StyledSessionCard = styled.div<{ type: ISessionType }>`
   background: #fceede;
   padding: 20px;
   z-index: 1;
+  position: relative;
 
   ${(props) =>
-    props.type === "missed" &&
+    props.type === 'missed' &&
     `
       border: 0.7px solid #ede7df;
       background: #fff;
   `}
 
   ${(props) =>
-    props.type === "previous" &&
+    props.type === 'previous' &&
     `
       background: #fff;
   `}
@@ -675,6 +688,35 @@ const StyledFeedbackDropdown = styled.div`
         height: 20px;
       }
     }
+  }
+`;
+
+const StyledTag = styled.div<{ variant: 'info' | 'error' | 'success' }>`
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  padding: 5px 7px;
+  border-radius: 8px;
+
+  ${(props) =>
+    props.variant === 'info' &&
+    `border: 1px solid #0288d1;
+    background: rgb(2 136 209 / 10%);
+    
+  `}
+
+  ${(props) =>
+    props.variant === 'error' &&
+    `border: 1px solid rgb(255, 140, 140);
+  background: rgba(255, 52, 52, 0.14);
+  `}
+
+  p {
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
   }
 `;
 

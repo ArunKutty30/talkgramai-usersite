@@ -146,6 +146,7 @@ export interface IBookingSession {
     rating: number;
   };
   meetingId?: string;
+  demoClass?: boolean;
   currentSession?: number;
   status:
     | 'COMPLETED'

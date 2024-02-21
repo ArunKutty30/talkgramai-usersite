@@ -337,7 +337,9 @@ const Header = ({ hide }: { hide?: boolean }) => {
               <Button>+ Book Session</Button>
             </Link>
           ) : (
-            <Button onClick={() => setOpenModal(true)}>+ Book Session</Button>
+            <Link to="/" className="book-session-link" onClick={(e) => e.preventDefault()}>
+              <Button onClick={() => setOpenModal(true)}>+ Book Session</Button>
+            </Link>
           )}
           {/* <h5>{user && user.displayName}</h5> */}
           <Link to="/profile">
