@@ -21,6 +21,7 @@ export const createMeeting = async (hasRecording: boolean) => {
           priority: 'PIN',
           gridSize: 2,
         },
+        quality: 'med',
       },
     };
   }
