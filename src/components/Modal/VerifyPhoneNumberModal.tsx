@@ -1,34 +1,39 @@
-import React, { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import styled from "styled-components";
-import { Formik, Form } from "formik";
-import PhoneInput from "react-phone-input-2";
-import VerificationInput from "react-verification-input";
+import React, { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import styled from 'styled-components';
+import { Formik, Form } from 'formik';
+import PhoneInput from 'react-phone-input-2';
+import VerificationInput from 'react-verification-input';
 
-import "react-phone-input-2/lib/style.css";
-import ReactModal from "./ReactModal";
-import Backdrop from "./Backdrop";
-import Button from "../Button";
+import 'react-phone-input-2/lib/style.css';
+import ReactModal from './ReactModal';
+import Backdrop from './Backdrop';
+import Button from '../Button';
+import { countOccurrences } from '../../utils/helpers';
+import { sendOtpService, verifyOtpService } from '../../services/otpService';
+import { userStore } from '../../store/userStore';
+import toast from 'react-hot-toast';
+import { AxiosError } from 'axios';
 
 const modalVaraints = {
   initial: {
     opacity: 0,
     scale: 0.5,
-    x: "-50%",
-    y: "-50%",
+    x: '-50%',
+    y: '-50%',
   },
   animate: {
     opacity: 1,
     transition: { duration: 0.3 },
     scale: 1,
-    x: "-50%",
-    y: "-50%",
+    x: '-50%',
+    y: '-50%',
   },
   exit: {
     opacity: 0,
     scale: 0,
-    x: "-50%",
-    y: "-50%",
+    x: '-50%',
+    y: '-50%',
   },
 };
 
@@ -36,27 +41,92 @@ interface IVerifyPhoneNumberModalProps {
   isOpen: boolean;
 }
 
-const initialValues = { phone: "" };
+const initialValues = { phone: '' };
 
 const VerifyPhoneNumberModal: React.FC<IVerifyPhoneNumberModalProps> = ({ isOpen }) => {
-  const [verificationCode, setVerificationCode] = useState("");
-  const [showVerification, setShowVerification] = useState(false);
+  const [verificationCode, setVerificationCode] = useState('');
+  const [showVerification, setShowVerification] = useState<string | null>(null);
+  const isError = useRef(true);
+  const [timer, setTimer] = useState(0);
+  const user = userStore((store) => store.user);
+  const [loading, setLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
 
-  const handleSubmit = async (values?: typeof initialValues) => {
+  useEffect(() => {
+    // Timer countdown logic
+    const intervalId = setInterval(() => {
+      setTimer((prevTimer) => {
+        if (prevTimer === 0) {
+          clearInterval(intervalId); // Stop the timer when it reaches 0
+        }
+        return prevTimer - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [timer]);
+
+  const handleSubmit = async (values: typeof initialValues) => {
     try {
+      if (!user) return;
       console.log(values);
-      setShowVerification(true);
+      setLoading(true);
+      await sendOtpService(user.uid, `+${values.phone}`);
+      setShowVerification(values.phone);
+      setTimer(60);
     } catch (error) {
-      console.log(error);
+      if (error instanceof AxiosError) {
+        if (error.response?.data['error']) {
+          toast.error(error.response?.data['error'].message);
+        } else {
+          toast.error('something went wrong.please try agian later');
+        }
+      } else {
+        toast.error('something went wrong.please try agian later');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   const verifyOtp = async () => {
     try {
+      if (!user) return;
       console.log(verificationCode);
-      // const newuser = await confirmationResult?.confirm(verificationCode);
+      setLoading(true);
+      await verifyOtpService(user.uid, verificationCode);
+
+      toast.success('Phone number verified successfully');
+
+      setTimeout(() => {
+        window.location.reload();
+        setLoading(false);
+      }, 2000);
     } catch (error) {
       console.log(error);
+      if (error instanceof AxiosError) {
+        if (error.response?.data['error']) {
+          toast.error(error.response?.data['error'].message);
+        } else {
+          toast.error('something went wrong.please try agian later');
+        }
+      } else {
+        toast.error('something went wrong.please try agian later');
+      }
+      setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    try {
+      if (!user) return;
+      setResendLoading(true);
+      await sendOtpService(user.uid, `+${showVerification}`);
+      setTimer(60);
+      setResendLoading(false);
+    } catch (error) {
+      console.log(error);
+      setResendLoading(false);
     }
   };
 
@@ -73,50 +143,73 @@ const VerifyPhoneNumberModal: React.FC<IVerifyPhoneNumberModalProps> = ({ isOpen
               exit="exit"
             >
               <StyledFormOne>
-                <h3>Verify Mobile Number</h3>
+                <h3>{!showVerification ? 'Verify Mobile Number' : 'Enter the OTP sent to'}</h3>
 
                 {!showVerification ? (
                   <Formik initialValues={initialValues} onSubmit={handleSubmit}>
                     {({ values, setFieldValue }) => (
                       <Form className="flex-column">
                         <PhoneInput
-                          country={"us"}
+                          country={'in'}
                           value={values.phone}
-                          onChange={(phone) => setFieldValue("phone", phone)}
+                          onChange={(phone) => setFieldValue('phone', phone)}
                           countryCodeEditable={false}
                           inputProps={{
-                            name: "phone",
+                            name: 'phone',
                             required: true,
                             autoFocus: true,
                           }}
                           isValid={(value, country: any) => {
-                            console.log(value, country);
-                            if (value.match(/12345/)) {
-                              return "Invalid value: " + value + ", " + country.name;
-                            } else if (value.match(/1234/)) {
-                              return false;
-                            } else {
+                            const stringLength = countOccurrences(country['format'], '.');
+
+                            if (value.length === stringLength) {
+                              isError.current = false;
                               return true;
+                            } else {
+                              isError.current = true;
+                              return false;
                             }
                           }}
                         />
-                        <div id="sign-in-button"></div>
-                        <Button type="submit">Sent OTP</Button>
+                        <Button type="submit" disabled={isError.current || loading}>
+                          Sent OTP
+                        </Button>
                       </Form>
                     )}
                   </Formik>
                 ) : (
                   <div className="flex-column">
+                    <p style={{ textAlign: 'center' }} className="s-16">
+                      +{showVerification}
+                    </p>
                     <div className="verification-input">
                       <VerificationInput
                         value={verificationCode}
                         onChange={(e) => setVerificationCode(e)}
                       />
-                      <div>
-                        <span>Resend</span>
-                      </div>
                     </div>
-                    <Button onClick={verifyOtp}>Verify</Button>
+                    <StyledResendDiv>
+                      <p>
+                        {timer > 0 ? (
+                          `Resend OTP in ${timer} seconds`
+                        ) : (
+                          <span
+                            style={{
+                              cursor: resendLoading ? 'no-drop' : 'pointer',
+                              pointerEvents: resendLoading ? 'none' : 'auto',
+                            }}
+                            className="text-primary"
+                            onClick={handleResend}
+                          >
+                            {resendLoading ? 'Resending OTP' : 'Resend OTP'}
+                          </span>
+                        )}
+                      </p>
+                    </StyledResendDiv>
+
+                    <Button onClick={verifyOtp} disabled={loading}>
+                      Verify
+                    </Button>
                   </div>
                 )}
               </StyledFormOne>
@@ -163,6 +256,7 @@ const StyledFormOne = styled.div`
 
     .form-control {
       width: 100%;
+      height: 44px;
     }
   }
 
@@ -183,6 +277,12 @@ const StyledFormOne = styled.div`
       background-color: rgba(0, 0, 0, 0.1);
     }
   }
+`;
+
+const StyledResendDiv = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 `;
 
 export default VerifyPhoneNumberModal;

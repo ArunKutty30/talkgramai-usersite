@@ -64,10 +64,12 @@ export interface IUserProfileData {
   displayName: string;
   isNewUser: boolean;
   demoClassBooked: boolean;
-  currentSubscriptionId?: string;
+  currentSubscriptionId?: string | null;
   favouriteTutors?: string[];
   profileImg: string;
   completedSession: number | undefined;
+  phoneNumber?: string;
+  phoneNumberVerified?: string;
 }
 
 export interface ITutorProfileData {
