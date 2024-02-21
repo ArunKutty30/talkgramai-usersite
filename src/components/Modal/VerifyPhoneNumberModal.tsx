@@ -132,7 +132,7 @@ const VerifyPhoneNumberModal: React.FC<IVerifyPhoneNumberModalProps> = ({ isOpen
 
   return (
     <ReactModal>
-      <Backdrop isOpen={isOpen}>
+      <Backdrop isOpen={isOpen} className="z-90">
         <AnimatePresence>
           {isOpen && (
             <StyledModal

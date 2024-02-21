@@ -275,7 +275,8 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
 
       const meetingId = await createMeeting(Boolean(subscriptionData?.recording));
 
-      const useBacklogSession = session <= 0 && (subscriptionData?.backlogSession ?? 0) > 0;
+      const remainingBacklogSessions = subscriptionData?.backlogSession ?? 0;
+      const useBacklogSession = session <= 0 && remainingBacklogSessions > 0;
 
       const bookSessionData: { [key: string]: any } = {
         startTime: Timestamp.fromDate(selectedDate),
@@ -296,7 +297,8 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
         timelogs: null,
       };
 
-      if (sessionLeft === 1) bookSessionData.isLastSession = true;
+      if (sessionLeft === 1 && !useBacklogSession) bookSessionData.isLastSession = true;
+      if (sessionLeft === 0 && remainingBacklogSessions === 1) bookSessionData.isLastSession = true;
 
       await createBookSessionDoc(tutorId, isDemoClass, useBacklogSession, bookSessionData);
 
