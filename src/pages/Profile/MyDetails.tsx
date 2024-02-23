@@ -1,8 +1,8 @@
-import React from "react";
-import { Form, Formik } from "formik";
-import styled from "styled-components";
-import Input from "../../components/Input";
-import { userStore } from "../../store/userStore";
+import React from 'react';
+import { Form, Formik } from 'formik';
+import styled from 'styled-components';
+import Input from '../../components/Input';
+import { userStore } from '../../store/userStore';
 
 const MyDetails = () => {
   const user = userStore((store) => store.user);
@@ -34,6 +34,7 @@ const MyDetails = () => {
                 <Input
                   name="phoneNumber"
                   label="Phone Number"
+                  value={profileData?.phoneNumber || ''}
                   placeholder="+91 9876543210"
                   readOnly
                 />
@@ -47,7 +48,7 @@ const MyDetails = () => {
                 <StyledTagContainer>
                   {profileData.interests.length ? (
                     <>
-                      {" "}
+                      {' '}
                       <label>Interests</label>
                       <StyledTagList>
                         {profileData.interests.map((int, i) => (
