@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs from 'dayjs';
 
 function separateIntoWeeks(startDate: Date, endDate: Date): number {
   // Calculate the difference in milliseconds between start and end date
@@ -40,14 +40,14 @@ export function getCurrentWeekInfo(
   currentWeekStartDate.setUTCDate(startDate.getUTCDate() + (currentWeek - 1) * 7);
 
   // Calculate the end date of the current week
-  const currentWeekEndDate = dayjs(new Date(currentWeekStartDate)).add(7, "days").toDate();
+  const currentWeekEndDate = dayjs(new Date(currentWeekStartDate)).add(7, 'days').toDate();
 
   // Calculate the start date of the last week
   const lastWeekStartDate = new Date(currentWeekStartDate);
   lastWeekStartDate.setUTCDate(lastWeekStartDate.getUTCDate() - 7);
 
   // Calculate the end date of the last week
-  const lastWeekEndDate = dayjs(new Date(lastWeekStartDate)).add(7, "days").toDate();
+  const lastWeekEndDate = dayjs(new Date(lastWeekStartDate)).add(7, 'days').toDate();
 
   return {
     totalWeeks: weeks,
@@ -74,4 +74,14 @@ export function getCurrentWeekInfo(
 
 export const addPrefixZero = (value: number) => {
   return value < 10 ? `0${value}` : value;
+};
+
+export const countOccurrences = (inputString: string, character: string) => {
+  let count = 0;
+  for (let i = 0; i < inputString.length; i++) {
+    if (inputString[i] === character) {
+      count++;
+    }
+  }
+  return count;
 };
