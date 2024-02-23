@@ -79,10 +79,10 @@ const VerifyPhoneNumberModal: React.FC<IVerifyPhoneNumberModalProps> = ({ isOpen
         if (error.response?.data['error']) {
           toast.error(error.response?.data['error'].message);
         } else {
-          toast.error('something went wrong.please try agian later');
+          toast.error('Something went wrong.Please try again later');
         }
       } else {
-        toast.error('something went wrong.please try agian later');
+        toast.error('Something went wrong.Please try again later');
       }
     } finally {
       setLoading(false);
@@ -108,10 +108,10 @@ const VerifyPhoneNumberModal: React.FC<IVerifyPhoneNumberModalProps> = ({ isOpen
         if (error.response?.data['error']) {
           toast.error(error.response?.data['error'].message);
         } else {
-          toast.error('something went wrong.please try agian later');
+          toast.error('Something went wrong.Please try again later');
         }
       } else {
-        toast.error('something went wrong.please try agian later');
+        toast.error('Something went wrong.Please try again later');
       }
       setLoading(false);
     }
@@ -172,7 +172,7 @@ const VerifyPhoneNumberModal: React.FC<IVerifyPhoneNumberModalProps> = ({ isOpen
                           }}
                         />
                         <Button type="submit" disabled={isError.current || loading}>
-                          Sent OTP
+                          SEND OTP
                         </Button>
                       </Form>
                     )}
