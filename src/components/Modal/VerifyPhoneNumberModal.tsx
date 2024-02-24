@@ -145,7 +145,7 @@ const VerifyPhoneNumberModal: React.FC<IVerifyPhoneNumberModalProps> = ({ isOpen
               <StyledFormOne>
                 <h3>{!showVerification ? 'Verify Mobile Number' : 'Enter the OTP sent to'}</h3>
 
-                {showVerification ? (
+                {!showVerification ? (
                   <Formik initialValues={initialValues} onSubmit={handleSubmit}>
                     {({ values, setFieldValue }) => (
                       <Form className="flex-column">
