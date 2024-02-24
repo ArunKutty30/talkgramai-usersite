@@ -157,6 +157,7 @@ const StyledTagList = styled.div`
     font-weight: 400;
     line-height: normal;
     padding: 10px 20px;
+    text-transform: capitalize;
   }
 
   .tag-variant-two {
@@ -170,6 +171,7 @@ const StyledTagList = styled.div`
     font-weight: 400;
     line-height: normal;
     padding: 10px 20px;
+    text-transform: capitalize;
   }
 `;
 

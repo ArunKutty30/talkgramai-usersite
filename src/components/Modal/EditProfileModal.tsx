@@ -1,50 +1,50 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { AnimatePresence, motion } from "framer-motion";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { AnimatePresence, motion } from 'framer-motion';
 
-import Backdrop from "./Backdrop";
-import Button from "../Button";
+import Backdrop from './Backdrop';
+import Button from '../Button';
 
-import { ReactComponent as ClockIcon } from "../../assets/icons/close.svg";
-import { Form, Formik } from "formik";
-import Input from "../Input";
-import { IUserProfileData, ITransactionStatus } from "../../constants/types";
+import { ReactComponent as ClockIcon } from '../../assets/icons/close.svg';
+import { Form, Formik } from 'formik';
+import Input from '../Input';
+import { IUserProfileData, ITransactionStatus } from '../../constants/types';
 import {
   goals as goalsData,
   interests as interestsData,
   issues as issuesData,
-} from "../../utils/data";
-import Avatar from "../Avatar";
-import { updateProfile } from "firebase/auth";
-import { userStore } from "../../store/userStore";
-import { db } from "../../utils/firebase";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { USER_COLLECTION_NAME } from "../../constants/data";
-import { uploadProfileImage } from "../../services/storageService";
+} from '../../utils/data';
+import Avatar from '../Avatar';
+import { updateProfile } from 'firebase/auth';
+import { userStore } from '../../store/userStore';
+import { db } from '../../utils/firebase';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { USER_COLLECTION_NAME } from '../../constants/data';
+import { uploadProfileImage } from '../../services/storageService';
 
 const modalVaraints = {
   initial: {
     opacity: 0,
     scale: 0.5,
-    x: "-50%",
-    y: "-50%",
+    x: '-50%',
+    y: '-50%',
   },
   animate: {
     opacity: 1,
     transition: { duration: 0.3 },
     scale: 1,
-    x: "-50%",
-    y: "-50%",
+    x: '-50%',
+    y: '-50%',
   },
   exit: {
     opacity: 0,
     scale: 0,
-    x: "-50%",
-    y: "-50%",
+    x: '-50%',
+    y: '-50%',
   },
 };
 
-interface IEditProfileModal extends Omit<IUserProfileData, "displayName"> {
+interface IEditProfileModal extends Omit<IUserProfileData, 'displayName'> {
   isOpen: boolean;
   handleClose?: () => void;
   displayName: string | null;
@@ -71,7 +71,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
     try {
       if (!user) return;
       console.log(values);
-      let profileUrl = "";
+      let profileUrl = '';
 
       setStatus(ITransactionStatus.PENDING);
       if (displayName) {
@@ -188,7 +188,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
                                             url: upload.target?.result as string,
                                           });
                                           setFieldValue(
-                                            "profileImg",
+                                            'profileImg',
                                             upload.target?.result as string
                                           );
                                         };
@@ -205,11 +205,11 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
                                 />
                               </label>
                             </ProfileImageInput>
-                            <Input label={"Full Name"} name={"displayName"} />
-                            <Input label={"Designation"} name={"designation"} />
+                            <Input label={'Full Name'} name={'displayName'} />
+                            <Input label={'Designation'} name={'designation'} />
                             <Input
-                              label={"Phone Number"}
-                              name={"phoneNumber"}
+                              label={'Phone Number'}
+                              name={'phoneNumber'}
                               placeholder="Enter your phone number"
                             />
                           </div>
@@ -218,8 +218,8 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
                       )}
                       {step === 2 && (
                         <div className="flex-column">
-                          <h6 className="mb-10">Issues I’m Currently Facing</h6>
-                          <p className="mb-20">Click on the issues you are currently facing</p>
+                          <h6 className="mb-10">My Interests</h6>
+                          <p className="mb-20">Select your area of interest</p>
                           <StyledTagList>
                             {interestsData.map((mappedData, i) => (
                               <span
@@ -228,8 +228,8 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
                                   values.interests.some(
                                     (s) => s.toLowerCase() === mappedData.toLowerCase()
                                   )
-                                    ? "tag-variant-one active"
-                                    : "tag-variant-one"
+                                    ? 'tag-variant-one active'
+                                    : 'tag-variant-one'
                                 }
                                 onClick={() => {
                                   if (
@@ -238,13 +238,13 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
                                     )
                                   ) {
                                     setFieldValue(
-                                      "interests",
+                                      'interests',
                                       values.interests.filter(
                                         (f) => f.toLowerCase() !== mappedData.toLowerCase()
                                       )
                                     );
                                   } else {
-                                    setFieldValue("interests", [
+                                    setFieldValue('interests', [
                                       ...values.interests,
                                       mappedData.toLowerCase(),
                                     ]);
@@ -261,7 +261,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
                       {step === 3 && (
                         <div className="flex-column">
                           <h6 className="mb-10">My Current Goals</h6>
-                          <p className="mb-20">Click on your current goals</p>
+                          <p className="mb-20">Select your current goals</p>
                           <StyledTagList>
                             {goalsData.map((mappedData, i) => (
                               <span
@@ -270,8 +270,8 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
                                   values.goals.some(
                                     (s) => s.toLowerCase() === mappedData.toLowerCase()
                                   )
-                                    ? "tag-variant-one active"
-                                    : "tag-variant-one"
+                                    ? 'tag-variant-one active'
+                                    : 'tag-variant-one'
                                 }
                                 onClick={() => {
                                   if (
@@ -280,13 +280,13 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
                                     )
                                   ) {
                                     setFieldValue(
-                                      "goals",
+                                      'goals',
                                       values.goals.filter(
                                         (f) => f.toLowerCase() !== mappedData.toLowerCase()
                                       )
                                     );
                                   } else {
-                                    setFieldValue("goals", [
+                                    setFieldValue('goals', [
                                       ...values.goals,
                                       mappedData.toLowerCase(),
                                     ]);
@@ -303,7 +303,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
                       {step === 4 && (
                         <div className="flex-column">
                           <h6 className="mb-10">My Current Issues</h6>
-                          <p className="mb-20">Click on your current goals</p>
+                          <p className="mb-20">Select the issues you are currently facing</p>
                           <StyledTagList>
                             {issuesData.map((mappedData, i) => (
                               <span
@@ -312,8 +312,8 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
                                   values.issues.some(
                                     (s) => s.toLowerCase() === mappedData.toLowerCase()
                                   )
-                                    ? "tag-variant-one active"
-                                    : "tag-variant-one"
+                                    ? 'tag-variant-one active'
+                                    : 'tag-variant-one'
                                 }
                                 onClick={() => {
                                   if (
@@ -322,13 +322,13 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
                                     )
                                   ) {
                                     setFieldValue(
-                                      "issues",
+                                      'issues',
                                       values.issues.filter(
                                         (f) => f.toLowerCase() !== mappedData.toLowerCase()
                                       )
                                     );
                                   } else {
-                                    setFieldValue("issues", [
+                                    setFieldValue('issues', [
                                       ...values.issues,
                                       mappedData.toLowerCase(),
                                     ]);
