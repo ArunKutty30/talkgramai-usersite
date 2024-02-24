@@ -1,15 +1,15 @@
-import React, { ReactNode } from "react";
-import styled from "styled-components";
-import Button, { ButtonProps } from "@mui/material/Button";
+import React, { ReactNode } from 'react';
+import styled from 'styled-components';
+import Button, { ButtonProps } from '@mui/material/Button';
 
-interface IButtonProps extends Omit<ButtonProps, "variant"> {
-  variant?: "primary" | "secondary" | "error" | "error-filled";
-  size?: "small" | "medium" | "large";
+interface IButtonProps extends Omit<ButtonProps, 'variant'> {
+  variant?: 'primary' | 'secondary' | 'error' | 'error-filled';
+  size?: 'small' | 'medium' | 'large';
   children: ReactNode;
 }
 
 const StyledButton = styled(Button)`
-  font-family: "Inter";
+  font-family: 'Inter';
   border: 1px solid transparent;
   outline: none;
   border-radius: 8px;
@@ -17,7 +17,7 @@ const StyledButton = styled(Button)`
   cursor: pointer;
   box-sizing: border-box;
   font-weight: 500;
-  text-transform: capitalize;
+  text-transform: capitalize !important;
 
   &.btn-primary {
     background: var(--btn-primary);
@@ -51,6 +51,7 @@ const StyledButton = styled(Button)`
     border-radius: 6px;
     border: 1px solid #ff8c8c;
     background: rgba(255, 52, 52, 0.14);
+    font-weight: 600;
 
     &:hover {
       border: 1px solid var(--error);
@@ -86,8 +87,8 @@ const StyledButton = styled(Button)`
 
 const MyButton: React.FC<IButtonProps> = ({
   children,
-  variant = "primary",
-  size = "medium",
+  variant = 'primary',
+  size = 'medium',
   ...rest
 }) => {
   return (

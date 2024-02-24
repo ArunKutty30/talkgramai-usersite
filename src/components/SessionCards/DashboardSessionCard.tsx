@@ -512,6 +512,7 @@ const StyledSessionHeader = styled.div`
 const BlockLeft = styled.div<{ type: ISessionType }>`
   display: flex;
   gap: 15px 30px;
+  align-items: center;
 
   &.section-one {
     align-items: center;

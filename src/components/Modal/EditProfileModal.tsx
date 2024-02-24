@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Circle as CircleIcon, CheckCircle } from '@styled-icons/bootstrap';
+import { ErrorMessage, Form, Formik } from 'formik';
 
 import Backdrop from './Backdrop';
 import Button from '../Button';
 
 import { ReactComponent as ClockIcon } from '../../assets/icons/close.svg';
-import { Form, Formik } from 'formik';
 import Input from '../Input';
 import { IUserProfileData, ITransactionStatus } from '../../constants/types';
 import {
+  designations,
   goals as goalsData,
   interests as interestsData,
   issues as issuesData,
@@ -21,6 +23,12 @@ import { db } from '../../utils/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { USER_COLLECTION_NAME } from '../../constants/data';
 import { uploadProfileImage } from '../../services/storageService';
+import {
+  FormInput,
+  StyledDropdownHeader,
+  StyledDropdownList,
+  StyledDropdownWrapper,
+} from '../../pages/Auth/OnBoarding/Signup.styled';
 
 const modalVaraints = {
   initial: {
@@ -63,9 +71,11 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
 }) => {
   const [step, setStep] = useState(1);
   const user = userStore((store) => store.user);
+  const profileData = userStore((store) => store.profileData);
   const updateProfileData = userStore((store) => store.updateProfileData);
   const [status, setStatus] = useState<ITransactionStatus>();
   const [image, setImage] = useState<{ file: File; url: string } | null>(null);
+  const [openDesignationDropdown, setOpenDesignationDropdown] = useState(false);
 
   const handleSubmit = async (values: any) => {
     try {
@@ -147,6 +157,7 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
                   issues: issues,
                   displayName,
                   profileImg,
+                  phoneNumber: profileData?.phoneNumber || '',
                 }}
                 onSubmit={handleSubmit}
               >
@@ -206,10 +217,67 @@ const EditProfileModal: React.FC<IEditProfileModal> = ({
                               </label>
                             </ProfileImageInput>
                             <Input label={'Full Name'} name={'displayName'} />
-                            <Input label={'Designation'} name={'designation'} />
+                            {/* <Input label={'Designation'} name={'designation'} /> */}
+                            <FormInput>
+                              <label
+                                htmlFor="designation"
+                                style={{
+                                  color: ' var(--text-primary)',
+                                  fontSize: '16px',
+                                  fontWeight: 500,
+                                }}
+                              >
+                                Designation
+                              </label>
+                              <StyledDropdownWrapper>
+                                <StyledDropdownHeader
+                                  role="button"
+                                  onClick={() => setOpenDesignationDropdown((d) => !d)}
+                                  className={openDesignationDropdown ? 'active' : ''}
+                                  style={{ padding: '10px 20px' }}
+                                >
+                                  <p className="truncate" style={{ fontSize: '1rem' }}>
+                                    {values.designation
+                                      ? values.designation
+                                      : 'Select your designation'}
+                                  </p>
+                                </StyledDropdownHeader>
+                                {openDesignationDropdown && (
+                                  <StyledDropdownList>
+                                    {designations.map((des, index) => (
+                                      <div
+                                        key={index.toString()}
+                                        className={
+                                          des.toLowerCase() === values.designation.toLowerCase()
+                                            ? 'active'
+                                            : ''
+                                        }
+                                        onClick={() => {
+                                          setFieldValue('designation', des.toLowerCase());
+                                          setOpenDesignationDropdown(false);
+                                        }}
+                                      >
+                                        <p>{des}</p>
+                                        {des.toLowerCase() === values.designation.toLowerCase() ? (
+                                          <CheckCircle color="#F7941F" />
+                                        ) : (
+                                          <CircleIcon />
+                                        )}
+                                      </div>
+                                    ))}
+                                  </StyledDropdownList>
+                                )}
+                              </StyledDropdownWrapper>
+                              <ErrorMessage
+                                name="designation"
+                                component="div"
+                                className="error-text"
+                              />
+                            </FormInput>
                             <Input
                               label={'Phone Number'}
                               name={'phoneNumber'}
+                              readOnly
                               placeholder="Enter your phone number"
                             />
                           </div>
