@@ -29,6 +29,9 @@ const theme = createTheme({
       main: '#f7941f',
     },
   },
+  typography: {
+    fontFamily: 'Inter, sans-serif',
+  },
 });
 
 const LazyProfilePage = React.lazy(() => import('./pages/Profile'));

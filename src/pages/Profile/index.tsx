@@ -1,17 +1,19 @@
-import React, { useState } from "react";
-import { Navigate, NavLink, Route, Routes } from "react-router-dom";
-import styled from "styled-components";
+import React, { useState } from 'react';
+import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
+import styled from 'styled-components';
+import EditIcon from '@mui/icons-material/Edit';
+import LogoutIcon from '@mui/icons-material/Logout';
 
-import { Button } from "../../components";
-import MyDetails from "./MyDetails";
-import MySubscriptions from "./MySubcsriptions";
-import Transactions from "./Transactions";
-import FavouriteTutors from "./FavouriteTutors";
-import { userStore } from "../../store/userStore";
-import EditProfileModal from "../../components/Modal/EditProfileModal";
-import Avatar from "../../components/Avatar";
-import LogoutModal from "../../components/Modal/LogoutModal";
-import FeedbackAnalysis from "./FeedbackAnalysis";
+import { Button } from '../../components';
+import MyDetails from './MyDetails';
+import MySubscriptions from './MySubcsriptions';
+import Transactions from './Transactions';
+import FavouriteTutors from './FavouriteTutors';
+import { userStore } from '../../store/userStore';
+import EditProfileModal from '../../components/Modal/EditProfileModal';
+import Avatar from '../../components/Avatar';
+import LogoutModal from '../../components/Modal/LogoutModal';
+import FeedbackAnalysis from './FeedbackAnalysis';
 
 const Profile = () => {
   const user = userStore((store) => store.user);
@@ -38,10 +40,12 @@ const Profile = () => {
             </div>
             <div className="block-right">
               <Button variant="secondary" onClick={() => setEditProfile(true)}>
-                Edit Details
+                <EditIcon fontSize={'medium'} style={{ marginRight: '8px' }} />
+                <span>Edit Details</span>
               </Button>
               <Button variant="error" onClick={() => setOpenLogoutModal(true)}>
-                Logout
+                <LogoutIcon fontSize={'medium'} style={{ marginRight: '8px' }} />
+                <span>Logout</span>
               </Button>
             </div>
           </div>
