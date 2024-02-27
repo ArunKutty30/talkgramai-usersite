@@ -1,16 +1,16 @@
-import React from "react";
-import styled from "styled-components";
-import ReactPlayer from "react-player/youtube";
+import React from 'react';
+import styled from 'styled-components';
+import ReactPlayer from 'react-player/youtube';
 
-import FaqCard from "./FaqCard";
-import { faqs } from "../../constants/data";
+import FaqCard from './FaqCard';
+import { faqs } from '../../constants/data';
 
 const Faq = () => {
   return (
     <div className="pad">
       <StyledContainer>
         <StyledFaqSection>
-          <h2 style={{ marginBottom: 20 }}>Faq</h2>
+          <h3 style={{ marginBottom: 20 }}>Faq</h3>
           <div className="faq-card-wrapper">
             {faqs.map((q, index) => (
               <FaqCard key={index.toString()} {...q} />
@@ -18,7 +18,7 @@ const Faq = () => {
           </div>
         </StyledFaqSection>
         <StyledHelpFullSection>
-          <h2 style={{ marginBottom: 20 }}>Helpful Videos</h2>
+          <h3 style={{ marginBottom: 20 }}>Helpful Videos</h3>
           <StyledVideoWrapper>
             <div className="video-card">
               <ReactPlayer
@@ -71,8 +71,12 @@ const StyledFaqSection = styled.div`
 
 const StyledVideoWrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   gap: 20px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
 
   .video-card {
     width: 100%;

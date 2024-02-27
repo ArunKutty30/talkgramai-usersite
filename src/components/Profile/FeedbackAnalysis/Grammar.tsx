@@ -1,20 +1,21 @@
-import React, { useMemo } from "react";
-import ReactApexChart from "react-apexcharts";
-import styled from "styled-components";
-import { INewTutorFeedback, TGrammar } from "../../../constants/types";
+import React, { useMemo } from 'react';
+import ReactApexChart from 'react-apexcharts';
+import styled from 'styled-components';
+import { INewTutorFeedback, TGrammar } from '../../../constants/types';
+import { config } from '../../../constants/config';
 
 const getGrammarRating = (value: TGrammar): number => {
-  if (value === "too many errors") return 1;
-  else if (value === "noticeable errors") return 2;
-  else if (value === "few errors") return 3;
-  else if (value === "Rarely noticeable") return 4;
-  else if (value === "no errors") return 5;
+  if (value === 'too many errors') return 1;
+  else if (value === 'noticeable errors') return 2;
+  else if (value === 'few errors') return 3;
+  else if (value === 'Rarely noticeable') return 4;
+  else if (value === 'no errors') return 5;
   return 3;
 };
 
 const analyzeFeedback = (
-  grammar: INewTutorFeedback["grammar"][],
-  key: keyof INewTutorFeedback["grammar"]
+  grammar: INewTutorFeedback['grammar'][],
+  key: keyof INewTutorFeedback['grammar']
 ): TGrammar => {
   const feedbackCounts: { [key: string]: number } = {};
 
@@ -27,13 +28,13 @@ const analyzeFeedback = (
     feedbackCounts[a] > feedbackCounts[b] ? a : b
   );
 
-  return (mostCommonFeedback as TGrammar) || "few errors";
+  return (mostCommonFeedback as TGrammar) || 'few errors';
 };
 
 const Grammar: React.FC<{ data: INewTutorFeedback[] }> = ({ data }) => {
   const grammarFeedback = useMemo(() => {
-    let improveOn = "";
-    let description = "";
+    let improveOn = '';
+    let description = '';
 
     if (data.length < 10) {
       return {
@@ -58,33 +59,33 @@ const Grammar: React.FC<{ data: INewTutorFeedback[] }> = ({ data }) => {
       .slice(roundOffLength - 10, roundOffLength - 5);
 
     const grammarRatings = {
-      tenses: getGrammarRating(analyzeFeedback(lastFiveSessionData, "tenses")),
+      tenses: getGrammarRating(analyzeFeedback(lastFiveSessionData, 'tenses')),
       articlesAndPrepositions: getGrammarRating(
-        analyzeFeedback(lastFiveSessionData, "articlesAndPrepositions")
+        analyzeFeedback(lastFiveSessionData, 'articlesAndPrepositions')
       ),
-      mostErrors: analyzeFeedback(lastFiveSessionData, "mostErrors"),
-      subjectVerb: getGrammarRating(analyzeFeedback(lastFiveSessionData, "subjectVerb")),
-      pronounUsage: getGrammarRating(analyzeFeedback(lastFiveSessionData, "pronounUsage")),
+      mostErrors: analyzeFeedback(lastFiveSessionData, 'mostErrors'),
+      subjectVerb: getGrammarRating(analyzeFeedback(lastFiveSessionData, 'subjectVerb')),
+      pronounUsage: getGrammarRating(analyzeFeedback(lastFiveSessionData, 'pronounUsage')),
     };
 
     const nextGrammarRatings = {
-      tenses: getGrammarRating(analyzeFeedback(nextFiveSessionData, "tenses")),
+      tenses: getGrammarRating(analyzeFeedback(nextFiveSessionData, 'tenses')),
       articlesAndPrepositions: getGrammarRating(
-        analyzeFeedback(nextFiveSessionData, "articlesAndPrepositions")
+        analyzeFeedback(nextFiveSessionData, 'articlesAndPrepositions')
       ),
-      mostErrors: analyzeFeedback(nextFiveSessionData, "mostErrors"),
-      subjectVerb: getGrammarRating(analyzeFeedback(nextFiveSessionData, "subjectVerb")),
-      pronounUsage: getGrammarRating(analyzeFeedback(nextFiveSessionData, "pronounUsage")),
+      mostErrors: analyzeFeedback(nextFiveSessionData, 'mostErrors'),
+      subjectVerb: getGrammarRating(analyzeFeedback(nextFiveSessionData, 'subjectVerb')),
+      pronounUsage: getGrammarRating(analyzeFeedback(nextFiveSessionData, 'pronounUsage')),
     };
 
     if (grammarRatings.pronounUsage <= 3) {
-      improveOn = "Pronouns";
+      improveOn = 'Pronouns';
     } else if (grammarRatings.pronounUsage > 3 && grammarRatings.articlesAndPrepositions <= 3) {
-      improveOn = "Articles & Prepositions";
+      improveOn = 'Articles & Prepositions';
     } else if (grammarRatings.articlesAndPrepositions === 4 && grammarRatings.subjectVerb <= 4) {
-      improveOn = "Subject-Verb Agreement";
+      improveOn = 'Subject-Verb Agreement';
     } else {
-      improveOn = "Tenses";
+      improveOn = 'Tenses';
       description = `To enhance your grasp of tenses, focus on reviewing the rules associated with tenses. Work initially on ${grammarRatings.mostErrors} and move to the others later as we have noticed that you make the most errors in ${grammarRatings.mostErrors}`;
     }
 
@@ -115,7 +116,7 @@ const Grammar: React.FC<{ data: INewTutorFeedback[] }> = ({ data }) => {
       </Head>
       {data.length <= 5 ? (
         <div className="no-data">
-          <p>Finish more than 10 sessions to unlock your full analysis.</p>
+          <p>{config.NO_FEEDBACK_MESSAGE}</p>
         </div>
       ) : (
         <>
@@ -135,7 +136,7 @@ const Grammar: React.FC<{ data: INewTutorFeedback[] }> = ({ data }) => {
             <ReactApexChart
               options={{
                 chart: {
-                  type: "bar",
+                  type: 'bar',
                   height: 350,
                 },
                 plotOptions: {
@@ -161,12 +162,12 @@ const Grammar: React.FC<{ data: INewTutorFeedback[] }> = ({ data }) => {
                     }`,
                   ],
                 },
-                colors: ["rgb(247, 148, 31)", "rgb(247, 148, 31)"],
+                colors: ['rgb(247, 148, 31)', 'rgb(247, 148, 31)'],
                 tooltip: {
                   y: {
                     title: {
                       formatter() {
-                        return "Score";
+                        return 'Score';
                       },
                     },
                   },

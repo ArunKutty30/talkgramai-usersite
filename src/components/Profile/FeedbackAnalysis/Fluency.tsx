@@ -1,9 +1,10 @@
-import React, { useMemo } from "react";
-import ReactApexChart from "react-apexcharts";
-import styled from "styled-components";
-import { IFluencyFeedback, INewTutorFeedback } from "../../../constants/types";
+import React, { useMemo } from 'react';
+import ReactApexChart from 'react-apexcharts';
+import styled from 'styled-components';
+import { IFluencyFeedback, INewTutorFeedback } from '../../../constants/types';
+import { config } from '../../../constants/config';
 
-const analyzeFeedback = (fluency: INewTutorFeedback["fluency"][]) => {
+const analyzeFeedback = (fluency: INewTutorFeedback['fluency'][]) => {
   const feedbackCounts: { [key: string]: number } = {};
 
   fluency.forEach((flu) => {
@@ -20,16 +21,16 @@ const analyzeFeedback = (fluency: INewTutorFeedback["fluency"][]) => {
 
 const fluencyFeedbackData = {
   [IFluencyFeedback.LONG_PAUSES]:
-    "Practice speaking more fluidly, and consider incorporating pauses strategically for emphasis rather than as moments of hesitation.",
+    'Practice speaking more fluidly, and consider incorporating pauses strategically for emphasis rather than as moments of hesitation.',
   [IFluencyFeedback.INCOMPLETE_SENTENCES]:
-    "Practice expressing your thoughts in a structured manner, ensuring each sentence contributes to the overall flow of your communication.",
+    'Practice expressing your thoughts in a structured manner, ensuring each sentence contributes to the overall flow of your communication.',
   [IFluencyFeedback.FILLER_SOUNDS]:
     "Try replacing filler sounds like 'um,' 'uh,' or 'like' with brief pauses, allowing you to gather your thoughts and speak more confidently.",
 };
 
 const Fluency: React.FC<{ data: INewTutorFeedback[] }> = ({ data }) => {
   const groupData = useMemo(() => {
-    let description = "";
+    let description = '';
 
     if (data.length < 10) {
       return {
@@ -97,7 +98,7 @@ const Fluency: React.FC<{ data: INewTutorFeedback[] }> = ({ data }) => {
       </Head>
       {data.length <= 5 ? (
         <div className="no-data">
-          <p>Finish more than 10 sessions to unlock your full analysis.</p>
+          <p>{config.NO_FEEDBACK_MESSAGE}</p>
         </div>
       ) : (
         <>
@@ -113,7 +114,7 @@ const Fluency: React.FC<{ data: INewTutorFeedback[] }> = ({ data }) => {
             <ReactApexChart
               options={{
                 chart: {
-                  type: "bar",
+                  type: 'bar',
                   height: 350,
                 },
                 plotOptions: {
@@ -139,12 +140,12 @@ const Fluency: React.FC<{ data: INewTutorFeedback[] }> = ({ data }) => {
                     }`,
                   ],
                 },
-                colors: ["rgb(247, 148, 31)", "rgb(247, 148, 31)"],
+                colors: ['rgb(247, 148, 31)', 'rgb(247, 148, 31)'],
                 tooltip: {
                   y: {
                     title: {
                       formatter() {
-                        return "Score";
+                        return 'Score';
                       },
                     },
                   },

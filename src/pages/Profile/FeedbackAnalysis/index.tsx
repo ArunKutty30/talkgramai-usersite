@@ -1,16 +1,16 @@
-import React, { useState } from "react";
-import styled from "styled-components";
+import React, { useState } from 'react';
+import styled from 'styled-components';
 
-import { ReactComponent as DownArrowIcon } from "../../../assets/icons/arrow_down.svg";
-import Fluency from "../../../components/Profile/FeedbackAnalysis/Fluency";
-import Vocabulary from "../../../components/Profile/FeedbackAnalysis/Vocabulary";
-import Pronuciation from "../../../components/Profile/FeedbackAnalysis/Pronunciation";
-import Grammar from "../../../components/Profile/FeedbackAnalysis/Grammar";
-import { userStore } from "../../../store/userStore";
-import { INewTutorFeedback } from "../../../constants/types";
-import UserSessionStats from "../../../components/UserSessionStats";
+import { ReactComponent as DownArrowIcon } from '../../../assets/icons/arrow_down.svg';
+import Fluency from '../../../components/Profile/FeedbackAnalysis/Fluency';
+import Vocabulary from '../../../components/Profile/FeedbackAnalysis/Vocabulary';
+import Pronuciation from '../../../components/Profile/FeedbackAnalysis/Pronunciation';
+import Grammar from '../../../components/Profile/FeedbackAnalysis/Grammar';
+import { userStore } from '../../../store/userStore';
+import { INewTutorFeedback } from '../../../constants/types';
+import UserSessionStats from '../../../components/UserSessionStats';
 
-const dropdownItems = ["item 1", "item 2"];
+const dropdownItems = ['item 1', 'item 2'];
 
 const FeedbackAnalysis: React.FC = () => {
   const [latestSession, setlatestSession] = useState<string | null>(null);
@@ -45,11 +45,11 @@ const FeedbackAnalysis: React.FC = () => {
         <Heading>
           <h3>Feedback From Tutors</h3>
         </Heading>
-        <div className="drop-down-wrapper" style={{ display: "none" }}>
+        <div className="drop-down-wrapper" style={{ display: 'none' }}>
           <DropDownContainer>
             <div className="container">
               <SelectContent onClick={toggleDropdown}>
-                <SelectText>{latestSession || "Latest Session (15-20)"}</SelectText>
+                <SelectText>{latestSession || 'Latest Session (15-20)'}</SelectText>
                 <div>
                   <DownArrowIcon width={14} height={14} />
                 </div>
@@ -68,7 +68,7 @@ const FeedbackAnalysis: React.FC = () => {
           <DropDownContainer>
             <div className="container">
               <SelectContent onClick={handleDropdownToggle} className="drop">
-                <SelectText>{latestSessionDrop || "Latest Session (15-20)"}</SelectText>
+                <SelectText>{latestSessionDrop || 'Latest Session (15-20)'}</SelectText>
                 <div>
                   <DownArrowIcon width={14} height={14} />
                 </div>
@@ -92,10 +92,10 @@ const FeedbackAnalysis: React.FC = () => {
       {!subscriptionData ? (
         <div
           style={{
-            height: "300px",
-            display: "grid",
-            placeItems: "center",
-            textAlign: "center",
+            height: '300px',
+            display: 'grid',
+            placeItems: 'center',
+            textAlign: 'center',
           }}
         >
           <p>Subscribe to see your analytics</p>
@@ -103,10 +103,10 @@ const FeedbackAnalysis: React.FC = () => {
       ) : isAllSessionFetching ? (
         <div
           style={{
-            height: "300px",
-            display: "grid",
-            placeItems: "center",
-            textAlign: "center",
+            height: '300px',
+            display: 'grid',
+            placeItems: 'center',
+            textAlign: 'center',
           }}
         >
           <p>Fetching Analytics of your sessions</p>

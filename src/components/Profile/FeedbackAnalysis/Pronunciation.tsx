@@ -1,19 +1,20 @@
-import React, { useMemo, useState } from "react";
-import styled from "styled-components";
+import React, { useMemo, useState } from 'react';
+import styled from 'styled-components';
 
-import { ReactComponent as DownArrowIcon } from "../../../assets/icons/arrow_down.svg";
-import SpeedometerBg from "../../../assets/images/speedometer-bg.png";
-import Speedometer from "../../../assets/images/speedometer.png";
-import { INewTutorFeedback } from "../../../constants/types";
+import { ReactComponent as DownArrowIcon } from '../../../assets/icons/arrow_down.svg';
+import SpeedometerBg from '../../../assets/images/speedometer-bg.png';
+import Speedometer from '../../../assets/images/speedometer.png';
+import { INewTutorFeedback } from '../../../constants/types';
+import { config } from '../../../constants/config';
 
-const dropdownItems = ["item 1", "item 2"];
+const dropdownItems = ['item 1', 'item 2'];
 
 const positionValue = [
-  { left: "-14px", bottom: "-14px" },
-  { left: "calc(20% - 14px)", bottom: "calc(50% - 14px)" },
-  { left: "calc(50%)", bottom: "calc(100% - 42px)" },
-  { left: "calc(80% + 14px)", bottom: "calc(50% - 14px)" },
-  { left: "calc(100% - 14px)", bottom: "-14px" },
+  { left: '-14px', bottom: '-14px' },
+  { left: 'calc(20% - 14px)', bottom: 'calc(50% - 14px)' },
+  { left: 'calc(50%)', bottom: 'calc(100% - 42px)' },
+  { left: 'calc(80% + 14px)', bottom: 'calc(50% - 14px)' },
+  { left: 'calc(100% - 14px)', bottom: '-14px' },
 ];
 
 const Pronuciation: React.FC<{ data: INewTutorFeedback[] }> = ({ data }) => {
@@ -52,9 +53,9 @@ const Pronuciation: React.FC<{ data: INewTutorFeedback[] }> = ({ data }) => {
           <h4>PRONUNCIATION</h4>
         </div>
         <DropDownContainer>
-          <div className="container" style={{ display: "none" }}>
+          <div className="container" style={{ display: 'none' }}>
             <SelectContent onClick={toggleDropdown}>
-              <SelectText>{latestSession || "Latest Session (15-20)"}</SelectText>
+              <SelectText>{latestSession || 'Latest Session (15-20)'}</SelectText>
               <div>
                 <DownArrowIcon width={14} height={14} />
               </div>
@@ -73,7 +74,7 @@ const Pronuciation: React.FC<{ data: INewTutorFeedback[] }> = ({ data }) => {
       </Head>
       {data.length <= 5 ? (
         <div className="no-data">
-          <p>Finish more than 10 sessions to unlock your full analysis.</p>
+          <p>{config.NO_FEEDBACK_MESSAGE}</p>
         </div>
       ) : (
         <>
@@ -83,9 +84,9 @@ const Pronuciation: React.FC<{ data: INewTutorFeedback[] }> = ({ data }) => {
                 Correct pronunciation is fundamental to clear and comprehensible communication.
                 <br />
                 <br />
-                Your overall pronunciation has been rated with {rating} star{rating > 1 ? "s" : ""},
-                indicating that your pronunciation of words{" "}
-                {rating <= 2 ? "needs improvement" : rating <= 4 ? "is good" : "is excellent"}.
+                Your overall pronunciation has been rated with {rating} star{rating > 1 ? 's' : ''},
+                indicating that your pronunciation of words{' '}
+                {rating <= 2 ? 'needs improvement' : rating <= 4 ? 'is good' : 'is excellent'}.
                 <br />
                 <br />
                 {/* NOTE: Specific sounds where mistakes are made can be included when we have teaching
@@ -213,18 +214,18 @@ const StyledChart = styled.div`
   .speedometer {
     width: 100%;
     height: 100%;
-    background-image: url("${SpeedometerBg}");
+    background-image: url('${SpeedometerBg}');
     background-size: 100% 100%;
     position: relative;
 
     &::after {
-      content: "";
+      content: '';
       position: absolute;
       top: 5px;
       left: 5px;
       right: 5px;
       bottom: 5px;
-      background-image: url("${Speedometer}");
+      background-image: url('${Speedometer}');
       background-size: 100% 100%;
     }
   }
@@ -242,7 +243,7 @@ const StyledChart = styled.div`
     transform: translate(-50%, -50%);
 
     &::after {
-      content: "";
+      content: '';
       position: absolute;
       width: 75%;
       height: 75%;

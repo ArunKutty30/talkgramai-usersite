@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { Link, useNavigate } from "react-router-dom";
-import ReactCountdown, { CountdownRenderProps } from "react-countdown";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { Link, useNavigate } from 'react-router-dom';
+import ReactCountdown, { CountdownRenderProps } from 'react-countdown';
 
-import { ICategory } from "../../constants/types";
-import { ReactComponent as LeftArrowIcon } from "../../assets/icons/chevron-left.svg";
-import BookSessionWrapper from "./BookSessionWrapper";
-import { userStore } from "../../store/userStore";
-import SubscriptionEndedModal from "../../components/Modal/SubscriptionEndedModal";
-import Modal from "../../components/Modal";
-import { Button } from "../../components";
-import { reminderStore } from "../../store/reminderStore";
-import { addPrefixZero } from "../../utils/helpers";
+import { ICategory } from '../../constants/types';
+import { ReactComponent as LeftArrowIcon } from '../../assets/icons/chevron-left.svg';
+import BookSessionWrapper from './BookSessionWrapper';
+import { userStore } from '../../store/userStore';
+import SubscriptionEndedModal from '../../components/Modal/SubscriptionEndedModal';
+import Modal from '../../components/Modal';
+import { Button } from '../../components';
+import { reminderStore } from '../../store/reminderStore';
+import { addPrefixZero } from '../../utils/helpers';
 
 const BookSessionContainer = styled.div`
   padding-bottom: 50px;
@@ -78,12 +78,12 @@ const BookSession = () => {
     } else {
       return (
         <div>
-          <p style={{ lineHeight: "1.5" }}>
-            Your next week session booking starts in{" "}
-            <b style={{ display: "inline-block", minWidth: "67px" }}>
-              {addPrefixZero(days)}d : {addPrefixZero(hours)}h : {addPrefixZero(minutes)}m :{" "}
+          <p style={{ lineHeight: '1.5' }}>
+            Your next week session booking starts in{' '}
+            <b style={{ display: 'inline-block', minWidth: '67px' }}>
+              {addPrefixZero(days)}d : {addPrefixZero(hours)}h : {addPrefixZero(minutes)}m :{' '}
               {addPrefixZero(seconds)}s
-            </b>{" "}
+            </b>{' '}
           </p>
         </div>
       );
@@ -98,7 +98,7 @@ const BookSession = () => {
             <div
               onClick={() => navigate(-1)}
               className="pointer"
-              style={{ transform: "rotate(180deg)", marginRight: "15px" }}
+              style={{ transform: 'rotate(180deg)', marginRight: '15px' }}
             >
               <LeftArrowIcon width={18} height={18} />
             </div>
@@ -108,7 +108,7 @@ const BookSession = () => {
             <div>
               <button
                 onClick={() => setSelectedCategory(ICategory.TUTOR_TALK)}
-                className={selectedCategory === ICategory.TUTOR_TALK ? "active" : ""}
+                className={selectedCategory === ICategory.TUTOR_TALK ? 'active' : ''}
               >
                 Tutor Talk
               </button>
@@ -121,7 +121,7 @@ const BookSession = () => {
             </div>
           </BookSessionCategory>
         </BookSessionHeader>
-        <p style={{ textAlign: "center" }} className="mb-20">
+        <p style={{ textAlign: 'center' }} className="mb-20">
           Here are few tutors that can help you .
         </p>
         <BookSessionWrapper />
@@ -132,7 +132,9 @@ const BookSession = () => {
         subscriptionData?.backlogSession === 0 && (
           <Modal isOpen rootClassName="z-90">
             <StyledModalDiv>
-              <p>Your booking limit is finished,please subscribe to update your plan. </p>
+              <p>
+                You've reached the booking limit. Subscribe now to continue your english journey.
+              </p>
               <StyledFlex>
                 <Link to="/">
                   <Button variant="secondary">Back</Button>

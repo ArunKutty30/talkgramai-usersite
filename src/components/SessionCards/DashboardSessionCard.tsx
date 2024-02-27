@@ -142,7 +142,7 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
     const timeCheck =
       dayjs(startTime).diff(dayjs(), 'hour') >= config.CANCEL_SESSION_DURATION_IN_HRS;
     if (!timeCheck) {
-      toast.error(`You can only cancel before 2 hours of session starting`);
+      toast.error(`You can only cancel 2 hours before the session start time`);
       return;
     }
     setOpenModal('CANCEL');

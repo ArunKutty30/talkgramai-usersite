@@ -13,4 +13,9 @@ export const config = {
   SHOW_AVAILABLE_SLOTS_BEFORE: 60, // 60 minutes
   CANCEL_SESSION_DURATION_IN_HRS: 2, // BEFORE 2 HRS
   EDIT_SESSION_DURATION_IN_HRS: 1, // BEFORE 2 HRS
+
+  // DEFAULT TEXT MESSAGES
+
+  NO_FEEDBACK_MESSAGE:
+    'Complete atleast 10 sessions to generate your detailed feedback analysis report',
 };

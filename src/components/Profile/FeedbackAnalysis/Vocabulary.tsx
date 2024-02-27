@@ -1,25 +1,26 @@
-import React, { useMemo, useState } from "react";
-import styled from "styled-components";
-import { ReactComponent as DownArrowIcon } from "../../../assets/icons/arrow_down.svg";
-import SpeedometerBg from "../../../assets/images/speedometer-bg.png";
-import Speedometer from "../../../assets/images/speedometer.png";
-import { INewTutorFeedback } from "../../../constants/types";
+import React, { useMemo, useState } from 'react';
+import styled from 'styled-components';
+import { ReactComponent as DownArrowIcon } from '../../../assets/icons/arrow_down.svg';
+import SpeedometerBg from '../../../assets/images/speedometer-bg.png';
+import Speedometer from '../../../assets/images/speedometer.png';
+import { INewTutorFeedback } from '../../../constants/types';
+import { config } from '../../../constants/config';
 
-const dropdownItems = ["item 1", "item 2"];
+const dropdownItems = ['item 1', 'item 2'];
 
-type TRange = INewTutorFeedback["vocabulary"]["range"];
-type TWordChoicePrecision = INewTutorFeedback["vocabulary"]["wordChoicePrecision"];
+type TRange = INewTutorFeedback['vocabulary']['range'];
+type TWordChoicePrecision = INewTutorFeedback['vocabulary']['wordChoicePrecision'];
 
 const positionValue = [
-  { left: "-14px", bottom: "-14px" },
-  { left: "calc(20% - 14px)", bottom: "calc(50% - 14px)" },
-  { left: "calc(50%)", bottom: "calc(100% - 42px)" },
-  { left: "calc(80% + 14px)", bottom: "calc(50% - 14px)" },
-  { left: "calc(100% - 14px)", bottom: "-14px" },
+  { left: '-14px', bottom: '-14px' },
+  { left: 'calc(20% - 14px)', bottom: 'calc(50% - 14px)' },
+  { left: 'calc(50%)', bottom: 'calc(100% - 42px)' },
+  { left: 'calc(80% + 14px)', bottom: 'calc(50% - 14px)' },
+  { left: 'calc(100% - 14px)', bottom: '-14px' },
 ];
 
 const analyzeVocabulary = (
-  vocabulary: INewTutorFeedback["vocabulary"][]
+  vocabulary: INewTutorFeedback['vocabulary'][]
 ): { range: TRange; wordChoicePrecision: TWordChoicePrecision } => {
   const range: { [key: string]: number } = {};
   const wordChoicePrecision: { [key: string]: number } = {};
@@ -37,23 +38,23 @@ const analyzeVocabulary = (
   );
 
   return {
-    range: (mostCommonRange as TRange) || "moderate",
-    wordChoicePrecision: (mostCommonWordChoicePrecision as TWordChoicePrecision) || "inappropriate",
+    range: (mostCommonRange as TRange) || 'moderate',
+    wordChoicePrecision: (mostCommonWordChoicePrecision as TWordChoicePrecision) || 'inappropriate',
   };
 };
 
 const getVocabularyFeedbackData = (key: string, value?: string) => {
-  if (key === "case1") {
+  if (key === 'case1') {
     return `Our analysis indicates that your vocabulary range is “${value}”. To expand your vocabulary, read widely, listen attentively, maintain a regularly updated vocabulary list and actively use new words in communication.`;
-  } else if (key === "case2") {
+  } else if (key === 'case2') {
     return `Our analysis indicates that your word choices are “${value}”. Work on selecting words that precisely convey your intended meaning. Use a thesaurus regularly to explore alternatives and enrich your expressive skills.`;
-  } else if (key === "case3") {
+  } else if (key === 'case3') {
     return `Our analysis indicates that your vocabulary range is moderate and your word choices are occasionally inappropriate. Diversify your vocabulary by incorporating new words daily. Improve word choice precision through careful selection and regular thesaurus use for enhanced expressiveness.`;
-  } else if (key === "case4") {
+  } else if (key === 'case4') {
     return `Your vocabulary range is assessed as “moderate”/”extensive” and the precision of your word choice is appropriate, indicating a keen understanding of selecting words that convey your intended meaning accurately. This is a commendable aspect of your language proficiency. Continue to refine your word choices to add depth and precision to your communication. `;
   }
 
-  return "";
+  return '';
 };
 
 const Vocabulary: React.FC<{ data: INewTutorFeedback[] }> = ({ data }) => {
@@ -61,13 +62,13 @@ const Vocabulary: React.FC<{ data: INewTutorFeedback[] }> = ({ data }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
   const groupData = useMemo(() => {
-    let description = "";
+    let description = '';
     // let vocabularyRange: INewTutorFeedback["vocabulary"]["range"] = "moderate";
     // let wordChoicePrecision: INewTutorFeedback["vocabulary"]["wordChoicePrecision"] =
     //   "inappropriate";
 
     if (data.length <= 5) {
-      description = "";
+      description = '';
       return {
         points: 1,
         description,
@@ -79,21 +80,21 @@ const Vocabulary: React.FC<{ data: INewTutorFeedback[] }> = ({ data }) => {
 
     const mostUsedData = analyzeVocabulary(lastFiveSessionData);
 
-    if (mostUsedData.range === "limited") {
-      description = getVocabularyFeedbackData("case1", "limited");
-    } else if (mostUsedData.wordChoicePrecision === "inappropriate") {
-      description = getVocabularyFeedbackData("case2", "inappropriate");
+    if (mostUsedData.range === 'limited') {
+      description = getVocabularyFeedbackData('case1', 'limited');
+    } else if (mostUsedData.wordChoicePrecision === 'inappropriate') {
+      description = getVocabularyFeedbackData('case2', 'inappropriate');
     } else if (
-      mostUsedData.wordChoicePrecision === "occasionally inappropriate" &&
-      mostUsedData.range === "moderate"
+      mostUsedData.wordChoicePrecision === 'occasionally inappropriate' &&
+      mostUsedData.range === 'moderate'
     ) {
-      description = getVocabularyFeedbackData("case3", "");
-    } else if (mostUsedData.wordChoicePrecision === "appropriate") {
-      description = getVocabularyFeedbackData("case4", "");
+      description = getVocabularyFeedbackData('case3', '');
+    } else if (mostUsedData.wordChoicePrecision === 'appropriate') {
+      description = getVocabularyFeedbackData('case4', '');
     }
 
     return {
-      points: mostUsedData.range === "limited" ? 2 : mostUsedData.range === "moderate" ? 3 : 5,
+      points: mostUsedData.range === 'limited' ? 2 : mostUsedData.range === 'moderate' ? 3 : 5,
       description,
     };
   }, [data]);
@@ -116,9 +117,9 @@ const Vocabulary: React.FC<{ data: INewTutorFeedback[] }> = ({ data }) => {
           <h4>VOCABULARY</h4>
         </div>
         <DropDownContainer>
-          <div className="container" style={{ display: "none" }}>
+          <div className="container" style={{ display: 'none' }}>
             <SelectContent onClick={toggleDropdown}>
-              <SelectText>{latestSession || "S-1 to S-5"}</SelectText>
+              <SelectText>{latestSession || 'S-1 to S-5'}</SelectText>
               <div>
                 <DownArrowIcon width={14} height={14} />
               </div>
@@ -137,7 +138,7 @@ const Vocabulary: React.FC<{ data: INewTutorFeedback[] }> = ({ data }) => {
       </Head>
       {data.length <= 5 ? (
         <div className="no-data">
-          <p>Finish more than 10 sessions to unlock your full analysis.</p>
+          <p>{config.NO_FEEDBACK_MESSAGE}</p>
         </div>
       ) : (
         <>
@@ -261,18 +262,18 @@ const StyledChart = styled.div`
   .speedometer {
     width: 100%;
     height: 100%;
-    background-image: url("${SpeedometerBg}");
+    background-image: url('${SpeedometerBg}');
     background-size: 100% 100%;
     position: relative;
 
     &::after {
-      content: "";
+      content: '';
       position: absolute;
       top: 5px;
       left: 5px;
       right: 5px;
       bottom: 5px;
-      background-image: url("${Speedometer}");
+      background-image: url('${Speedometer}');
       background-size: 100% 100%;
     }
   }
@@ -290,7 +291,7 @@ const StyledChart = styled.div`
     transform: translate(-50%, -50%);
 
     &::after {
-      content: "";
+      content: '';
       position: absolute;
       width: 75%;
       height: 75%;

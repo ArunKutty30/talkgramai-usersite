@@ -159,7 +159,7 @@ export const faqs = [
   {
     question: 'What if the tutor misses my booked session?',
     answer:
-      'If the tutor misses a session, it will also be added as a backlog session to ensure users receive the full value of their subscription.',
+      'If the tutor misses your booked session, a backlog session will be added to your current subscription.You can make use of the backlog sessions before your subscription ends',
   },
   {
     question: 'What will happen if I miss a booked session?',
