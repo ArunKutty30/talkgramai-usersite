@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
-import dayjs from "dayjs";
+import React, { useEffect, useMemo, useState } from 'react';
+import styled from 'styled-components';
+import dayjs from 'dayjs';
 
-import { ReactComponent as DownArrowIcon } from "../../assets/icons/arrow_down.svg";
+import { ReactComponent as DownArrowIcon } from '../../assets/icons/arrow_down.svg';
 // import { generateTimeIntervalsWithDate } from "../../constants/formatter";
 // import Dropdown from "../Dropdown";
-import { TDropdownList } from "../../constants/types";
-import { reminderStore } from "../../store/reminderStore";
-import toast from "react-hot-toast";
+import { TDropdownList } from '../../constants/types';
+import { reminderStore } from '../../store/reminderStore';
+import toast from 'react-hot-toast';
+import { userStore } from '../../store/userStore';
 // import ButtonGroup from "../ButtonGroup";
 // import { meridianList } from "../../constants/data";
 
@@ -143,8 +144,10 @@ interface ISelectTimeProps {
 
 const SelectTime: React.FC<ISelectTimeProps> = ({ selectedDate, setSelectedDate }) => {
   const [startDate, setStartDate] = useState(new Date());
-  const [currentMonth, setCurrentMonth] = useState("");
+  const [currentMonth, setCurrentMonth] = useState('');
   const endDate = reminderStore((store) => store.endDate);
+  const subscriptionData = userStore((store) => store.subscriptionData);
+
   // const [selectedMeridian, setSelectedMeridian] = useState<TDropdownList>(meridianList[0]);
 
   // const intervals = generateTimeIntervalsWithDate(selectedDate, 9, 24, 30);
@@ -181,7 +184,7 @@ const SelectTime: React.FC<ISelectTimeProps> = ({ selectedDate, setSelectedDate 
   };
 
   useEffect(() => {
-    const monthName = startDate.toLocaleString("default", { month: "long" });
+    const monthName = startDate.toLocaleString('default', { month: 'long' });
     setCurrentMonth(monthName);
   }, [startDate]);
 
@@ -221,6 +224,11 @@ const SelectTime: React.FC<ISelectTimeProps> = ({ selectedDate, setSelectedDate 
     );
   };
 
+  useMemo(() => {
+    if (subscriptionData) {
+    }
+  }, [subscriptionData]);
+
   return (
     <SelectTimeContainer>
       <BlockOne className="session-card">
@@ -240,26 +248,32 @@ const SelectTime: React.FC<ISelectTimeProps> = ({ selectedDate, setSelectedDate 
                 key={index.toString()}
                 className={
                   // selectedDate.toISOString() === new Date(data).toISOString() ? "active" : ""
-                  dayjs(selectedDate).isSame(data, "day")
-                    ? "active"
-                    : dayjs(data).isBefore(endDate, "day")
-                    ? "valid-date"
-                    : dayjs(data).isSame(endDate, "day")
-                    ? "valid-date"
-                    : "invalid-date"
+                  dayjs(selectedDate).isSame(data, 'day')
+                    ? 'active'
+                    : dayjs(data).isBefore(endDate, 'day')
+                    ? 'valid-date'
+                    : dayjs(data).isSame(endDate, 'day')
+                    ? 'valid-date'
+                    : subscriptionData
+                    ? 'invalid-date'
+                    : 'valid-date'
                 }
                 onClick={() => {
-                  if (dayjs(data).isBefore(endDate, "day")) {
+                  if (!subscriptionData) {
                     setSelectedDate(new Date(data));
-                  } else if (dayjs(data).isSame(endDate, "day")) {
+                    return;
+                  }
+                  if (dayjs(data).isBefore(endDate, 'day')) {
+                    setSelectedDate(new Date(data));
+                  } else if (dayjs(data).isSame(endDate, 'day')) {
                     setSelectedDate(new Date(data));
                   } else {
-                    toast.error("Booking on this date is restricted");
+                    toast.error('Booking on this date is restricted');
                   }
                 }}
               >
-                <p>{dayjs(data).format("ddd")}</p>
-                <span>{dayjs(data).format("DD")}</span>
+                <p>{dayjs(data).format('ddd')}</p>
+                <span>{dayjs(data).format('DD')}</span>
               </li>
             ))}
           </ul>
@@ -277,26 +291,26 @@ const SelectTime: React.FC<ISelectTimeProps> = ({ selectedDate, setSelectedDate 
                 key={index.toString()}
                 className={
                   // selectedDate.toISOString() === new Date(data).toISOString() ? "active" : ""
-                  dayjs(selectedDate).isSame(data, "day")
-                    ? "active"
-                    : dayjs(data).isBefore(endDate, "day")
-                    ? "valid-date"
-                    : dayjs(data).isSame(endDate, "day")
-                    ? "valid-date"
-                    : "invalid-date"
+                  dayjs(selectedDate).isSame(data, 'day')
+                    ? 'active'
+                    : dayjs(data).isBefore(endDate, 'day')
+                    ? 'valid-date'
+                    : dayjs(data).isSame(endDate, 'day')
+                    ? 'valid-date'
+                    : 'invalid-date'
                 }
                 onClick={() => {
-                  if (dayjs(data).isBefore(endDate, "day")) {
+                  if (dayjs(data).isBefore(endDate, 'day')) {
                     setSelectedDate(new Date(data));
-                  } else if (dayjs(data).isSame(endDate, "day")) {
+                  } else if (dayjs(data).isSame(endDate, 'day')) {
                     setSelectedDate(new Date(data));
                   } else {
-                    toast.error("Booking on this date is restricted");
+                    toast.error('Booking on this date is restricted');
                   }
                 }}
               >
-                <p>{dayjs(data).format("ddd")}</p>
-                <span>{dayjs(data).format("DD")}</span>
+                <p>{dayjs(data).format('ddd')}</p>
+                <span>{dayjs(data).format('DD')}</span>
               </li>
             ))}
           </ul>

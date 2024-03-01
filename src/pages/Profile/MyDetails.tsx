@@ -48,7 +48,6 @@ const MyDetails = () => {
                 <StyledTagContainer>
                   {profileData.interests.length ? (
                     <>
-                      {' '}
                       <label>Interests</label>
                       <StyledTagList>
                         {profileData.interests.map((int, i) => (

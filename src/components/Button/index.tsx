@@ -55,6 +55,7 @@ const StyledButton = styled(Button)`
 
     &:hover {
       border: 1px solid var(--error);
+      color: var(--error);
     }
   }
 
@@ -65,6 +66,10 @@ const StyledButton = styled(Button)`
     background-color: var(--error, tomato);
     transition: all 200ms linear;
     line-height: 22px;
+
+    &:hover {
+      color: var(--error);
+    }
   }
 
   &.btn-small {
