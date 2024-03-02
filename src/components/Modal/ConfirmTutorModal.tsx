@@ -112,6 +112,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
   const user = userStore((store) => store.user);
   const profileData = userStore((store) => store.profileData);
   const subscriptionData = userStore((store) => store.subscriptionData);
+  const overallBookedSession = userStore((store) => store.overallBookedSession);
   const refetchUser = userStore((store) => store.refetchUser);
   const sessionLeft = userStore((store) => store.sessionLeft);
   const [tutorData, setTutorData] = useState<ITutorProfileData>();
@@ -151,7 +152,6 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
 
   const handleCancelSession = async () => {
     try {
-      console.log('gjkgkjg');
       if (!user || !profileData) return;
       if (!formData) return;
       console.log('ENTER');
@@ -269,6 +269,8 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
         cost = config.DEMO_CLASS_FEE;
         isDemoClass = true;
         await updateUserDoc(user.uid, { demoClassBooked: true });
+      } else if (overallBookedSession.length === 0) {
+        isDemoClass = true;
       }
 
       const endTime = dayjs(selectedDate).add(30, 'minute').toDate();
