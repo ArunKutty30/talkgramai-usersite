@@ -84,6 +84,8 @@ export interface ITutorProfileData {
   profileImg: string;
   description: string;
   id: string;
+  totalRatings?: number;
+  totalRatingsCount?: number;
 }
 
 export type TDropdownList = {

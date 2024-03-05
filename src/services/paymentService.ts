@@ -1,19 +1,19 @@
-import axios from "axios";
-import dayjs from "dayjs";
-import { Timestamp } from "firebase/firestore";
+import axios from 'axios';
+import dayjs from 'dayjs';
+import { Timestamp } from 'firebase/firestore';
 
-import logo from "../assets/logo/logo_short.png";
+import logo from '../assets/logo/logo_short.png';
 
-import { BACKEND_URL } from "../utils/api";
-import { config } from "../constants/config";
-import { createSubscriptionDocWithOrderId } from "./subscriptionService";
-import { ICategory } from "../constants/types";
-import { User } from "firebase/auth";
-import { updateUserDoc } from "./userService";
+import { BACKEND_URL } from '../utils/api';
+import { config } from '../constants/config';
+import { createSubscriptionDocWithOrderId } from './subscriptionService';
+import { ICategory } from '../constants/types';
+import { User } from 'firebase/auth';
+import { updateUserDoc } from './userService';
 
 export const loadScript = (src: string) => {
   return new Promise((resolve) => {
-    const script = document.createElement("script");
+    const script = document.createElement('script');
     script.src = src;
     script.onload = () => {
       resolve(true);
@@ -26,29 +26,29 @@ export const loadScript = (src: string) => {
 };
 
 export const invokeRazorpay = async () => {
-  const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+  const res = await loadScript('https://checkout.razorpay.com/v1/checkout.js');
 
   if (!res) {
-    alert("Razorpay SDK failed to load. Are you online?");
+    alert('Razorpay SDK failed to load. Are you online?');
     return;
   }
 
-  const result = await axios.post("http://localhost:8000/payment/orders");
+  const result = await axios.post('http://localhost:8000/payment/orders');
 
   if (!result) {
-    alert("Server error. Are you online?");
+    alert('Server error. Are you online?');
     return;
   }
 
   const { amount, id: order_id, currency } = result.data;
 
   const options = {
-    key: "rzp_test_7Kya0fkFuobW4L", // Enter the Key ID generated from the Dashboard
+    key: 'rzp_test_7Kya0fkFuobW4L', // Enter the Key ID generated from the Dashboard
     amount: amount.toString(),
     currency: currency,
-    name: "Talkgram",
-    description: "Test Transaction",
-    image: { logo: "" },
+    name: 'Talkgram',
+    description: 'Test Transaction',
+    image: { logo: '' },
     order_id: order_id,
     handler: async function (response: any) {
       const data = {
@@ -58,18 +58,18 @@ export const invokeRazorpay = async () => {
         razorpaySignature: response.razorpay_signature,
       };
 
-      await axios.post("http://localhost:8000/payment/success", data);
+      await axios.post('http://localhost:8000/payment/success', data);
     },
     prefill: {
-      name: "arun",
-      email: "example@example.com",
-      contact: "9999999999",
+      name: 'arun',
+      email: 'example@example.com',
+      contact: '9999999999',
     },
     notes: {
-      address: "Talkgram Corporate Office",
+      address: 'Talkgram Corporate Office',
     },
     theme: {
-      color: "#f7941f",
+      color: '#f7941f',
     },
   };
 
@@ -85,7 +85,7 @@ const handleStoreData = async (docId: string, userData: User) => {
       currentSubscriptionId: docId,
       isNewUser: false,
     });
-    console.log("success");
+    console.log('success');
   } catch (error) {
     console.log(error);
   }
@@ -97,12 +97,12 @@ export const handlePayForDemoClass = async (
 ) => {
   try {
     const REACT_APP_RAZORPAY_KEY = process.env.REACT_APP_RAZORPAY_KEY;
-    if (!REACT_APP_RAZORPAY_KEY) return alert("RAZORPAY KEY NOT ADDED");
+    if (!REACT_APP_RAZORPAY_KEY) return alert('RAZORPAY KEY NOT ADDED');
 
-    const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+    const res = await loadScript('https://checkout.razorpay.com/v1/checkout.js');
 
     if (!res) {
-      throw new Error("Razorpay SDK failed to load. Are you online?");
+      throw new Error('Razorpay SDK failed to load. Are you online?');
     }
 
     const result = await axios.post(`${BACKEND_URL}/payment/orders`, {
@@ -110,17 +110,17 @@ export const handlePayForDemoClass = async (
     });
 
     if (!result) {
-      alert("Server error. Are you online?");
+      alert('Server error. Are you online?');
       return;
     }
 
     const { amount, id: order_id, currency } = result.data;
-    const endDate = dayjs(new Date()).add(3, "days").toDate();
+    const endDate = dayjs(new Date()).add(3, 'days').toDate();
 
     const subscriptionData = {
       user: user.uid,
       type: ICategory.TUTOR_TALK,
-      plan: "Demo Class",
+      plan: 'Demo Class',
       offer: 0,
       startDate: Timestamp.now(),
       endDate: Timestamp.fromDate(endDate),
@@ -133,7 +133,8 @@ export const handlePayForDemoClass = async (
       backlogSession: 0,
       bookedSession: 0,
       demoClass: true,
-      status: "PENDING",
+      status: 'PENDING',
+      recording: true,
     };
 
     await createSubscriptionDocWithOrderId(order_id, subscriptionData);
@@ -142,8 +143,8 @@ export const handlePayForDemoClass = async (
       key: REACT_APP_RAZORPAY_KEY,
       amount: amount.toString(),
       currency: currency,
-      name: "Talkgram",
-      description: "Test Transaction",
+      name: 'Talkgram',
+      description: 'Test Transaction',
       image: { logo },
       order_id: order_id,
       handler: async function (response: any) {
@@ -161,10 +162,10 @@ export const handlePayForDemoClass = async (
         contact: user.phoneNumber,
       },
       notes: {
-        address: "Talkgram Corporate Office",
+        address: 'Talkgram Corporate Office',
       },
       theme: {
-        color: "#f7941f",
+        color: '#f7941f',
       },
     };
 

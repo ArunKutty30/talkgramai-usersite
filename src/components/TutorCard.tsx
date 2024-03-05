@@ -1,15 +1,21 @@
-import React, { useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import styled from "styled-components";
+import React, { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import styled from 'styled-components';
 
-import { ReactComponent as HeartIcon } from "../assets/icons/heart.svg";
+import { ReactComponent as HeartIcon } from '../assets/icons/heart.svg';
 
-import { ITutorProfileData } from "../constants/types";
-import { updateUserFavouriteTutorsDoc } from "../services/userService";
-import { userStore } from "../store/userStore";
-import Rating from "./Rating";
+import { ITutorProfileData } from '../constants/types';
+import { updateUserFavouriteTutorsDoc } from '../services/userService';
+import { userStore } from '../store/userStore';
+import Rating from './Rating';
 
-const TutorCard: React.FC<ITutorProfileData> = ({ id: tutorId, username, profileImg }) => {
+const TutorCard: React.FC<ITutorProfileData> = ({
+  id: tutorId,
+  username,
+  profileImg,
+  totalRatings,
+  totalRatingsCount,
+}) => {
   const [, setSearchParams] = useSearchParams();
 
   const user = userStore((store) => store.user);
@@ -19,7 +25,7 @@ const TutorCard: React.FC<ITutorProfileData> = ({ id: tutorId, username, profile
   const [isFavouriteTutor, setIsFavouriteTutor] = useState(
     Boolean(
       profileData &&
-        profileData["favouriteTutors"] &&
+        profileData['favouriteTutors'] &&
         profileData.favouriteTutors.some((s) => s === tutorId)
     )
   );
@@ -31,7 +37,7 @@ const TutorCard: React.FC<ITutorProfileData> = ({ id: tutorId, username, profile
       if (!isFavouriteTutor) setIsFavouriteTutor(true);
       else setIsFavouriteTutor(false);
       await updateUserFavouriteTutorsDoc(user.uid, tutorId);
-      console.log("FAVOURITE TUTOR ADDED");
+      console.log('FAVOURITE TUTOR ADDED');
       refetchUser();
     } catch (error) {
       console.log(error);
@@ -58,7 +64,10 @@ const TutorCard: React.FC<ITutorProfileData> = ({ id: tutorId, username, profile
         <h6 className="mb-8">{username}</h6>
         {/* <p className="s-14 mb-15 truncate">M.A, M.Phil, PHD, Professor... </p> */}
         <div className="flex-between">
-          <Rating rating={5} iconSize={20} />
+          <Rating
+            rating={Math.ceil((totalRatings || 0) / (totalRatingsCount || 0))}
+            iconSize={20}
+          />
           <button
             disabled={loading}
             type="button"
@@ -68,7 +77,7 @@ const TutorCard: React.FC<ITutorProfileData> = ({ id: tutorId, username, profile
               handleAddFavouriteTutor();
             }}
           >
-            <HeartIcon fill={isFavouriteTutor ? "rgb(204, 44, 61)" : "none"} />
+            <HeartIcon fill={isFavouriteTutor ? 'rgb(204, 44, 61)' : 'none'} />
           </button>
         </div>
         {/* <div className={i.toString() === selectedTutor ? "radio active" : "radio"}></div> */}
