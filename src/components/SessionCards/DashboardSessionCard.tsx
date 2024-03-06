@@ -214,7 +214,7 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
               </p>
             </div>
           </div>
-          {type === 'previous' && (
+          {(type === 'previous' || status === 'TUTOR_MISSED') && (
             <Button
               variant="error"
               style={{

@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
-import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { collection, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 
-import { BOOKINGS_COLLECTION_NAME } from "../../constants/data";
-import { EBookingStatus, IBookingSession } from "../../constants/types";
-import { userStore } from "../../store/userStore";
-import { db } from "../../utils/firebase";
-import NoSession from "../../components/NoSession";
-import SessionCardLoader from "../../components/Loader/SessionCardLoader";
-import DashboardSessionCard from "../../components/SessionCards/DashboardSessionCard";
+import { BOOKINGS_COLLECTION_NAME } from '../../constants/data';
+import { EBookingStatus, IBookingSession } from '../../constants/types';
+import { userStore } from '../../store/userStore';
+import { db } from '../../utils/firebase';
+import NoSession from '../../components/NoSession';
+import SessionCardLoader from '../../components/Loader/SessionCardLoader';
+import DashboardSessionCard from '../../components/SessionCards/DashboardSessionCard';
 
 const MissedSession = () => {
   const user = userStore((store) => store.user);
@@ -20,9 +20,9 @@ const MissedSession = () => {
     const colRef = collection(db, BOOKINGS_COLLECTION_NAME);
     const q = query(
       colRef,
-      where("user", "==", user.uid),
-      where("status", "in", [EBookingStatus.MISSED, EBookingStatus.TUTOR_MISSED]),
-      orderBy("endTime", "desc")
+      where('user', '==', user.uid),
+      where('status', 'in', [EBookingStatus.MISSED, EBookingStatus.TUTOR_MISSED]),
+      orderBy('endTime', 'desc')
     );
 
     const unsubscribe = onSnapshot(
@@ -44,7 +44,7 @@ const MissedSession = () => {
         setLoading(false);
       },
       (error) => {
-        console.error("Error fetching upcoming sessions:", error);
+        console.error('Error fetching upcoming sessions:', error);
       }
     );
 
