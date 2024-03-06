@@ -658,7 +658,7 @@ const StyledFeedbackDropdown = styled.div`
   padding: 20px 20px 0;
   display: flex;
   align-items: center;
-  gap: 60px;
+  gap: 20px;
   flex-wrap: wrap;
 
   @media (max-width: 600px) {
