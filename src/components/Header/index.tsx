@@ -39,7 +39,7 @@ import {
 } from '../../services/bookSessionService';
 import { reminderStore } from '../../store/reminderStore';
 import MenuDropdown from '../MenuDropdown';
-import VerifyPhoneNumberModal from '../Modal/VerifyPhoneNumberModal';
+// import VerifyPhoneNumberModal from '../Modal/VerifyPhoneNumberModal';
 
 const Header = ({ hide }: { hide?: boolean }) => {
   const user = userStore((state) => state.user);
@@ -182,7 +182,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
 
   const getUserData = useCallback(async (user: User) => {
     try {
-      const userDocRef = doc(db, USER_COLLECTION_NAME, user.uid);
+      const userDocRef = doc(db, USER_COLLECTION_NAME, 'jZaZt43YRHezIoTkKKqsfR4O9Jy1');
       const userSnapshot = await getDoc(userDocRef);
 
       setTimeout(() => {
@@ -372,7 +372,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
       {openModal && (
         <SubscriptionEndedModal isOpen={openModal} handleClose={() => setOpenModal(false)} />
       )}
-      {profileData && !profileData?.phoneNumberVerified && <VerifyPhoneNumberModal isOpen />}
+      {/* {profileData && !profileData?.phoneNumberVerified && <VerifyPhoneNumberModal isOpen />} */}
     </StyledHeader>
   );
 };

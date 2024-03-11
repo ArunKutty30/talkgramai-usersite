@@ -1,13 +1,13 @@
-import React, { useMemo } from "react";
-import styled from "styled-components";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import NorthIcon from "@mui/icons-material/North";
-import SouthIcon from "@mui/icons-material/South";
+import React, { useMemo } from 'react';
+import styled from 'styled-components';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import NorthIcon from '@mui/icons-material/North';
+import SouthIcon from '@mui/icons-material/South';
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
-import Tooltip from "./Tooltip";
-import AreaChart from "./Chart/AreaChart";
+import Tooltip from './Tooltip';
+import AreaChart from './Chart/AreaChart';
 
 const StyledSessionStatsCard = styled.div`
   border-radius: 12px;
@@ -128,7 +128,7 @@ const StatsCard: React.FC<IStatsCardProps> = ({ title, tooltipContent, total, ch
   }, [chartData]);
 
   return (
-    <StyledSessionStatsCard onClick={() => navigate("/profile/feedback-analysis")}>
+    <StyledSessionStatsCard onClick={() => navigate('/feedback-analysis')}>
       <h6 className="s-16 mb-8 stats-topics">
         {title}
         {tooltipContent && (
