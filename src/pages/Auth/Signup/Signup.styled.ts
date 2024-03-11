@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const StyledDiv = styled.div`
   height: 100vh;
@@ -8,6 +8,10 @@ export const StyledDiv = styled.div`
   flex-direction: column;
   justify-content: space-between;
   position: relative;
+
+  @media (max-width: 768px) {
+    text-align: center;
+  }
 
   .logo {
     height: 40px;
@@ -97,6 +101,7 @@ export const FormInput = styled.div`
     font-size: 14px;
     line-height: 18px;
     color: var(--text-secondary);
+    text-align: left;
   }
 
   input {
