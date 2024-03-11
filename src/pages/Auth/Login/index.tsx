@@ -1,16 +1,16 @@
-import React, { useState } from "react";
-import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
-import * as Yup from "yup";
+import React, { useState } from 'react';
+import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik';
+import * as Yup from 'yup';
 import {
   signInWithPopup,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   AuthErrorCodes,
-} from "firebase/auth";
-import { Link } from "react-router-dom";
-import { EyeFill } from "styled-icons/bootstrap";
-import { EyeSlashFill } from "styled-icons/bootstrap";
-import { FirebaseError } from "firebase/app";
+} from 'firebase/auth';
+import { Link } from 'react-router-dom';
+import { EyeFill } from 'styled-icons/bootstrap';
+import { EyeSlashFill } from 'styled-icons/bootstrap';
+import { FirebaseError } from 'firebase/app';
 
 import {
   StyledAuthHeader,
@@ -20,23 +20,23 @@ import {
   FormInput,
   FormInputField,
   FormInputWrapper,
-} from "./Login.styled";
+} from './Login.styled';
 
-import logo from "../../../assets/logo/logo.png";
-import Google from "../../../assets/icons/google.svg";
-import { Button } from "../../../components";
-import AuthSlider from "../AuthSlider";
-import { auth } from "../../../utils/firebase";
+import logo from '../../../assets/logo/logo.png';
+import Google from '../../../assets/icons/google.svg';
+import { Button } from '../../../components';
+import AuthSlider from '../AuthSlider';
+import { auth } from '../../../utils/firebase';
 
-const initialState = { email: "", password: "" };
+const initialState = { email: '', password: '' };
 
 const validationSchema = Yup.object({
-  email: Yup.string().email("invalid email address").required("This field is required"),
-  password: Yup.string().min(8, "minimum 8 characters required").required("This field is required"),
+  email: Yup.string().email('invalid email address').required('This field is required'),
+  password: Yup.string().min(8, 'minimum 8 characters required').required('This field is required'),
 });
 
 const Login = () => {
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (
@@ -49,11 +49,11 @@ const Login = () => {
       console.log(error);
       if (error instanceof FirebaseError) {
         if (error.code === AuthErrorCodes.USER_DELETED) {
-          console.log("user not found");
-          setError("username or password is invalid");
+          console.log('user not found');
+          setError('username or password is invalid');
         }
         if (error.code === AuthErrorCodes.INVALID_PASSWORD) {
-          setError("username or password is invalid");
+          setError('username or password is invalid');
         }
         actions.setSubmitting(false);
       }
@@ -85,8 +85,11 @@ const Login = () => {
             >
               {({ isSubmitting }) => (
                 <Form>
-                  <h2 style={{ marginBottom: "10px" }}>Welcome back!</h2>
-                  <p className="text-secondary s-16" style={{ marginBottom: "30px" }}>
+                  <h2 style={{ marginBottom: '10px' }}>Welcome back!</h2>
+                  <p
+                    className="text-secondary s-16"
+                    style={{ marginBottom: '30px', lineHeight: '1.3' }}
+                  >
                     Please enter the credentials to access your account
                   </p>
                   <FormInputWrapper>
@@ -102,7 +105,7 @@ const Login = () => {
                       <FormInputField>
                         <Field
                           name="password"
-                          type={showPassword ? "text" : "password"}
+                          type={showPassword ? 'text' : 'password'}
                           placeholder="Enter your password"
                         />
                         {showPassword ? (
@@ -125,12 +128,12 @@ const Login = () => {
                     {!isSubmitting && error && <p className="error-text">{error}</p>}
                   </FormInputWrapper>
                   <Button size="large" type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? "Please wait..." : "Login"}
+                    {isSubmitting ? 'Please wait...' : 'Login'}
                   </Button>
                 </Form>
               )}
             </Formik>
-            <p className="text-secondary" style={{ margin: "30px 0", textAlign: "center" }}>
+            <p className="text-secondary" style={{ margin: '30px 0', textAlign: 'center' }}>
               or
             </p>
             <div>
@@ -139,7 +142,7 @@ const Login = () => {
                 <span>Google</span>
               </button>
             </div>
-            <p className="text-secondary" style={{ marginTop: "30px", textAlign: "center" }}>
+            <p className="text-secondary" style={{ marginTop: '30px', textAlign: 'center' }}>
               Don&#39;t have an account?&nbsp;
               <Link to="/signup" className="primary">
                 Create Account

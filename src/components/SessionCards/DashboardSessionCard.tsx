@@ -477,6 +477,10 @@ const StyledSessionCard = styled.div<{ type: ISessionType }>`
   z-index: 1;
   position: relative;
 
+  @media (max-width: 600px) {
+    padding: 15px;
+  }
+
   ${(props) =>
     props.type === 'missed' &&
     `
@@ -576,8 +580,6 @@ const BlockLeft = styled.div<{ type: ISessionType }>`
 
     &.content {
       @media (max-width: 968px) {
-        padding-top: 10px;
-        margin-top: 10px;
         width: 100%;
       }
     }

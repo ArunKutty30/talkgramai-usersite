@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import styled from "styled-components";
-import { collection, limit, onSnapshot, orderBy, query, where } from "firebase/firestore";
-import ReactCountdown, { CountdownRenderProps } from "react-countdown";
-import { Box } from "@mui/material";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+import { collection, limit, onSnapshot, orderBy, query, where } from 'firebase/firestore';
+import ReactCountdown, { CountdownRenderProps } from 'react-countdown';
+import { Box } from '@mui/material';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
-import SectionHeader from "../SectionHeader";
-import Button from "../Button";
-import NoSessionIllustration from "../../assets/images/no_sessions.svg";
-import { userStore } from "../../store/userStore";
-import { BOOKINGS_COLLECTION_NAME } from "../../constants/data";
-import { db } from "../../utils/firebase";
-import { EBookingStatus, IBookingSession } from "../../constants/types";
-import { reminderStore } from "../../store/reminderStore";
-import { addPrefixZero } from "../../utils/helpers";
-import DashboardSessionCard from "../SessionCards/DashboardSessionCard";
-import UserSessionStats from "../UserSessionStats";
+import SectionHeader from '../SectionHeader';
+import Button from '../Button';
+import NoSessionIllustration from '../../assets/images/no_sessions.svg';
+import { userStore } from '../../store/userStore';
+import { BOOKINGS_COLLECTION_NAME } from '../../constants/data';
+import { db } from '../../utils/firebase';
+import { EBookingStatus, IBookingSession } from '../../constants/types';
+import { reminderStore } from '../../store/reminderStore';
+import { addPrefixZero } from '../../utils/helpers';
+import DashboardSessionCard from '../SessionCards/DashboardSessionCard';
+import UserSessionStats from '../UserSessionStats';
 
 dayjs.extend(relativeTime);
 
@@ -35,26 +35,26 @@ const SessionReminder = () => {
       return (
         <Box
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "start",
-            gap: "15px",
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'start',
+            gap: '15px',
           }}
         >
-          <p style={{ color: "#646464" }}>Your remaining</p>
+          <p style={{ color: '#646464' }}>Your remaining</p>
           <h1>
-            {remainingSession} Session{remainingSession > 1 ? "s" : ""}
+            {remainingSession} Session{remainingSession > 1 ? 's' : ''}
           </h1>
           <div>
             {/* <BellIcon width={14} height={14} /> */}
             <p>
               {/* Your {session} session{session > 1 ? "s" : ""} for this week ends in{" "} */}
-              ends in{" "}
-              <b style={{ display: "inline-block", minWidth: "67px" }}>
-                {addPrefixZero(days)}D : {addPrefixZero(hours)}H : {addPrefixZero(minutes)}M :{" "}
+              ends in{' '}
+              <b style={{ display: 'inline-block', minWidth: '67px' }}>
+                {addPrefixZero(days)}D : {addPrefixZero(hours)}H : {addPrefixZero(minutes)}M :{' '}
                 {addPrefixZero(seconds)}S
-              </b>{" "}
+              </b>{' '}
               !!
             </p>
           </div>
@@ -70,22 +70,22 @@ const SessionReminder = () => {
       return (
         <Box
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "start",
-            gap: "15px",
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'start',
+            gap: '15px',
           }}
         >
-          <p style={{ color: "#646464" }}>Your next</p>
+          <p style={{ color: '#646464' }}>Your next</p>
           <h1>{subscriptionData?.sessionPerWeek} Sessions</h1>
           <div>
             {/* <BellIcon width={14} height={14} /> */}
             <p>
               {/* Your next week session booking starts in{" "} */}
-              starts in{" "}
-              <b style={{ display: "inline-block", minWidth: "67px" }}>
-                {addPrefixZero(days)}D : {addPrefixZero(hours)}H : {addPrefixZero(minutes)}M :{" "}
+              starts in{' '}
+              <b style={{ display: 'inline-block', minWidth: '67px' }}>
+                {addPrefixZero(days)}D : {addPrefixZero(hours)}H : {addPrefixZero(minutes)}M :{' '}
                 {addPrefixZero(seconds)}S
               </b>
             </p>
@@ -126,10 +126,10 @@ const SubscribedUserSession: React.FC = () => {
     const colRef = collection(db, BOOKINGS_COLLECTION_NAME);
     const q = query(
       colRef,
-      where("user", "==", user.uid),
-      where("status", "==", "UPCOMING"),
-      where("endTime", ">=", new Date()),
-      orderBy("endTime", "asc"),
+      where('user', '==', user.uid),
+      where('status', '==', 'UPCOMING'),
+      where('endTime', '>=', new Date()),
+      orderBy('endTime', 'asc'),
       limit(1)
     );
 
@@ -151,7 +151,7 @@ const SubscribedUserSession: React.FC = () => {
         setSessions(slots);
       },
       (error) => {
-        console.error("Error fetching upcoming sessions:", error);
+        console.error('Error fetching upcoming sessions:', error);
       }
     );
 
@@ -165,10 +165,10 @@ const SubscribedUserSession: React.FC = () => {
     const colRef = collection(db, BOOKINGS_COLLECTION_NAME);
     const q = query(
       colRef,
-      where("user", "==", user.uid),
-      where("endTime", "<", new Date()),
-      where("status", "in", [EBookingStatus.UPCOMING, EBookingStatus.COMPLETED]),
-      orderBy("endTime", "desc"),
+      where('user', '==', user.uid),
+      where('endTime', '<', new Date()),
+      where('status', 'in', [EBookingStatus.UPCOMING, EBookingStatus.COMPLETED]),
+      orderBy('endTime', 'desc'),
       limit(1)
     );
 
@@ -178,7 +178,7 @@ const SubscribedUserSession: React.FC = () => {
         const slots: any[] = [];
         snapshot.forEach((doc) => {
           const data = doc.data();
-          if (data.status !== "MISSED") {
+          if (data.status !== 'MISSED') {
             slots.push({
               id: doc.id,
               ...data,
@@ -192,7 +192,7 @@ const SubscribedUserSession: React.FC = () => {
         setPreviousSessionss(slots);
       },
       (error) => {
-        console.error("Error fetching upcoming sessions:", error);
+        console.error('Error fetching upcoming sessions:', error);
       }
     );
 
@@ -243,7 +243,7 @@ const SubscribedUserSession: React.FC = () => {
             )}
           </StyledUpComingSessionContainer>
           <StyledPreviousSessionContainer>
-            <div className="flex-between" style={{ marginBottom: "24px" }}>
+            <div className="flex-between" style={{ marginBottom: '24px' }}>
               <h5 className="section-title">Previous Sessions</h5>
               <Link className="primary-link" to="/sessions?type=previous">
                 View all
@@ -270,10 +270,10 @@ const SubscribedUserSession: React.FC = () => {
             <Box
               className="book-session-one"
               sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "15px",
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '15px',
               }}
             >
               <Link to="/book-session">
@@ -304,16 +304,16 @@ const SubscribedUserSession: React.FC = () => {
           </Box>
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: "15px",
-              height: "2rem",
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '15px',
+              height: '2rem',
             }}
             className="book-session-two"
           >
             <Link to="/book-session">
-              <Button style={{ whiteSpace: "nowrap", width: "100%" }}>+ Book Session</Button>
+              <Button style={{ whiteSpace: 'nowrap', width: '100%' }}>+ Book Session</Button>
             </Link>
           </Box>
         </StyledCurrentPlan>
@@ -324,19 +324,9 @@ const SubscribedUserSession: React.FC = () => {
 
 const CurrentPlanCards = ({ title, count }: { title: string; count: number }) => {
   return (
-    <Box
-      sx={{
-        background: "white",
-        padding: "1rem",
-        borderRadius: "12px",
-        border: "1px solid #E3E3E380",
-        boxShadow: "0px 1px 6px rgba(0, 0, 0, 0.02)",
-        minWidth: "10rem",
-        fontSize: "0.7rem",
-      }}
-    >
-      <p style={{ fontSize: "13px" }}>{title}</p>
-      <h1 style={{ padding: "0.5rem 0 0 0" }}>{count}</h1>
+    <Box className="plans-card">
+      <p style={{ fontSize: '13px' }}>{title}</p>
+      <h1 style={{ padding: '0.5rem 0 0 0' }}>{count}</h1>
     </Box>
   );
 };
@@ -372,6 +362,21 @@ const StyledCurrentPlan = styled.section`
     justify-content: start;
     align-items: flex-start;
     gap: 15px;
+
+    .plans-card {
+      background: white;
+      padding: 1rem;
+      border-radius: 12px;
+      border: 1px solid #e3e3e380;
+      box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.02);
+      min-width: 10rem;
+      font-size: 0.7rem;
+
+      @media (max-width: 600px) {
+        padding: 0.5rem;
+        min-width: auto;
+      }
+    }
   }
 
   @media (max-width: 1100px) {
@@ -379,6 +384,10 @@ const StyledCurrentPlan = styled.section`
     justify-content: start;
     align-items: start;
     gap: 20px;
+
+    @media (max-width: 768px) {
+      padding: 15px;
+    }
 
     .book-session-one {
       display: flex;
@@ -416,7 +425,7 @@ const StyledCurrentPlan = styled.section`
 
   @media (max-width: 400px) {
     .sec-last-card-hold {
-      grid-template-columns: repeat(2, 9rem);
+      grid-template-columns: repeat(2, 1fr);
       font-size: 70%;
       gap: 5px;
       justify-content: start;
@@ -541,7 +550,7 @@ const StyledTimeReminder = styled.div`
 
     p {
       color: var(--black, #ff1a1a);
-      font-family: "Inter";
+      font-family: 'Inter';
       font-size: 14px;
       font-style: normal;
       font-weight: 400;
