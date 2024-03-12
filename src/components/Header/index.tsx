@@ -182,7 +182,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
 
   const getUserData = useCallback(async (user: User) => {
     try {
-      const userDocRef = doc(db, USER_COLLECTION_NAME, 'jZaZt43YRHezIoTkKKqsfR4O9Jy1');
+      const userDocRef = doc(db, USER_COLLECTION_NAME, user.uid);
       const userSnapshot = await getDoc(userDocRef);
 
       setTimeout(() => {
