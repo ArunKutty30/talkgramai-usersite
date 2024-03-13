@@ -1,26 +1,26 @@
-import React, { useMemo, useState } from "react";
-import styled from "styled-components";
-import axios from "axios";
-import dayjs from "dayjs";
-import { User } from "firebase/auth";
-import { Timestamp } from "firebase/firestore";
-import Modal from "@mui/material/Modal";
-import { CheckCircleFill } from "styled-icons/bootstrap";
-import { Checkbox, FormControlLabel } from "@mui/material";
+import React, { useMemo, useState } from 'react';
+import styled from 'styled-components';
+import axios from 'axios';
+import dayjs from 'dayjs';
+import { User } from 'firebase/auth';
+import { Timestamp } from 'firebase/firestore';
+import Modal from '@mui/material/Modal';
+import { CheckCircleFill } from 'styled-icons/bootstrap';
+import { Checkbox, FormControlLabel } from '@mui/material';
 
-import Button from "./Button";
-import logo from "../assets/logo/logo_short.png";
-import { ReactComponent as DiscountIcon } from "../assets/icons/noto_confetti.svg";
-import { userStore } from "../store/userStore";
-import { createSubscriptionDocWithOrderId } from "../services/subscriptionService";
-import { updateUserDoc } from "../services/userService";
-import { loadScript } from "../services/paymentService";
-import { formatCurrency } from "../constants/formatter";
-import { BACKEND_URL } from "../utils/api";
-import { ICategory, ISelectedPlan } from "../constants/types";
-import CustomModal from "./Modal";
-import TemporaryPaymentModal from "./Modal/TemporaryPaymentModal";
-import { config } from "../constants/config";
+import Button from './Button';
+import logo from '../assets/logo/logo_short.png';
+import { ReactComponent as DiscountIcon } from '../assets/icons/noto_confetti.svg';
+import { userStore } from '../store/userStore';
+import { createSubscriptionDocWithOrderId } from '../services/subscriptionService';
+import { updateUserDoc } from '../services/userService';
+import { loadScript } from '../services/paymentService';
+import { formatCurrency } from '../constants/formatter';
+import { BACKEND_URL } from '../utils/api';
+import { ICategory, ISelectedPlan } from '../constants/types';
+import CustomModal from './Modal';
+import TemporaryPaymentModal from './Modal/TemporaryPaymentModal';
+import { config } from '../constants/config';
 
 const perSessionCost = config.PER_SESSION_COST;
 
@@ -44,8 +44,8 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
   const handleStoreData = async (docId: string, userData: User) => {
     try {
       await updateUserDoc(userData.uid, { currentSubscriptionId: docId, isNewUser: false });
-      console.log("success");
-      window.location.href = "/book-session";
+      console.log('success');
+      window.location.href = '/book-session';
     } catch (error) {
       console.log(error);
     }
@@ -55,14 +55,14 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
     try {
       if (!user) return;
 
-      if (!process.env.REACT_APP_RAZORPAY_KEY) return alert("RAZORPAY KEY NOT ADDED");
+      if (!process.env.REACT_APP_RAZORPAY_KEY) return alert('RAZORPAY KEY NOT ADDED');
 
       setLoading(true);
 
-      const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+      const res = await loadScript('https://checkout.razorpay.com/v1/checkout.js');
 
       if (!res) {
-        alert("Razorpay SDK failed to load. Are you online?");
+        alert('Razorpay SDK failed to load. Are you online?');
         setLoading(false);
         return;
       }
@@ -72,16 +72,16 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
       });
 
       if (!result) {
-        alert("Server error. Are you online?");
+        alert('Server error. Are you online?');
         return;
       }
 
       const { amount, id: order_id, currency } = result.data;
 
       const endDate =
-        process.env.REACT_APP_MODE === "LOCAL"
-          ? dayjs(new Date()).add(selectedPlan.durationInMonth, "day").toDate()
-          : dayjs(new Date()).add(selectedPlan.durationInMonth, "month").toDate();
+        process.env.REACT_APP_MODE === 'LOCAL'
+          ? dayjs(new Date()).add(selectedPlan.durationInMonth, 'day').toDate()
+          : dayjs(new Date()).add(selectedPlan.durationInMonth, 'month').toDate();
 
       await createSubscriptionDocWithOrderId(order_id, {
         user: user.uid,
@@ -99,8 +99,8 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
         cancelledSession: 0,
         backlogSession: 0,
         bookedSession: 0,
-        status: "PENDING",
-        subscriptionStatus: "SUBSCRIBED",
+        status: 'PENDING',
+        subscriptionStatus: 'SUBSCRIBED',
         recording: onRecordings,
         chargesBreakdown: {
           sessionsFee: selectedPlan.total,
@@ -112,8 +112,8 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
         key: process.env.REACT_APP_RAZORPAY_KEY,
         amount: amount.toString(),
         currency: currency,
-        name: "Talkgram",
-        description: "Test Transaction",
+        name: 'Talkgram',
+        description: 'Test Transaction',
         image: { logo },
         order_id: order_id,
         handler: async function (response: any) {
@@ -130,7 +130,7 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
           } catch (error) {
             console.log(error);
             setLoading(false);
-            alert("something went wrong");
+            alert('something went wrong');
           }
         },
         prefill: {
@@ -139,10 +139,10 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
           contact: user.phoneNumber,
         },
         notes: {
-          address: "Talkgram Corporate Office",
+          address: 'Talkgram Corporate Office',
         },
         theme: {
-          color: "#f7941f",
+          color: '#f7941f',
         },
       };
 
@@ -177,9 +177,9 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
 
   return (
     <StyledPaymentDetails id="checkout">
-      <h4 style={{ textTransform: "uppercase" }}>Checkout</h4>
+      <h4 style={{ textTransform: 'uppercase' }}>Checkout</h4>
       <p className="default">
-        Finalising your English learning journey. One last step before we finish{" "}
+        Finalising your English learning journey. One last step before we finish{' '}
       </p>
       <StyledSelectedPlan>
         <h5>{selectedPlan.title}</h5>
@@ -211,7 +211,7 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
               <CheckCircleFill /> Applied
             </>
           ) : (
-            "Apply"
+            'Apply'
           )}
         </button>
       </div>
@@ -242,7 +242,7 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
         <div className="flex-between mb-10">
           <p>Coupon Discount :</p>
           <p>
-            - Rs{" "}
+            - Rs{' '}
             {applyOffer
               ? formatCurrency(selectedPlan.noOfSessions * perSessionCost * (50 / 100))
               : 0}
@@ -251,7 +251,7 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
         <div className="flex-between mb-10">
           <p>Sub Total :</p>
           <p>
-            Rs{" "}
+            Rs{' '}
             {applyOffer
               ? formatCurrency(selectedPlan.noOfSessions * perSessionCost * ((100 - 50) / 100))
               : formatCurrency(selectedPlan.noOfSessions * perSessionCost * ((100 - 0) / 100))}
@@ -272,7 +272,8 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
           {onRecordings && (
             <p>
               {selectedPlan.noOfSessions} sessions X ₹ {config.PER_SESSION_RECORDING_FEE} =&gt;
-              &nbsp; Rs {formatCurrency(selectedPlan.noOfSessions * 30)}{" "}
+              &nbsp; Rs{' '}
+              {formatCurrency(selectedPlan.noOfSessions * config.PER_SESSION_RECORDING_FEE)}{' '}
             </p>
           )}
         </div>
@@ -300,12 +301,12 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
       </CustomModal>
       <Modal
         style={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          margin: "auto",
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          margin: 'auto',
         }}
         open={payemntModalOpen}
         onClose={() => {
@@ -372,7 +373,7 @@ const StyledPaymentDetails = styled.div`
     z-index: 1;
 
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       width: 50px;
       height: 100%;

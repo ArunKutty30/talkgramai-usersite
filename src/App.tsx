@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
 import { Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import 'react-calendar/dist/Calendar.css';
 
@@ -94,7 +95,13 @@ const App: React.FC = () => {
             <Route
               path="/feedback-analysis"
               element={
-                <Suspense fallback={null}>
+                <Suspense
+                  fallback={
+                    <div className="suspense-loader">
+                      <CircularProgress />
+                    </div>
+                  }
+                >
                   <LazyUserFeedbackReportPagePage />
                 </Suspense>
               }
