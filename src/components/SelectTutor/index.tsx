@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { useSearchParams } from 'react-router-dom';
 
@@ -9,10 +9,8 @@ import { bookSessionFilters } from '../../constants/data';
 import TutorProfile from '../../pages/Tutor/TutorProfile';
 import TutorCard from '../TutorCard';
 import { useBookingFilterStore } from '../../store/useBookingFilterStore';
-import { getTutorBlockedUsersDoc, getTutorDoc } from '../../services/tutorService';
 import { ITutorProfileData } from '../../constants/types';
 import TutorCardLoader from '../Loader/TutorCardLoader';
-import { userStore } from '../../store/userStore';
 
 const SessionCard = styled.div`
   border-radius: 20px;
@@ -100,7 +98,7 @@ const StyledDataNotFound = styled.div`
 `;
 
 interface ISelectTutorProps {
-  tutors: { tutorId: string; isReserved: boolean }[];
+  tutors: ITutorProfileData[];
   loading: boolean;
 }
 
@@ -111,56 +109,23 @@ const SelectTutor: React.FC<ISelectTutorProps> = ({ tutors, loading }) => {
   const searchText = useBookingFilterStore((store) => store.searchText);
   const setSelectedFilter = useBookingFilterStore((store) => store.setSelectedFilter);
   const setSearchText = useBookingFilterStore((store) => store.setSearchText);
-  const [tutorsData, setTutorsData] = useState<ITutorProfileData[]>([]);
-  const [filteredTutorsData, setFilteredTutorsData] = useState<ITutorProfileData[]>([]);
-  const [isFetching, setIsFetching] = useState(false);
-  const user = userStore((store) => store.user);
 
-  const handleGetTutorData = useCallback(async () => {
-    try {
-      if (!user) return;
+  const filteredTutors = useMemo(() => {
+    if (!searchText) return tutors;
 
-      setIsFetching(true);
-      const result = await Promise.all(
-        tutors.map(async (tutor) => {
-          return await getTutorDoc(tutor.tutorId);
-        })
-      );
+    const filteredResult = tutors
+      .map((t) => {
+        if (t.username.toLowerCase().includes(searchText.toLowerCase())) {
+          return t;
+        }
+        return null;
+      })
+      .filter((f) => f !== null) as ITutorProfileData[];
 
-      const blockedTutorsList = await getTutorBlockedUsersDoc(user.uid);
-
-      const filteredResult = result.filter((f) => !blockedTutorsList.some((s) => s.id === f.id));
-
-      console.log(result);
-      setTutorsData(filteredResult);
-      setFilteredTutorsData(filteredResult);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsFetching(false);
-    }
-  }, [tutors, user]);
-
-  useEffect(() => {
-    handleGetTutorData();
-  }, [handleGetTutorData]);
-
-  useMemo(() => {
-    if (!searchText) return setFilteredTutorsData(tutorsData);
-
-    setFilteredTutorsData(
-      tutorsData
-        .map((t) => {
-          if (t.username.toLowerCase().includes(searchText.toLowerCase())) {
-            return t;
-          }
-          return null;
-        })
-        .filter((f) => f !== null) as ITutorProfileData[]
-    );
+    return filteredResult;
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchText]);
+  }, [searchText, tutors]);
 
   return (
     <SessionCard>
@@ -195,15 +160,15 @@ const SelectTutor: React.FC<ISelectTutorProps> = ({ tutors, loading }) => {
           </SelectTutorFilterContainer>
         </HeaderBlockRight>
       </SelectTutorFilterHeader>
-      {loading || isFetching ? (
+      {loading ? (
         <TutorCardLoader />
-      ) : !filteredTutorsData.length ? (
+      ) : !filteredTutors.length ? (
         <StyledDataNotFound>
           <p>No Tutors found</p>
         </StyledDataNotFound>
       ) : (
         <SelectTutorCardWrapper>
-          {filteredTutorsData.map((tutor, index) => (
+          {filteredTutors.map((tutor, index) => (
             <TutorCard key={index.toString()} {...tutor} />
           ))}
         </SelectTutorCardWrapper>

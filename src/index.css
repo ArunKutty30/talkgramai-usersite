@@ -27,6 +27,8 @@
   --card-background: #fff;
 
   --btn-primary: linear-gradient(180deg, #f7941f 0%, #f76d1f 100%);
+
+  --header-height: 70px;
 }
 
 ::-webkit-scrollbar {

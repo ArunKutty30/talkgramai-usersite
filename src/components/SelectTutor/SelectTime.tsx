@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 
@@ -223,11 +223,6 @@ const SelectTime: React.FC<ISelectTimeProps> = ({ selectedDate, setSelectedDate 
       today < new Date(startOfCurrentWeek.getTime() + 7 * 24 * 60 * 60 * 1000)
     );
   };
-
-  useMemo(() => {
-    if (subscriptionData) {
-    }
-  }, [subscriptionData]);
 
   return (
     <SelectTimeContainer>

@@ -87,7 +87,7 @@ const TutorCard: React.FC<ITutorProfileData> = ({
 };
 
 const SelectTutorCard = styled.div`
-  padding: 32px 32px;
+  padding: 24px;
   border-radius: 8px;
   border: 1px solid #ede7df;
   background: var(--white, #fff);

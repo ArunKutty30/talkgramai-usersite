@@ -27,8 +27,8 @@ import { ReactComponent as HomeIcon } from '../../assets/icons/home.svg';
 import { ReactComponent as BookSessionIcon } from '../../assets/icons/book-session.svg';
 import { ReactComponent as SessionIcon } from '../../assets/icons/session.svg';
 import { USER_COLLECTION_NAME } from '../../constants/data';
-import { getSubscriptionDoc } from '../../services/subscriptionService';
-import { getUserCancelledSessionOnCurrentMonth, updateUserDoc } from '../../services/userService';
+import { getUserSubscriptionDoc, updateSubscriptionDoc } from '../../services/subscriptionService';
+import { getUserCancelledSessionOnCurrentMonth } from '../../services/userService';
 import SubscriptionEndedModal from '../Modal/SubscriptionEndedModal';
 import { generalStore } from '../../store/generalStore';
 import { getCurrentWeekInfo } from '../../utils/helpers';
@@ -63,6 +63,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
   const [openSidebar, setOpenSidebar] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const setReminder = reminderStore((state) => state.setReminder);
+  const updateSubscriptionDataFetching = userStore((store) => store.updateSubscriptionDataFetching);
 
   const handleCheckCurrentData = useCallback(async () => {
     if (!subscriptionData) return;
@@ -86,10 +87,12 @@ const Header = ({ hide }: { hide?: boolean }) => {
         fetching: false,
         endDate: subscriptionData.endDate.toDate(),
         session: 1 - sessionInfo,
+        isLastWeek: true,
       });
 
       updateAllSessionFetching(false);
       updateExpiredClass(0);
+      updateSubscriptionDataFetching('SUCCESS');
       return;
     }
 
@@ -152,7 +155,10 @@ const Header = ({ hide }: { hide?: boolean }) => {
       fetching: false,
       endDate: currentInfo.currentWeekEndDate,
       session: sessionPerWeek - sessionInfo,
+      isLastWeek: currentInfo.totalWeeks === currentInfo.currentWeek,
     });
+
+    updateSubscriptionDataFetching('SUCCESS');
   }, [
     subscriptionData,
     setReminder,
@@ -162,6 +168,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
     updateCurrentPlanSession,
     updateCancelledSession,
     updateSessionLeft,
+    updateSubscriptionDataFetching,
   ]);
 
   const handleGetOverallSessionData = useCallback(async () => {
@@ -173,7 +180,35 @@ const Header = ({ hide }: { hide?: boolean }) => {
     } catch (error) {
       console.log(error);
     }
-  }, [user, updateOverallBookedSession]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+  const handleGetSubscriptionData = useCallback(async (user: User) => {
+    if (!user) return;
+
+    try {
+      updateSubscriptionDataFetching('PENDING');
+      const tempSubscriptionData = await getUserSubscriptionDoc(user.uid);
+
+      if (tempSubscriptionData) {
+        const isFinished = dayjs(tempSubscriptionData.endDate.toDate()).isBefore(dayjs());
+
+        if (isFinished) {
+          await updateSubscriptionDoc(tempSubscriptionData.id, { subscriptionStatus: 'EXPIRED' });
+          updateSubscriptionData(null);
+          updateSubscriptionDataFetching('SUCCESS');
+        } else {
+          updateSubscriptionData(tempSubscriptionData);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      updateSubscriptionDataFetching('ERROR');
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     handleCheckCurrentData();
@@ -191,15 +226,8 @@ const Header = ({ hide }: { hide?: boolean }) => {
 
       if (userSnapshot.exists()) {
         const userData = userSnapshot.data() as IUserProfileData;
-        console.log(userData);
         updateProfileData(userData);
-
-        if (userData.currentSubscriptionId) {
-          updateSubscriptionData(await getSubscriptionDoc(userData.currentSubscriptionId));
-          updateFetching(false);
-        } else {
-          updateFetching(false);
-        }
+        updateFetching(false);
       } else {
         navigate('/');
         const profileData = {
@@ -247,6 +275,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
           return navigate('/verify-mail');
         }
         getUserData(data);
+        handleGetSubscriptionData(data);
       } else {
         navigate('/login');
         setTimeout(() => {
@@ -257,32 +286,6 @@ const Header = ({ hide }: { hide?: boolean }) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const handleCheckSubsciptionData = useCallback(async () => {
-    if (!subscriptionData) return;
-
-    console.log(subscriptionData);
-    const isFinished = dayjs(subscriptionData.endDate.toDate()).isBefore(dayjs());
-
-    if (isFinished) {
-      await updateUserDoc(subscriptionData.user, { currentSubscriptionId: null });
-      setOutdated();
-      window.location.reload();
-    }
-
-    if (
-      subscriptionData['allSessionsCompleted'] &&
-      subscriptionData['allSessionsCompleted'] === true
-    ) {
-      await updateUserDoc(subscriptionData.user, { currentSubscriptionId: null });
-      setOutdated();
-      // window.location.href = "/";
-    }
-  }, [subscriptionData, setOutdated]);
-
-  useEffect(() => {
-    handleCheckSubsciptionData();
-  }, [handleCheckSubsciptionData]);
 
   console.log(subscriptionData);
 

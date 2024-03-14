@@ -25,8 +25,6 @@ export function getCurrentWeekInfo(
   lastWeekStartDate: Date;
   lastWeekEndDate: Date;
 } {
-  console.log(startDate);
-  console.log(endDate);
   const weeks = separateIntoWeeks(startDate, endDate);
 
   // Calculate the number of milliseconds from the start date to the current date

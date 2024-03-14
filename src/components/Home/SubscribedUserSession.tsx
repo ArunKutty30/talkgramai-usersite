@@ -23,6 +23,7 @@ dayjs.extend(relativeTime);
 
 const SessionReminder = () => {
   const fetching = reminderStore((store) => store.fetching);
+  const isLastWeek = reminderStore((store) => store.isLastWeek);
   const endDate = reminderStore((store) => store.endDate);
   const session = reminderStore((store) => store.session);
   const remainingSession = reminderStore((store) => store.session);
@@ -96,6 +97,22 @@ const SessionReminder = () => {
   };
 
   if (fetching) return null;
+
+  if (session <= 0 && isLastWeek) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'start',
+          gap: '15px',
+        }}
+      >
+        <p>You've completed the sessions successfully. Subscribe to continue</p>
+      </Box>
+    );
+  }
 
   if (session <= 0)
     return (

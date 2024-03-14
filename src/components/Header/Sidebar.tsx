@@ -1,7 +1,7 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
-import styled from "styled-components";
-import { AnimatePresence, motion } from "framer-motion";
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+import styled from 'styled-components';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface ISidebarProps {
   openSidebar: boolean;
@@ -20,7 +20,7 @@ const Sidebar: React.FC<ISidebarProps> = ({ openSidebar, handleClose }) => {
         >
           <StyledSidebar
             onClick={(e) => e.stopPropagation()}
-            animate={{ right: 0, transitionDelay: "-200ms" }}
+            animate={{ right: 0, transitionDelay: '-200ms' }}
             exit={{ right: -300 }}
             initial={{ right: -300 }}
           >
@@ -95,6 +95,10 @@ const StyledSidebar = styled(motion.div)`
   right: 0;
   bottom: 0;
   height: 100%;
+
+  @media (max-width: 600px) {
+    max-width: 240px;
+  }
 
   ul {
     list-style: none;

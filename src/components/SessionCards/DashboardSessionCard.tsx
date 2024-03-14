@@ -59,8 +59,6 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
     demoClass,
   } = props;
 
-  console.log(props);
-
   const [openFeedbackModal, setOpenFeedbackModal] = useState(false);
   const [openTutorFeedbackModal, setOpenTutorFeedbackModal] = useState(false);
   const [openFeedbackDropdown, setOpenFeedbackDropdown] = useState(false);
@@ -76,7 +74,7 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
   const [openRecordingModal, setOpenRecordingModal] = useState(false);
   const [openChatModal, setOpenChatModal] = useState(false);
   const cancelledSession = userStore((store) => store.userCancelledSession);
-  console.log(disputeStatus);
+
   const handleGetData = useCallback(async () => {
     try {
       const userData = await getUserDoc(user);
@@ -723,4 +721,4 @@ const StyledTag = styled.div<{ variant: 'info' | 'error' | 'success' }>`
   }
 `;
 
-export default DashboardSessionCard;
+export default React.memo(DashboardSessionCard);

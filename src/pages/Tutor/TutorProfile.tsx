@@ -5,6 +5,7 @@ import { TIME_SLOTS_COLLECTION_NAME, TUTOR_COLLECTION_NAME } from '../../constan
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 import { useLockedBody } from 'usehooks-ts';
+import toast from 'react-hot-toast';
 
 import { db } from '../../utils/firebase';
 import ConfirmTutorModal from '../../components/Modal/ConfirmTutorModal';
@@ -15,6 +16,7 @@ import { ITutorProfileData, ITutorSlot } from '../../constants/types';
 import TutorProfileDetails from './components/TutorProfileDetails';
 import { getLocaleDate } from '../../constants/formatDate';
 import { config } from '../../constants/config';
+import { reminderStore } from '../../store/reminderStore';
 
 const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
   const [openSelectedTutorModal, setOpenSelectedTutorModal] = useState(false);
@@ -24,6 +26,7 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
   const navigate = useNavigate();
   const [tutorData, setTutorData] = useState<ITutorProfileData | null>(null);
   useLockedBody(true);
+  const endDate = reminderStore((store) => store.endDate);
 
   const handleGetData = useCallback(async () => {
     if (!tutorId) return;
@@ -164,7 +167,15 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
                         )
                         .map((slot, i) => (
                           <button
-                            onClick={() => setSelectedDate(slot.startTime)}
+                            onClick={() => {
+                              if (dayjs(slot.startTime).isBefore(endDate, 'minutes')) {
+                                setSelectedDate(slot.startTime);
+                              } else if (dayjs(slot.startTime).isSame(endDate, 'minutes')) {
+                                setSelectedDate(slot.startTime);
+                              } else {
+                                toast.error('Booking on this date is restricted');
+                              }
+                            }}
                             className={
                               dayjs(slot.startTime).isSame(selectedDate)
                                 ? 'available-timings active'

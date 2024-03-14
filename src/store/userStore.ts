@@ -1,10 +1,16 @@
 import { create } from 'zustand';
 import type { User } from 'firebase/auth';
-import { IBookingSessionDB, ISubscriptionDB, IUserProfileData } from '../constants/types';
+import {
+  IBookingSessionDB,
+  ISubscriptionDB,
+  IUserProfileData,
+  TLoadingStatus,
+} from '../constants/types';
 
 type State = {
   user: User | null;
   isFetching: boolean;
+  subscriptionDataFetching: TLoadingStatus;
   isAllSessionFetching: boolean;
   profileData: IUserProfileData | null;
   subscriptionData: ISubscriptionDB | null;
@@ -20,6 +26,7 @@ type State = {
 type Action = {
   updateFetching: (fetching: boolean) => void;
   updateAllSessionFetching: (fetching: boolean) => void;
+  updateSubscriptionDataFetching: (subscriptionDataFetching: TLoadingStatus) => void;
   updateUser: (user: User) => void;
   updateProfileData: (data: IUserProfileData) => void;
   updateSubscriptionData: (data: ISubscriptionDB | null) => void;
@@ -36,6 +43,7 @@ type Action = {
 export const userStore = create<State & Action>((set) => ({
   user: null,
   isFetching: true,
+  subscriptionDataFetching: 'PENDING',
   isAllSessionFetching: true,
   profileData: null,
   subscriptionData: null,
@@ -58,4 +66,6 @@ export const userStore = create<State & Action>((set) => ({
   updateOverallBookedSession: (data) => set(() => ({ overallBookedSession: data })),
   updateCurrentPlanSession: (data) => set(() => ({ currentPlanSessions: data })),
   updateSessionLeft: (sessionLeft) => set(() => ({ sessionLeft })),
+  updateSubscriptionDataFetching: (subscriptionDataFetching) =>
+    set(() => ({ subscriptionDataFetching })),
 }));

@@ -1,13 +1,13 @@
-import React, { useCallback, useEffect, useState } from "react";
-import styled from "styled-components";
-import { useSearchParams } from "react-router-dom";
+import React, { useCallback, useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { useSearchParams } from 'react-router-dom';
 
-import { userStore } from "../../../store/userStore";
-import TutorCard from "../../../components/TutorCard";
-import { ITutorProfileData } from "../../../constants/types";
-import { getTutorDoc } from "../../../services/tutorService";
-import TutorCardLoader from "../../../components/Loader/TutorCardLoader";
-import TutorProfile from "../../Tutor/TutorProfile";
+import { userStore } from '../../../store/userStore';
+import TutorCard from '../../../components/TutorCard';
+import { ITutorProfileData } from '../../../constants/types';
+import { getTutorDoc } from '../../../services/tutorService';
+import TutorCardLoader from '../../../components/Loader/TutorCardLoader';
+import TutorProfile from '../../Tutor/TutorProfile';
 // import TutorCard from "../../../components/TutorCard";
 
 const FavouriteTutors = () => {
@@ -15,7 +15,7 @@ const FavouriteTutors = () => {
   const [tutorsData, setTutorsData] = useState<ITutorProfileData[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
-  const tutorId = searchParams.get("tutor");
+  const tutorId = searchParams.get('tutor');
 
   const handleGetTutorData = useCallback(async () => {
     try {
@@ -43,8 +43,8 @@ const FavouriteTutors = () => {
   return (
     <StyledContainer>
       {!profileData ||
-      !profileData["favouriteTutors"] ||
-      !profileData["favouriteTutors"]?.length ? (
+      !profileData['favouriteTutors'] ||
+      !profileData['favouriteTutors']?.length ? (
         <StyledNoFavouriteTutors>
           <p>No Favourite tutors</p>
         </StyledNoFavouriteTutors>

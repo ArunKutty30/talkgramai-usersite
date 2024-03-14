@@ -1,6 +1,6 @@
-import React from "react";
-import Skeleton from "react-loading-skeleton";
-import styled from "styled-components";
+import React from 'react';
+import Skeleton from 'react-loading-skeleton';
+import styled from 'styled-components';
 
 const TutorCardLoader = () => {
   return (
@@ -8,7 +8,7 @@ const TutorCardLoader = () => {
       {Array.from({ length: 4 }).map((_, index) => (
         <StyledTutorCard key={index.toString()}>
           <div className="card-image">
-            <Skeleton style={{ height: "100%" }} />
+            <Skeleton style={{ height: '100%' }} />
           </div>
           <Skeleton count={2} />
         </StyledTutorCard>
@@ -19,13 +19,13 @@ const TutorCardLoader = () => {
 
 const StyledDiv = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 270px));
-  gap: 20px 70px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px 60px;
   justify-content: space-between;
 `;
 
 const StyledTutorCard = styled.div`
-  padding: 32px 32px;
+  padding: 24px;
   border-radius: 8px;
   border: 1px solid #ede7df;
   background: var(--white, #fff);

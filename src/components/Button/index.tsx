@@ -103,4 +103,4 @@ const MyButton: React.FC<IButtonProps> = ({
   );
 };
 
-export default MyButton;
+export default React.memo(MyButton);

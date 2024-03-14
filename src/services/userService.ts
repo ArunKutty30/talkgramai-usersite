@@ -10,14 +10,14 @@ import {
   Timestamp,
   updateDoc,
   where,
-} from "firebase/firestore";
-import { BOOKINGS_COLLECTION_NAME, USER_COLLECTION_NAME } from "../constants/data";
-import { db } from "../utils/firebase";
-import { IUserProfileData } from "../constants/types";
+} from 'firebase/firestore';
+import { BOOKINGS_COLLECTION_NAME, USER_COLLECTION_NAME } from '../constants/data';
+import { db } from '../utils/firebase';
+import { IUserProfileData } from '../constants/types';
 
 export const getUserDoc = async (id: string) => {
   const docRef = doc(db, USER_COLLECTION_NAME, id);
-  const tutorData = (await getDoc(docRef)).data() as Omit<IUserProfileData, "id">;
+  const tutorData = (await getDoc(docRef)).data() as Omit<IUserProfileData, 'id'>;
 
   return { id: id, ...tutorData };
 };
@@ -30,7 +30,7 @@ export const updateUserDoc = async (id: string, data: DocumentData) => {
 export const updateUserFavouriteTutorsDoc = async (id: string, tutorId: string) => {
   const docRef = doc(db, USER_COLLECTION_NAME, id);
 
-  const existingData = (await getDoc(docRef)).data() as Omit<IUserProfileData, "id">;
+  const existingData = (await getDoc(docRef)).data() as Omit<IUserProfileData, 'id'>;
   const existingTutors = existingData?.favouriteTutors || [];
 
   if (existingTutors.some((s) => s === tutorId)) {
@@ -50,19 +50,18 @@ export const getUserCancelledSessionOnCurrentMonth = async (id: string, startDat
   const colRef = collection(db, BOOKINGS_COLLECTION_NAME);
   const q = query(
     colRef,
-    where("user", "==", id),
-    where("status", "==", "USER_CANCELLED"),
-    where("startTime", ">", startDate)
+    where('user', '==', id),
+    where('status', '==', 'USER_CANCELLED'),
+    where('startTime', '>', startDate)
   );
 
   const data = await getDocs(q);
 
-  console.log(data.size);
   return data.size;
 };
 
 export const getCompletedLessonPlan = async (userUid: string) => {
-  const finishedTopicsColRef = collection(db, USER_COLLECTION_NAME, userUid, "FinishedTopics");
+  const finishedTopicsColRef = collection(db, USER_COLLECTION_NAME, userUid, 'FinishedTopics');
 
   const data = await getDocs(finishedTopicsColRef);
   const formattedData: any[] = [];

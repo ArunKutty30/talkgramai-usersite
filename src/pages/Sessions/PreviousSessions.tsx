@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
-import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { collection, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 
-import { BOOKINGS_COLLECTION_NAME } from "../../constants/data";
-import { EBookingStatus, IBookingSession } from "../../constants/types";
-import { userStore } from "../../store/userStore";
-import { db } from "../../utils/firebase";
-import NoSession from "../../components/NoSession";
-import SessionCardLoader from "../../components/Loader/SessionCardLoader";
-import DashboardSessionCard from "../../components/SessionCards/DashboardSessionCard";
+import { BOOKINGS_COLLECTION_NAME } from '../../constants/data';
+import { EBookingStatus, IBookingSession } from '../../constants/types';
+import { userStore } from '../../store/userStore';
+import { db } from '../../utils/firebase';
+import NoSession from '../../components/NoSession';
+import SessionCardLoader from '../../components/Loader/SessionCardLoader';
+import DashboardSessionCard from '../../components/SessionCards/DashboardSessionCard';
 
 const PreviousSessions = () => {
   const user = userStore((store) => store.user);
@@ -20,10 +20,10 @@ const PreviousSessions = () => {
     const colRef = collection(db, BOOKINGS_COLLECTION_NAME);
     const q = query(
       colRef,
-      where("user", "==", user.uid),
-      where("endTime", "<", new Date()),
-      where("status", "in", [EBookingStatus.COMPLETED, EBookingStatus.UPCOMING]),
-      orderBy("endTime", "desc")
+      where('user', '==', user.uid),
+      where('endTime', '<', new Date()),
+      where('status', 'in', [EBookingStatus.COMPLETED, EBookingStatus.UPCOMING]),
+      orderBy('endTime', 'desc')
     );
 
     const unsubscribe = onSnapshot(
@@ -32,7 +32,7 @@ const PreviousSessions = () => {
         const slots: any[] = [];
         snapshot.forEach((doc) => {
           const data = doc.data();
-          if (data.status !== "MISSED") {
+          if (data.status !== 'MISSED') {
             slots.push({
               id: doc.id,
               ...data,
@@ -47,7 +47,7 @@ const PreviousSessions = () => {
         setLoading(false);
       },
       (error) => {
-        console.error("Error fetching upcoming sessions:", error);
+        console.error('Error fetching upcoming sessions:', error);
       }
     );
 
@@ -55,8 +55,6 @@ const PreviousSessions = () => {
       unsubscribe();
     };
   }, [user]);
-
-  console.table(sessions);
 
   if (loading)
     return (

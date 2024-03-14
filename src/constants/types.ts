@@ -1,5 +1,7 @@
 import { Timestamp } from 'firebase/firestore';
 
+export type TLoadingStatus = 'PENDING' | 'SUCCESS' | 'ERROR';
+
 export enum ICategory {
   TUTOR_TALK = 'TUTOR_TALK',
   CURRICULUM = 'CURRICULUM',
