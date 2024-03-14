@@ -32,7 +32,7 @@ export const getUserSubscriptionDoc = async (userId: string) => {
   const q = query(
     colRef,
     where('user', '==', userId),
-    where('status', '==', 'COMPLETED'),
+    where('status', 'in', ['COMPLETED', 'SUCCESS']),
     where('subscriptionStatus', '==', 'SUBSCRIBED'),
     orderBy('createdAt', 'desc'),
     limit(1)

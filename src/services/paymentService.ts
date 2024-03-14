@@ -135,6 +135,7 @@ export const handlePayForDemoClass = async (
       demoClass: true,
       status: 'PENDING',
       recording: true,
+      subscriptionStatus: 'SUBSCRIBED',
     };
 
     await createSubscriptionDocWithOrderId(order_id, subscriptionData);
