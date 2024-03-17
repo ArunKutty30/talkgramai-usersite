@@ -168,13 +168,15 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
                         .map((slot, i) => (
                           <button
                             onClick={() => {
-                              if (dayjs(slot.startTime).isBefore(endDate, 'minutes')) {
-                                setSelectedDate(slot.startTime);
-                              } else if (dayjs(slot.startTime).isSame(endDate, 'minutes')) {
-                                setSelectedDate(slot.startTime);
-                              } else {
-                                toast.error('Booking on this date is restricted');
-                              }
+                              setSelectedDate(slot.startTime);
+
+                              // if (dayjs(slot.startTime).isBefore(endDate, 'minutes')) {
+                              //   setSelectedDate(slot.startTime);
+                              // } else if (dayjs(slot.startTime).isSame(endDate, 'minutes')) {
+                              //   setSelectedDate(slot.startTime);
+                              // } else {
+                              //   toast.error('Booking on this date is restricted');
+                              // }
                             }}
                             className={
                               dayjs(slot.startTime).isSame(selectedDate)
