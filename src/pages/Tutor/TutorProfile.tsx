@@ -5,7 +5,7 @@ import { TIME_SLOTS_COLLECTION_NAME, TUTOR_COLLECTION_NAME } from '../../constan
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 import { useLockedBody } from 'usehooks-ts';
-import toast from 'react-hot-toast';
+// import toast from 'react-hot-toast';
 
 import { db } from '../../utils/firebase';
 import ConfirmTutorModal from '../../components/Modal/ConfirmTutorModal';
@@ -169,7 +169,7 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
                           <button
                             onClick={() => {
                               setSelectedDate(slot.startTime);
-
+                              console.log(endDate);
                               // if (dayjs(slot.startTime).isBefore(endDate, 'minutes')) {
                               //   setSelectedDate(slot.startTime);
                               // } else if (dayjs(slot.startTime).isSame(endDate, 'minutes')) {
