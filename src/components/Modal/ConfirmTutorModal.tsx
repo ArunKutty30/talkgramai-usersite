@@ -263,7 +263,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
       const currentSubscriptionData = tempSubscriptionData || subscriptionData;
       const currentSubscriptionId = tempSubscriptionData
         ? tempSubscriptionData.id
-        : profileData.currentSubscriptionId;
+        : subscriptionData?.id;
 
       if (currentSubscriptionData?.demoClass === true) {
         cost = config.DEMO_CLASS_FEE;

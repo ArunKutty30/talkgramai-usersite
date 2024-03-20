@@ -188,7 +188,6 @@ const Header = ({ hide }: { hide?: boolean }) => {
     if (!user) return;
 
     try {
-      console.log(user);
       updateSubscriptionDataFetching('PENDING');
       const tempSubscriptionData = await getUserSubscriptionDoc(user.uid);
 

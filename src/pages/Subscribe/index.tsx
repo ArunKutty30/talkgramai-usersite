@@ -1,18 +1,19 @@
-import React from "react";
+import React from 'react';
 
-import SubscribePage from "./SubscriptionPage";
-import { userStore } from "../../store/userStore";
-import SubscriptionDetails from "./SubscriptionDetails";
-import SubscriptionLoader from "../../components/Loader/SubscriptionLoader";
+import SubscribePage from './SubscriptionPage';
+import { userStore } from '../../store/userStore';
+import SubscriptionDetails from './SubscriptionDetails';
+import SubscriptionLoader from '../../components/Loader/SubscriptionLoader';
 
-const Subscribe = () => {
-  const profileData = userStore((store) => store.profileData);
+const Subscribe: React.FC = () => {
+  const subscriptionDataFetching = userStore((store) => store.subscriptionDataFetching);
+  const subscriptionData = userStore((store) => store.subscriptionData);
 
   return (
     <div>
-      {!profileData ? (
+      {!subscriptionDataFetching ? (
         <SubscriptionLoader />
-      ) : profileData.currentSubscriptionId ? (
+      ) : subscriptionData ? (
         <SubscriptionDetails />
       ) : (
         <SubscribePage />
