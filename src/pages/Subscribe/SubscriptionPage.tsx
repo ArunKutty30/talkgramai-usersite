@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
-import { useMediaQuery } from "usehooks-ts";
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination } from 'swiper/modules';
+import { useMediaQuery } from 'usehooks-ts';
 
 // Import Swiper styles
-import "swiper/css";
-import "swiper/css/pagination";
+import 'swiper/css';
+import 'swiper/css/pagination';
 
-import Dropdown from "../../components/Dropdown";
-import SubscriptionCard from "../../components/SubscriptionCard";
-import PaymentDetails from "../../components/PaymentDetails";
-import { ISelectedPlan, TDropdownList } from "../../constants/types";
-import { subscriptionList } from "../../constants/data";
+import Dropdown from '../../components/Dropdown';
+import SubscriptionCard from '../../components/SubscriptionCard';
+import PaymentDetails from '../../components/PaymentDetails';
+import { ISelectedPlan, TDropdownList } from '../../constants/types';
+import { subscriptionList } from '../../constants/data';
 
 // const durationList: TDropdownList[] = [
 //   { name: "30 minutes", value: "30 minutes" },
@@ -21,16 +21,17 @@ import { subscriptionList } from "../../constants/data";
 // ];
 
 const sessionList: TDropdownList[] = [
-  { name: "3 Sessions/Week", value: "3" },
-  { name: "5 Sessions/Week", value: "5" },
-  { name: "7 Sessions/Week", value: "7" },
+  { name: '3 Sessions/Week', value: '3' },
+  { name: '4 Sessions/Week', value: '4' },
+  { name: '5 Sessions/Week', value: '5' },
+  { name: '7 Sessions/Week', value: '7' },
 ];
 
 const SubscribePage = () => {
   // const [selectedDuration, setSelectedDuration] = useState<TDropdownList | undefined>(
   //   durationList[0]
   // );
-  const isTab = useMediaQuery("(max-width:768px)");
+  const isTab = useMediaQuery('(max-width:768px)');
   const [selectedSessionPerWeek, setSelectedSessionPerWeek] = useState<TDropdownList | undefined>(
     sessionList[0]
   );
@@ -91,7 +92,7 @@ const SubscribePage = () => {
                 setSelectedList={setSelectedSessionPerWeek}
                 placeholder="No. Of Sessions per Week"
                 style={{
-                  border: "2px solid rgba(248, 145, 32, 0.25)",
+                  border: '2px solid rgba(248, 145, 32, 0.25)',
                 }}
               />
             </div>
