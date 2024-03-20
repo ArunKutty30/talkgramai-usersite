@@ -11,7 +11,7 @@ const Subscribe: React.FC = () => {
 
   return (
     <div>
-      {!subscriptionDataFetching ? (
+      {subscriptionDataFetching === 'PENDING' ? (
         <SubscriptionLoader />
       ) : subscriptionData ? (
         <SubscriptionDetails />
