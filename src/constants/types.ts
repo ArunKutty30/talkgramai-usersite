@@ -163,6 +163,7 @@ export interface IBookingSession {
     | 'MISSED';
   feedbackFromTutor?: INewTutorFeedback;
   chats?: IChat[];
+  isLastSession?: boolean;
 }
 
 export interface ISubscription {
@@ -187,6 +188,7 @@ export interface IBookingSessionDB {
   createdAt: Timestamp;
   updatedAt: Timestamp;
   currentSession?: number;
+  isLastSession?: boolean;
   feedbackFromTutor?: INewTutorFeedback;
   chats?: IChat[];
   status:

@@ -11,6 +11,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ImportContactsIcon from '@mui/icons-material/ImportContacts';
 import MuiButton from '@mui/material/Button';
 import InfoIcon from '@mui/icons-material/InfoOutlined';
+import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined';
 
 import Button from '../Button';
 import FeedbackModal from '../Modal/FeedbackModal';
@@ -259,7 +260,15 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
               <ImportContactsIcon className="session-card-icon" /> Lesson Plan
             </div>
           )}
-          {chats && <MuiButton onClick={() => setOpenChatModal(true)}>view chat</MuiButton>}
+          {chats && (
+            <MuiButton
+              onClick={() => setOpenChatModal(true)}
+              style={{ textTransform: 'capitalize' }}
+              startIcon={<ChatOutlinedIcon />}
+            >
+              view chat
+            </MuiButton>
+          )}
         </BlockLeft>
 
         {/* row-3 */}

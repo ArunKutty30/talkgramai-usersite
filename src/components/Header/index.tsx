@@ -68,6 +68,8 @@ const Header = ({ hide }: { hide?: boolean }) => {
   const handleCheckCurrentData = useCallback(async () => {
     if (!subscriptionData) return;
 
+    let missedSession = 0;
+
     updateCancelledSession(
       await getUserCancelledSessionOnCurrentMonth(
         subscriptionData.user,
@@ -83,10 +85,17 @@ const Header = ({ hide }: { hide?: boolean }) => {
         subscriptionData.endDate.toDate()
       );
 
+      if (sessionInfo.some((s) => s.status === 'COMPLETED')) {
+        console.log('DEMO CLASS FINISHED');
+        await updateSubscriptionDoc(subscriptionData.id, { subscriptionStatus: 'EXPIRED' });
+        updateSubscriptionData(null);
+        updateSubscriptionDataFetching('SUCCESS');
+      }
+
       setReminder({
         fetching: false,
         endDate: subscriptionData.endDate.toDate(),
-        session: 1 - sessionInfo,
+        session: 1 - sessionInfo.length,
         isLastWeek: true,
       });
 
@@ -126,14 +135,14 @@ const Header = ({ hide }: { hide?: boolean }) => {
       //   );
       // }
 
-      const missedClass = (currentInfo.currentWeek - 1) * sessionPerWeek - lastWeekSessionInfo;
+      missedSession = (currentInfo.currentWeek - 1) * sessionPerWeek - lastWeekSessionInfo.length;
 
-      console.log('MISSED CLASS ', missedClass);
+      console.log('MISSED CLASS ', missedSession);
       const sessionLeft =
         (subscriptionData?.noOfSession || 0) -
-        ((subscriptionData?.bookedSession || 0) + missedClass);
+        ((subscriptionData?.bookedSession || 0) + missedSession);
 
-      updateExpiredClass(missedClass);
+      updateExpiredClass(missedSession);
       updateSessionLeft(sessionLeft);
     } else {
       updateExpiredClass(0);
@@ -154,11 +163,26 @@ const Header = ({ hide }: { hide?: boolean }) => {
     setReminder({
       fetching: false,
       endDate: currentInfo.currentWeekEndDate,
-      session: sessionPerWeek - sessionInfo,
+      session: sessionPerWeek - sessionInfo.length,
       isLastWeek: currentInfo.totalWeeks === currentInfo.currentWeek,
     });
 
+    const bookedSession = subscriptionData.bookedSession || 0;
+    const backlogSession = subscriptionData.backlogSession || 0;
+
+    if (bookedSession + missedSession === subscriptionData.noOfSession && backlogSession === 0) {
+      console.log('UNSUBSCRIBE');
+      const isCompleted = currentPlanSession.some(
+        (s) => Boolean(s.isLastSession) && s.status === 'COMPLETED'
+      );
+      if (isCompleted) {
+        console.log('UNSUBSCRIBE THIS USER');
+      }
+    }
+
     updateSubscriptionDataFetching('SUCCESS');
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     subscriptionData,
     setReminder,

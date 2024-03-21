@@ -12,8 +12,8 @@ import {
   runTransaction,
   Timestamp,
   where,
-} from "firebase/firestore";
-import { v4 } from "uuid";
+} from 'firebase/firestore';
+import { v4 } from 'uuid';
 
 import {
   BOOKINGS_COLLECTION_NAME,
@@ -21,10 +21,10 @@ import {
   TIME_SLOTS_COLLECTION_NAME,
   TUTOR_COLLECTION_NAME,
   USER_COLLECTION_NAME,
-} from "../constants/data";
-import { EBookingStatus, IBookingSessionDB } from "../constants/types";
-import { db } from "../utils/firebase";
-import { config } from "../constants/config";
+} from '../constants/data';
+import { EBookingStatus, IBookingSessionDB } from '../constants/types';
+import { db } from '../utils/firebase';
+import { config } from '../constants/config';
 
 export const createBookSessionDoc = async (
   tutorId: string,
@@ -41,18 +41,18 @@ export const createBookSessionDoc = async (
       db,
       USER_COLLECTION_NAME,
       data.user,
-      "FinishedTopics",
+      'FinishedTopics',
       data.topicInfo.category
     );
     const timeSlotData = await transaction.get(docRef);
     const userData = await transaction.get(userDocRef);
 
     if (!userData.exists()) {
-      throw new Error("User does not exist.");
+      throw new Error('User does not exist.');
     }
 
     if (!timeSlotData.exists()) {
-      throw new Error("Time slot does not exist.");
+      throw new Error('Time slot does not exist.');
     }
 
     const sessionData = { ...data };
@@ -84,7 +84,7 @@ export const createBookSessionDoc = async (
       transaction.update(subscriptionRef, {
         backlogSession: increment(-1),
       });
-      sessionData.sessionType = "backlog";
+      sessionData.sessionType = 'backlog';
     } else {
       transaction.update(subscriptionRef, {
         bookedSession: increment(1),
@@ -127,7 +127,7 @@ export const updateBookSessionDoc = async (
       db,
       USER_COLLECTION_NAME,
       userId,
-      "FinishedTopics",
+      'FinishedTopics',
       data.topicInfo.category
     );
 
@@ -135,7 +135,7 @@ export const updateBookSessionDoc = async (
       db,
       USER_COLLECTION_NAME,
       userId,
-      "FinishedTopics",
+      'FinishedTopics',
       oldTopicInfo.category
     );
 
@@ -162,12 +162,12 @@ export const deleteBookSessionDoc = async (id: string, topicInfo: ITopicInfo) =>
   await runTransaction(db, async (transaction) => {
     const docRef = doc(db, BOOKINGS_COLLECTION_NAME, id);
     const bookSessionDoc = await transaction.get(docRef);
-    if (!bookSessionDoc.exists()) throw new Error("No session found");
+    if (!bookSessionDoc.exists()) throw new Error('No session found');
     const bookSessionData = bookSessionDoc.data() as IBookingSessionDB;
 
     const timeSlotDocRef = doc(db, TIME_SLOTS_COLLECTION_NAME, bookSessionData.slotId);
     const timeSlotDoc = await transaction.get(timeSlotDocRef);
-    if (!timeSlotDoc.exists()) throw new Error("No slots found");
+    if (!timeSlotDoc.exists()) throw new Error('No slots found');
     const timeSlotData = timeSlotDoc.data();
 
     const subscriptionDocRef = doc(
@@ -176,15 +176,15 @@ export const deleteBookSessionDoc = async (id: string, topicInfo: ITopicInfo) =>
       bookSessionData.subscriptionId
     );
     const subscriptionDoc = await transaction.get(subscriptionDocRef);
-    if (!subscriptionDoc.exists()) throw new Error("No subscription found");
+    if (!subscriptionDoc.exists()) throw new Error('No subscription found');
 
     if (subscriptionDoc.data()?.demoClass === true) {
       if (subscriptionDoc.data().cancelledSession >= config.CANCEL_DEMO_SESSION_COUNT) {
-        throw new Error("your cancel quota over");
+        throw new Error('your cancel quota over');
       }
     } else {
       if (subscriptionDoc.data().cancelledSession >= config.CANCEL_SESSION_COUNT) {
-        throw new Error("your cancel quota over");
+        throw new Error('your cancel quota over');
       }
     }
 
@@ -199,7 +199,7 @@ export const deleteBookSessionDoc = async (id: string, topicInfo: ITopicInfo) =>
       tutors: updatedArray,
     });
     transaction.update(docRef, {
-      status: "USER_CANCELLED",
+      status: 'USER_CANCELLED',
       updateAt: Timestamp.now(),
     });
     transaction.update(subscriptionDocRef, {
@@ -211,7 +211,7 @@ export const deleteBookSessionDoc = async (id: string, topicInfo: ITopicInfo) =>
       db,
       USER_COLLECTION_NAME,
       bookSessionData.user,
-      "FinishedTopics",
+      'FinishedTopics',
       topicInfo.category
     );
     transaction.set(
@@ -228,17 +228,17 @@ export const deleteDemoBookSessionDoc = async (id: string, topicInfo: ITopicInfo
   await runTransaction(db, async (transaction) => {
     const docRef = doc(db, BOOKINGS_COLLECTION_NAME, id);
     const bookSessionDoc = await transaction.get(docRef);
-    if (!bookSessionDoc.exists()) throw new Error("No session found");
+    if (!bookSessionDoc.exists()) throw new Error('No session found');
     const bookSessionData = bookSessionDoc.data() as IBookingSessionDB;
 
     const timeSlotDocRef = doc(db, TIME_SLOTS_COLLECTION_NAME, bookSessionData.slotId);
     const timeSlotDoc = await transaction.get(timeSlotDocRef);
-    if (!timeSlotDoc.exists()) throw new Error("No slots found");
+    if (!timeSlotDoc.exists()) throw new Error('No slots found');
     const timeSlotData = timeSlotDoc.data();
 
     const userDocRef = doc(db, USER_COLLECTION_NAME, bookSessionData.user);
     const userDoc = await transaction.get(userDocRef);
-    if (!userDoc.exists()) throw new Error("No user found");
+    if (!userDoc.exists()) throw new Error('No user found');
 
     const subscriptionDocRef = doc(
       db,
@@ -246,15 +246,15 @@ export const deleteDemoBookSessionDoc = async (id: string, topicInfo: ITopicInfo
       bookSessionData.subscriptionId
     );
     const subscriptionDoc = await transaction.get(subscriptionDocRef);
-    if (!subscriptionDoc.exists()) throw new Error("No subscription found");
+    if (!subscriptionDoc.exists()) throw new Error('No subscription found');
 
     if (subscriptionDoc.data()?.demoClass === true) {
       if (subscriptionDoc.data().cancelledSession >= config.CANCEL_DEMO_SESSION_COUNT) {
-        throw new Error("your cancel quota over");
+        throw new Error('your cancel quota over');
       }
     } else {
       if (subscriptionDoc.data().cancelledSession >= config.CANCEL_SESSION_COUNT) {
-        throw new Error("your cancel quota over");
+        throw new Error('your cancel quota over');
       }
     }
 
@@ -269,7 +269,7 @@ export const deleteDemoBookSessionDoc = async (id: string, topicInfo: ITopicInfo
       tutors: updatedArray,
     });
     transaction.update(docRef, {
-      status: "USER_CANCELLED",
+      status: 'USER_CANCELLED',
       updatedAt: Timestamp.now(),
     });
     transaction.update(subscriptionDocRef, {
@@ -282,7 +282,7 @@ export const deleteDemoBookSessionDoc = async (id: string, topicInfo: ITopicInfo
       db,
       USER_COLLECTION_NAME,
       bookSessionData.user,
-      "FinishedTopics",
+      'FinishedTopics',
       topicInfo.category
     );
     transaction.set(
@@ -298,7 +298,7 @@ export const deleteDemoBookSessionDoc = async (id: string, topicInfo: ITopicInfo
 export const getBookingSessionDoc = async (docId: string) => {
   const docRef = doc(db, BOOKINGS_COLLECTION_NAME, docId);
   const docResult = await getDoc(docRef);
-  const docData = docResult.data() as Omit<IBookingSessionDB, "id">;
+  const docData = docResult.data() as Omit<IBookingSessionDB, 'id'>;
 
   if (!docData) return null;
 
@@ -314,21 +314,19 @@ export const getUserBookedSessionOnThisWeekDoc = async (
   const colRef = collection(db, BOOKINGS_COLLECTION_NAME);
   const q = query(
     colRef,
-    where("user", "==", userId),
-    where("subscriptionId", "==", subscriptionId),
-    where("startTime", ">=", startDate),
-    where("startTime", "<=", endDate),
-    where("status", "in", [EBookingStatus.COMPLETED, EBookingStatus.UPCOMING])
+    where('user', '==', userId),
+    where('subscriptionId', '==', subscriptionId),
+    where('startTime', '>=', startDate),
+    where('startTime', '<=', endDate),
+    where('status', 'in', [EBookingStatus.COMPLETED, EBookingStatus.UPCOMING])
   );
 
   const collectionResult = await getDocs(q);
 
-  console.log(
-    "lastWeekSessionInfo",
-    collectionResult.forEach((m) => m.data())
-  );
-
-  return collectionResult.size;
+  return collectionResult.docs.map((m) => ({
+    ...(m.data() as Omit<IBookingSessionDB, 'id'>),
+    id: m.id,
+  }));
 };
 
 export const getUserCompletedSessionOnSubscriptionDoc = async (
@@ -340,11 +338,11 @@ export const getUserCompletedSessionOnSubscriptionDoc = async (
   const colRef = collection(db, BOOKINGS_COLLECTION_NAME);
   const q = query(
     colRef,
-    where("user", "==", userId),
-    where("subscriptionId", "==", subscriptionId),
-    where("startTime", ">=", startDate),
-    where("startTime", "<=", endDate),
-    where("status", "in", [EBookingStatus.COMPLETED, EBookingStatus.UPCOMING])
+    where('user', '==', userId),
+    where('subscriptionId', '==', subscriptionId),
+    where('startTime', '>=', startDate),
+    where('startTime', '<=', endDate),
+    where('status', 'in', [EBookingStatus.COMPLETED, EBookingStatus.UPCOMING])
   );
 
   const collectionResult = await getDocs(q);
@@ -361,16 +359,17 @@ export const getUserBookedSessionDoc = async (
   const colRef = collection(db, BOOKINGS_COLLECTION_NAME);
   const q = query(
     colRef,
-    where("user", "==", userId),
-    where("subscriptionId", "==", subscriptionId),
-    where("startTime", ">=", startDate),
-    where("startTime", "<=", endDate),
-    where("status", "in", [EBookingStatus.UPCOMING, EBookingStatus.COMPLETED])
+    where('user', '==', userId),
+    where('subscriptionId', '==', subscriptionId),
+    where('startTime', '>=', startDate),
+    where('startTime', '<=', endDate),
+    where('status', 'in', [EBookingStatus.UPCOMING, EBookingStatus.COMPLETED]),
+    orderBy('startTime', 'asc')
   );
 
   const collectionResult = await getDocs(q);
 
-  console.log("collectionResult.size", collectionResult.size);
+  console.log('collectionResult.size', collectionResult.size);
 
   return collectionResult.docs.map((d) => ({ id: d.id, ...d.data() })) as IBookingSessionDB[];
 };
@@ -397,15 +396,15 @@ export const getUserCompletedSessionDoc = async (userId: string, endDate: Date) 
   const colRef = collection(db, BOOKINGS_COLLECTION_NAME);
   const q = query(
     colRef,
-    where("user", "==", userId),
-    where("startTime", "<", endDate),
-    where("status", "in", [EBookingStatus.COMPLETED]),
-    orderBy("startTime", "asc")
+    where('user', '==', userId),
+    where('startTime', '<', endDate),
+    where('status', 'in', [EBookingStatus.COMPLETED]),
+    orderBy('startTime', 'asc')
   );
 
   const collectionResult = await getDocs(q);
 
-  console.log("collectionResultOverall.size", collectionResult.size);
+  console.log('collectionResultOverall.size', collectionResult.size);
 
   return collectionResult.docs.map((d) => ({ id: d.id, ...d.data() })) as IBookingSessionDB[];
 };
