@@ -119,6 +119,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
   const session = reminderStore((store) => store.session);
   const [completedLessonPlan, setCompletedLessonPlan] = useState<ILessonPlanDB[]>([]);
   const tempValues = useRef<IFormType | null>(null);
+  const updateSubscriptionDataOutdated = userStore((state) => state.updateSubscriptionDataOutdated);
 
   const handleGetTutorData = useCallback(async () => {
     try {
@@ -164,6 +165,8 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
       }
 
       setMessage('Your Session has been Cancelled !!');
+      updateSubscriptionDataOutdated(true);
+
       setTimeout(() => {
         if (handleClose) handleClose();
       }, 1500);
@@ -306,6 +309,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
 
       setLoading(false);
       setMessage('Your Session has been Booked !!');
+      updateSubscriptionDataOutdated(true);
 
       setTimeout(() => {
         refetchUser();

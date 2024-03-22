@@ -369,8 +369,6 @@ export const getUserBookedSessionDoc = async (
 
   const collectionResult = await getDocs(q);
 
-  console.log('collectionResult.size', collectionResult.size);
-
   return collectionResult.docs.map((d) => ({ id: d.id, ...d.data() })) as IBookingSessionDB[];
 };
 
@@ -403,8 +401,6 @@ export const getUserCompletedSessionDoc = async (userId: string, endDate: Date) 
   );
 
   const collectionResult = await getDocs(q);
-
-  console.log('collectionResultOverall.size', collectionResult.size);
 
   return collectionResult.docs.map((d) => ({ id: d.id, ...d.data() })) as IBookingSessionDB[];
 };

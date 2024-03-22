@@ -55,6 +55,8 @@ const Header = ({ hide }: { hide?: boolean }) => {
   const updateSessionLeft = userStore((state) => state.updateSessionLeft);
   const updateAllSessionFetching = userStore((state) => state.updateAllSessionFetching);
   const setOutdated = userStore((state) => state.setOutdated);
+  const updateSubscriptionDataOutdated = userStore((state) => state.updateSubscriptionDataOutdated);
+  const isSubscriptionDataOutdated = userStore((state) => state.isSubscriptionDataOutdated);
   const showHeader = generalStore((state) => state.showHeader);
   const isOutdated = userStore((state) => state.isOutdated);
   const updateOverallBookedSession = userStore((state) => state.updateOverallBookedSession);
@@ -109,7 +111,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
       subscriptionData.startDate.toDate(),
       subscriptionData.endDate.toDate()
     );
-    console.log('current', currentInfo);
+    // console.log('current', currentInfo);
     const sessionInfo = await getUserBookedSessionOnThisWeekDoc(
       subscriptionData.user,
       subscriptionData.id,
@@ -127,17 +129,9 @@ const Header = ({ hide }: { hide?: boolean }) => {
 
       const sessionPerWeek = subscriptionData?.sessionPerWeek ?? 0;
 
-      // if (subscriptionData?.sessionPerWeek !== lastWeekSessionInfo) {
-      //   const sessionPerWeek = subscriptionData?.sessionPerWeek ?? 0;
-      //   await updateMissedSessionSubscriptionDoc(
-      //     subscriptionData.id,
-      //     sessionPerWeek - lastWeekSessionInfo
-      //   );
-      // }
-
       missedSession = (currentInfo.currentWeek - 1) * sessionPerWeek - lastWeekSessionInfo.length;
 
-      console.log('MISSED CLASS ', missedSession);
+      // console.log('MISSED CLASS ', missedSession);
       const sessionLeft =
         (subscriptionData?.noOfSession || 0) -
         ((subscriptionData?.bookedSession || 0) + missedSession);
@@ -145,6 +139,9 @@ const Header = ({ hide }: { hide?: boolean }) => {
       updateExpiredClass(missedSession);
       updateSessionLeft(sessionLeft);
     } else {
+      const sessionLeft =
+        (subscriptionData?.noOfSession || 0) - (subscriptionData?.bookedSession || 0);
+      updateSessionLeft(sessionLeft);
       updateExpiredClass(0);
     }
 
@@ -194,6 +191,28 @@ const Header = ({ hide }: { hide?: boolean }) => {
     updateSessionLeft,
     updateSubscriptionDataFetching,
   ]);
+
+  useEffect(() => {
+    const updateData = async () => {
+      console.log('CALLED');
+      try {
+        if (user) {
+          const tempSubscriptionData = await getUserSubscriptionDoc(user.uid);
+          updateSubscriptionData(tempSubscriptionData);
+          updateSubscriptionDataOutdated(false);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (isSubscriptionDataOutdated) {
+      console.log('SUBSCRIPTION DATA OUTDATED');
+      updateData();
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSubscriptionDataOutdated]);
 
   const handleGetOverallSessionData = useCallback(async () => {
     try {

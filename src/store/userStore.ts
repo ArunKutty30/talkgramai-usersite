@@ -21,6 +21,7 @@ type State = {
   expiredClass: number;
   missedClass: number;
   sessionLeft: number;
+  isSubscriptionDataOutdated: boolean;
 };
 
 type Action = {
@@ -38,6 +39,7 @@ type Action = {
   updateCurrentPlanSession: (value: IBookingSessionDB[]) => void;
   updateOverallBookedSession: (value: IBookingSessionDB[]) => void;
   updateSessionLeft: (sessionLeft: number) => void;
+  updateSubscriptionDataOutdated: (value: boolean) => void;
 };
 
 export const userStore = create<State & Action>((set) => ({
@@ -53,6 +55,7 @@ export const userStore = create<State & Action>((set) => ({
   missedClass: 0,
   sessionLeft: 0,
   currentPlanSessions: [],
+  isSubscriptionDataOutdated: false,
   updateFetching: (fetching) => set(() => ({ isFetching: fetching })),
   updateAllSessionFetching: (fetching) => set(() => ({ isAllSessionFetching: fetching })),
   updateUser: (user) => set(() => ({ user })),
@@ -68,4 +71,5 @@ export const userStore = create<State & Action>((set) => ({
   updateSessionLeft: (sessionLeft) => set(() => ({ sessionLeft })),
   updateSubscriptionDataFetching: (subscriptionDataFetching) =>
     set(() => ({ subscriptionDataFetching })),
+  updateSubscriptionDataOutdated: (value) => set(() => ({ isSubscriptionDataOutdated: value })),
 }));
