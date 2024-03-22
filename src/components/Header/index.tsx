@@ -174,6 +174,10 @@ const Header = ({ hide }: { hide?: boolean }) => {
       );
       if (isCompleted) {
         console.log('UNSUBSCRIBE THIS USER');
+        await updateSubscriptionDoc(subscriptionData.id, { subscriptionStatus: 'EXPIRED' });
+        updateSubscriptionData(null);
+        updateSubscriptionDataFetching('SUCCESS');
+        return;
       }
     }
 
