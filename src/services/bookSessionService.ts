@@ -318,7 +318,11 @@ export const getUserBookedSessionOnThisWeekDoc = async (
     where('subscriptionId', '==', subscriptionId),
     where('startTime', '>=', startDate),
     where('startTime', '<=', endDate),
-    where('status', 'in', [EBookingStatus.COMPLETED, EBookingStatus.UPCOMING])
+    where('status', 'in', [
+      EBookingStatus.COMPLETED,
+      EBookingStatus.UPCOMING,
+      EBookingStatus.MISSED,
+    ])
   );
 
   const collectionResult = await getDocs(q);
