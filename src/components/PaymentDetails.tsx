@@ -22,8 +22,6 @@ import CustomModal from './Modal';
 import TemporaryPaymentModal from './Modal/TemporaryPaymentModal';
 import { config } from '../constants/config';
 
-const perSessionCost = config.PER_SESSION_COST;
-
 interface IPaymentDetailsProps {
   selectedPlan: ISelectedPlan;
   setApplyOffer: React.Dispatch<React.SetStateAction<boolean>>;
@@ -163,9 +161,9 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
   const grandTotal = useMemo(() => {
     let total = 0;
     if (applyOffer) {
-      total += selectedPlan.noOfSessions * perSessionCost * ((100 - 50) / 100);
+      total += selectedPlan.noOfSessions * selectedPlan.priceForSession * ((100 - 50) / 100);
     } else {
-      total += selectedPlan.noOfSessions * perSessionCost * ((100 - 0) / 100);
+      total += selectedPlan.noOfSessions * selectedPlan.priceForSession;
     }
 
     if (onRecordings) {
@@ -237,14 +235,21 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
       <div className="cost-split">
         <div className="flex-between mb-10">
           <p>Plan Price :</p>
-          <p>Rs {formatCurrency(selectedPlan.noOfSessions * perSessionCost * ((100 - 0) / 100))}</p>
+          <p>
+            Rs{' '}
+            {formatCurrency(
+              selectedPlan.noOfSessions * selectedPlan.priceForSession * ((100 - 0) / 100)
+            )}
+          </p>
         </div>
         <div className="flex-between mb-10">
           <p>Coupon Discount :</p>
           <p>
             - Rs{' '}
             {applyOffer
-              ? formatCurrency(selectedPlan.noOfSessions * perSessionCost * (50 / 100))
+              ? formatCurrency(
+                  selectedPlan.noOfSessions * selectedPlan.priceForSession * (50 / 100)
+                )
               : 0}
           </p>
         </div>
@@ -253,8 +258,12 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
           <p>
             Rs{' '}
             {applyOffer
-              ? formatCurrency(selectedPlan.noOfSessions * perSessionCost * ((100 - 50) / 100))
-              : formatCurrency(selectedPlan.noOfSessions * perSessionCost * ((100 - 0) / 100))}
+              ? formatCurrency(
+                  selectedPlan.noOfSessions * selectedPlan.priceForSession * ((100 - 50) / 100)
+                )
+              : formatCurrency(
+                  selectedPlan.noOfSessions * selectedPlan.priceForSession * ((100 - 0) / 100)
+                )}
           </p>
         </div>
         <div className="flex-between mb-10">
@@ -316,8 +325,12 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
         <TemporaryPaymentModal
           amount={
             applyOffer
-              ? formatCurrency(selectedPlan.noOfSessions * perSessionCost * ((100 - 50) / 100))
-              : formatCurrency(selectedPlan.noOfSessions * perSessionCost * ((100 - 0) / 100))
+              ? formatCurrency(
+                  selectedPlan.noOfSessions * selectedPlan.priceForSession * ((100 - 50) / 100)
+                )
+              : formatCurrency(
+                  selectedPlan.noOfSessions * selectedPlan.priceForSession * ((100 - 0) / 100)
+                )
           }
         />
       </Modal>
