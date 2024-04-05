@@ -72,19 +72,19 @@ export const subscriptionList: TSubscriptionList[] = [
       '30 mins session duration',
     ],
   },
-  {
-    title: 'Two months',
-    durationInMonth: 2,
-    tag: { status: ITransactionStatus.SUCCESSFUL, text: 'Most Purchased' },
-    priceForSession: 300,
-    // priceForSession: 200,
-    recommended: false,
-    benefits: [
-      'You get a special discount. Making your price per session ₹10',
-      'You get a total of 24 sessions per week',
-      '30 mins session duration',
-    ],
-  },
+  // {
+  //   title: 'Two months',
+  //   durationInMonth: 2,
+  //   tag: { status: ITransactionStatus.SUCCESSFUL, text: 'Most Purchased' },
+  //   priceForSession: 300,
+  //   // priceForSession: 200,
+  //   recommended: false,
+  //   benefits: [
+  //     'You get a special discount. Making your price per session ₹10',
+  //     'You get a total of 24 sessions per week',
+  //     '30 mins session duration',
+  //   ],
+  // },
   {
     title: 'three months',
     durationInMonth: 3,
