@@ -115,6 +115,7 @@ export interface ISelectedPlan {
   total: number;
   noOfSessions: number;
   sessionPerWeek: number;
+  priceForSession: number;
 }
 
 export interface ITutorSlot {

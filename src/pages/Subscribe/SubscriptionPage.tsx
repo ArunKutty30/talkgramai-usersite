@@ -43,10 +43,11 @@ const SubscribePage = () => {
     setSelectedPlan({
       title: subscriptionList[1].title,
       noOfSessions: noOfSessions,
-      total: noOfSessions * 300,
+      total: noOfSessions * subscriptionList[1].priceForSession,
       durationInMonth: subscriptionList[1].durationInMonth,
       sessionPerWeek: 3,
       offerPrice: 25,
+      priceForSession: subscriptionList[1].priceForSession,
     });
   }, []);
 
@@ -55,12 +56,12 @@ const SubscribePage = () => {
       if (selectedPlan) {
         const noOfSessions =
           selectedPlan.durationInMonth * 4 * Number(selectedSessionPerWeek.value);
-        setSelectedPlan({
+        setSelectedPlan((s) => ({
           ...selectedPlan,
           sessionPerWeek: Number(selectedSessionPerWeek.value),
           noOfSessions: noOfSessions,
-          total: noOfSessions * 150,
-        });
+          total: noOfSessions * (s ? s.priceForSession : 0),
+        }));
       }
     }
 

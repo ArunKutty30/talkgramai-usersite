@@ -64,6 +64,7 @@ export const subscriptionList: TSubscriptionList[] = [
     durationInMonth: 1,
     tag: { status: ITransactionStatus.INFO, text: 'Recommended For You' },
     priceForSession: 300,
+    // priceForSession: 220,
     recommended: false,
     benefits: [
       'You get a special discount. Making your price per session ₹10',
@@ -71,11 +72,25 @@ export const subscriptionList: TSubscriptionList[] = [
       '30 mins session duration',
     ],
   },
+  // {
+  //   title: 'Two months',
+  //   durationInMonth: 2,
+  //   tag: { status: ITransactionStatus.SUCCESSFUL, text: 'Most Purchased' },
+  //   priceForSession: 300,
+  //   // priceForSession: 200,
+  //   recommended: false,
+  //   benefits: [
+  //     'You get a special discount. Making your price per session ₹10',
+  //     'You get a total of 24 sessions per week',
+  //     '30 mins session duration',
+  //   ],
+  // },
   {
     title: 'three months',
     durationInMonth: 3,
     tag: { status: ITransactionStatus.SUCCESSFUL, text: 'Most Purchased' },
     priceForSession: 300,
+    // priceForSession: 160,
     recommended: true,
     benefits: [
       'You get a special discount. Making your price per session ₹10',
@@ -88,6 +103,7 @@ export const subscriptionList: TSubscriptionList[] = [
     offerPrice: 25,
     durationInMonth: 6,
     priceForSession: 300,
+    // priceForSession: 150,
     recommended: false,
     benefits: [
       'You get a special discount. Making your price per session ₹10',
@@ -100,6 +116,7 @@ export const subscriptionList: TSubscriptionList[] = [
     offerPrice: 25,
     durationInMonth: 12,
     priceForSession: 300,
+    // priceForSession: 145,
     recommended: false,
     benefits: [
       'You get a special discount. Making your price per session ₹10',

@@ -1,9 +1,9 @@
-import React from "react";
-import styled from "styled-components";
-import { Check, CheckCircleFill } from "styled-icons/bootstrap";
+import React from 'react';
+import styled from 'styled-components';
+import { Check, CheckCircleFill } from 'styled-icons/bootstrap';
 
-import { ISelectedPlan, TSubscriptionList } from "../constants/types";
-import { useMediaQuery } from "usehooks-ts";
+import { ISelectedPlan, TSubscriptionList } from '../constants/types';
+import { useMediaQuery } from 'usehooks-ts';
 // import tagBg from "../assets/icons/offer-tag.svg";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -13,8 +13,6 @@ interface ISubscriptionCard extends TSubscriptionList {
   setSelectedPlan: React.Dispatch<React.SetStateAction<ISelectedPlan | null>>;
   applyOffer: boolean;
 }
-
-const perSessionCost = 300;
 
 const SubscriptionCard: React.FC<ISubscriptionCard> = (props) => {
   const {
@@ -26,28 +24,30 @@ const SubscriptionCard: React.FC<ISubscriptionCard> = (props) => {
     offerPrice,
     recommended,
     applyOffer,
+    priceForSession,
   } = props;
-  const isMobile = useMediaQuery("(max-width:768px)");
+  const isMobile = useMediaQuery('(max-width:768px)');
 
   const noOfSessions = durationInMonth * 4 * sessionPerWeek;
 
   return (
     <StyledSubscriptionCard
-      className={selectedPlan?.title === title ? "active" : ""}
+      className={selectedPlan?.title === title ? 'active' : ''}
       onClick={() => {
         setSelectedPlan({
           title: props.title,
           noOfSessions: noOfSessions,
-          total: noOfSessions * perSessionCost,
+          total: noOfSessions * priceForSession,
           durationInMonth,
           sessionPerWeek,
           offerPrice,
+          priceForSession,
         });
         if (isMobile) {
-          const checkoutElement = document.getElementById("checkout");
+          const checkoutElement = document.getElementById('checkout');
 
           if (checkoutElement) {
-            checkoutElement.scrollIntoView({ behavior: "smooth" });
+            checkoutElement.scrollIntoView({ behavior: 'smooth' });
           }
         }
       }}
@@ -70,19 +70,19 @@ const SubscriptionCard: React.FC<ISubscriptionCard> = (props) => {
           </div>
         ))} */}
         <div>
-          <div style={{ width: "18px", height: "18px" }}>
+          <div style={{ width: '18px', height: '18px' }}>
             <Check />
           </div>
           <span>You get a 50% Beta Launch Discount, making the Per-Session Cost ₹150 Only</span>
         </div>
         <div>
-          <div style={{ width: "18px", height: "18px" }}>
+          <div style={{ width: '18px', height: '18px' }}>
             <Check />
           </div>
           <span>You get a Total of {noOfSessions} Sessions</span>
         </div>
         <div>
-          <div style={{ width: "18px", height: "18px" }}>
+          <div style={{ width: '18px', height: '18px' }}>
             <Check />
           </div>
           <span>30-Minutes Session Duration</span>
@@ -102,9 +102,9 @@ const SubscriptionCard: React.FC<ISubscriptionCard> = (props) => {
       <div className="price">
         {applyOffer ? (
           <>
-            <del className="strike">₹{noOfSessions * perSessionCost}</del>
+            <del className="strike">₹{noOfSessions * priceForSession}</del>
             <span className="offer-price">
-              ₹{noOfSessions * perSessionCost * ((100 - 50) / 100)}
+              ₹{noOfSessions * priceForSession * 0.5}
               {/* <span style={{ fontSize: "75%" }}>mo</span> */}
             </span>
             <span className="price-offer-tag">-{50}% off</span>
@@ -112,7 +112,7 @@ const SubscriptionCard: React.FC<ISubscriptionCard> = (props) => {
         ) : (
           <>
             <span className="offer-price">
-              ₹{noOfSessions * perSessionCost}
+              ₹{noOfSessions * priceForSession}
               {/* /<span style={{ fontSize: "75%" }}>mo</span> */}
             </span>
             <span className="price-offer-tag">-{50}% off applicable</span>
@@ -126,7 +126,7 @@ const SubscriptionCard: React.FC<ISubscriptionCard> = (props) => {
             <span>Selected</span>
           </>
         ) : (
-          "choose plan"
+          'choose plan'
         )}
       </button>
       {/* {offerPrice && <div className="offer-tag">{offerPrice}% Off</div>} */}
@@ -334,7 +334,7 @@ const StyledSubscriptionCard = styled.div`
     font-weight: 500;
     line-height: normal;
     padding: 12px 15px;
-    font-family: "Inter";
+    font-family: 'Inter';
     display: flex;
     align-items: center;
     gap: 5px;
