@@ -7,7 +7,7 @@ export const BACKEND_URL =
 const API_BASE_URL = 'https://api.videosdk.live';
 const VIDEOSDK_TOKEN = process.env.REACT_APP_VIDEOSDK_TOKEN;
 
-export const createMeeting = async (hasRecording: boolean) => {
+export const createMeeting = async (userId: string, date: string, hasRecording: boolean) => {
   if (!VIDEOSDK_TOKEN) throw new Error('Invalid token');
   const url = `${API_BASE_URL}/v2/rooms`;
 
@@ -23,6 +23,7 @@ export const createMeeting = async (hasRecording: boolean) => {
         },
         quality: 'med',
       },
+      awsDirPath: `${userId}/${date}`,
     };
   }
 
