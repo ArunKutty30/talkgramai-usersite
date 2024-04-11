@@ -406,7 +406,7 @@ export interface IRecordings {
       userStorage: null;
       createdAt: string;
       updatedAt: string;
-      fileUrl: string;
+      fileUrl?: string;
       id: string;
     };
     id: string;

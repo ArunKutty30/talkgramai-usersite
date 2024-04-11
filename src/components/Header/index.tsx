@@ -337,8 +337,6 @@ const Header = ({ hide }: { hide?: boolean }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  console.log(subscriptionData);
-
   if (!showHeader) return null;
   if (hide) return null;
 

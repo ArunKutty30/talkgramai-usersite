@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import autoAnimate from '@formkit/auto-animate';
 import dayjs from 'dayjs';
 import Modal from '@mui/material/Modal';
-import axios from 'axios';
 import ReactCountdown from 'react-countdown';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -15,12 +14,7 @@ import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined';
 
 import Button from '../Button';
 import FeedbackModal from '../Modal/FeedbackModal';
-import {
-  IBookingSession,
-  IRecordings,
-  ITutorProfileData,
-  IUserProfileData,
-} from '../../constants/types';
+import { IBookingSession, ITutorProfileData, IUserProfileData } from '../../constants/types';
 import { customFormat, formatFromToDate, getLocaleDateWithYear } from '../../constants/formatDate';
 import ConfirmTutorModal from '../Modal/ConfirmTutorModal';
 import Rating from '../Rating';
@@ -71,7 +65,6 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
   const profileData = userStore((store) => store.profileData);
   const subscriptionData = userStore((store) => store.subscriptionData);
   const [disputeStatus, setDisputeStatus] = useState<'Raise' | 'View'>('Raise');
-  const [recordingUrl, setRecordingUrl] = useState<string[]>();
   const [openRecordingModal, setOpenRecordingModal] = useState(false);
   const [openChatModal, setOpenChatModal] = useState(false);
   const cancelledSession = userStore((store) => store.userCancelledSession);
@@ -91,29 +84,9 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
     parent.current && autoAnimate(parent.current);
   }, [parent]);
 
-  const handleGetRecordingsData = useCallback(async () => {
-    if (type !== 'previous') return;
-
-    const { data } = await axios.get<IRecordings>(config.RECORDING_API, {
-      params: {
-        roomId: meetingId,
-        page: 1,
-        perPage: 10,
-      },
-      headers: {
-        Authorization: process.env.REACT_APP_VIDEOSDK_TOKEN,
-      },
-    });
-
-    if (data.data.length) {
-      setRecordingUrl(data.data.map((m) => m.file.fileUrl));
-    }
-  }, [type, meetingId]);
-
   useEffect(() => {
     handleGetData();
-    handleGetRecordingsData();
-  }, [handleGetData, handleGetRecordingsData]);
+  }, [handleGetData]);
 
   const navigate = useNavigate();
   const sessionLink = `https://meet-talkgram.netlify.app/${meetingId}/?username=${profileData?.displayName}&uid=${user}`;
@@ -313,15 +286,13 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
                     </Button>
                   )}
 
-                  {recordingUrl && (
-                    <Button
-                      variant="secondary"
-                      size="small"
-                      onClick={() => setOpenRecordingModal(true)}
-                    >
-                      View Recording
-                    </Button>
-                  )}
+                  <Button
+                    variant="secondary"
+                    size="small"
+                    onClick={() => setOpenRecordingModal(true)}
+                  >
+                    View Recording
+                  </Button>
                   {feedbackFromTutor && (
                     <Button
                       variant="secondary"
@@ -451,11 +422,11 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
           formData={{ id, topic, description, topicInfo: topicInfo || { category: '', title: '' } }}
         />
       )}
-      {recordingUrl && openRecordingModal && (
+      {meetingId && openRecordingModal && (
         <Recordings
           isOpen={openRecordingModal}
           handleClose={() => setOpenRecordingModal(false)}
-          recordingUrl={recordingUrl}
+          meetingId={meetingId}
         />
       )}
       {openTutorFeedbackModal && (
