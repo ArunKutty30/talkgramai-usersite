@@ -1,42 +1,42 @@
-import React from "react";
-import styled from "styled-components";
-import { AnimatePresence, motion } from "framer-motion";
-import { ErrorMessage, Form, Formik } from "formik";
+import React from 'react';
+import styled from 'styled-components';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ErrorMessage, Form, Formik } from 'formik';
 
-import Backdrop from "./Backdrop";
-import ReactModal from "./ReactModal";
+import Backdrop from './Backdrop';
+import ReactModal from './ReactModal';
 
-import { ReactComponent as CloseIcon } from "../../assets/icons/close.svg";
-import { ReactComponent as StarIcon } from "../../assets/icons/star.svg";
-import { IBookingSession, INewTutorFeedback } from "../../constants/types";
-import { grammerFeedback, skillsLable, vocabularyFeedback } from "../../constants/data";
-import Button from "../Button";
+import { ReactComponent as CloseIcon } from '../../assets/icons/close.svg';
+import { ReactComponent as StarIcon } from '../../assets/icons/star.svg';
+import { IBookingSession, INewTutorFeedback } from '../../constants/types';
+import { grammerFeedback, skillsLable, vocabularyFeedback } from '../../constants/data';
+import Button from '../Button';
 import {
   fluencyFeedbackItems,
   grammerTitles,
   pronunciationFeedbackItems,
   vocabulary,
-} from "../../utils/data";
+} from '../../utils/data';
 
 const modalVaraints = {
   initial: {
     opacity: 0,
     scale: 0.5,
-    x: "-50%",
-    y: "-50%",
+    x: '-50%',
+    y: '-50%',
   },
   animate: {
     opacity: 1,
     transition: { duration: 0.3 },
     scale: 1,
-    x: "-50%",
-    y: "-50%",
+    x: '-50%',
+    y: '-50%',
   },
   exit: {
     opacity: 0,
     scale: 0,
-    x: "-50%",
-    y: "-50%",
+    x: '-50%',
+    y: '-50%',
   },
 };
 
@@ -48,12 +48,12 @@ interface ITutorFeedbackModal extends IBookingSession {
 }
 
 const initialValues = {
-  status: "COMPLETED",
+  status: 'COMPLETED',
   confidenceRating: 0,
   fluencyRating: 0,
   pronounciationRating: 0,
-  vocabulary: "",
-  grammer: { tenses: "", articlesAndPrepositions: "", subjectVerb: "", other: "" },
+  vocabulary: '',
+  grammer: { tenses: '', articlesAndPrepositions: '', subjectVerb: '', other: '' },
   skills: {
     confidence: 0,
     passion: 0,
@@ -108,39 +108,39 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                         <StyledTagList>
                           <span
                             className={
-                              values.status === "COMPLETED"
-                                ? "tag-variant-one success"
-                                : "tag-variant-one"
+                              values.status === 'COMPLETED'
+                                ? 'tag-variant-one success'
+                                : 'tag-variant-one'
                             }
                           >
                             Joined
                           </span>
                           <span
                             className={
-                              values.status === "MISSED"
-                                ? "tag-variant-one error"
-                                : "tag-variant-one"
+                              values.status === 'MISSED'
+                                ? 'tag-variant-one error'
+                                : 'tag-variant-one'
                             }
                           >
                             Missed
                           </span>
                         </StyledTagList>
                       </div>
-                      {values.status === "COMPLETED" && (
+                      {values.status === 'COMPLETED' && (
                         <>
                           <h4>Interaction Analysis</h4>
-                          {Object.keys(initialValues["skills"]).map((k) => (
+                          {Object.keys(initialValues['skills']).map((k) => (
                             <div className="flex-column" key={k}>
-                              <p className="title" style={{ textTransform: "capitalize" }}>
+                              <p className="title" style={{ textTransform: 'capitalize' }}>
                                 {skillsLable[k as keyof typeof skillsLable]}
                               </p>
                               <StyledNumberList>
                                 {Array.from({ length: 10 }).map((_, i) => (
                                   <span
                                     className={
-                                      values.skills[k as keyof (typeof values)["skills"]] === i + 1
-                                        ? "active"
-                                        : ""
+                                      values.skills[k as keyof (typeof values)['skills']] === i + 1
+                                        ? 'active'
+                                        : ''
                                     }
                                     key={i.toString()}
                                   >
@@ -166,7 +166,7 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                                 <StyledStarList>
                                   {Array.from({ length: 5 }).map((_, i) => (
                                     <span
-                                      className={i + 1 <= values.fluency.rating ? "active" : ""}
+                                      className={i + 1 <= values.fluency.rating ? 'active' : ''}
                                       key={i.toString()}
                                     >
                                       <StarIcon />
@@ -184,7 +184,7 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                               <StyledEmojiList>
                                 {fluencyFeedbackItems.map((data, j) => (
                                   <div
-                                    className={values.fluency.feedback === data ? "active" : ""}
+                                    className={values.fluency.feedback === data ? 'active' : ''}
                                     key={j.toString()}
                                   >
                                     <p>{data}</p>
@@ -206,7 +206,7 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                                   {Array.from({ length: 5 }).map((_, i) => (
                                     <span
                                       className={
-                                        i + 1 <= values.pronunciation.rating ? "active" : ""
+                                        i + 1 <= values.pronunciation.rating ? 'active' : ''
                                       }
                                       key={i.toString()}
                                     >
@@ -226,7 +226,7 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                                 {pronunciationFeedbackItems.map((data, j) => (
                                   <div
                                     className={
-                                      values.pronunciation.feedback === data.name ? "active" : ""
+                                      values.pronunciation.feedback === data.name ? 'active' : ''
                                     }
                                     key={j.toString()}
                                   >
@@ -251,7 +251,7 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                             <StyledEmojiList>
                               {vocabularyFeedback.map((data, j) => (
                                 <div
-                                  className={values.vocabulary.general === data ? "active" : ""}
+                                  className={values.vocabulary.general === data ? 'active' : ''}
                                   key={j.toString()}
                                 >
                                   <p>{data}</p>
@@ -270,7 +270,7 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                             <StyledEmojiList>
                               {vocabulary.vocabularyRange.options.map((data, j) => (
                                 <div
-                                  className={values.vocabulary.range === data ? "active" : ""}
+                                  className={values.vocabulary.range === data ? 'active' : ''}
                                   key={j.toString()}
                                 >
                                   <p>{data}</p>
@@ -290,7 +290,7 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                               {vocabulary.wordChoicePrecision.options.map((data, j) => (
                                 <div
                                   className={
-                                    values.vocabulary.wordChoicePrecision === data ? "active" : ""
+                                    values.vocabulary.wordChoicePrecision === data ? 'active' : ''
                                   }
                                   key={j.toString()}
                                 >
@@ -310,13 +310,13 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                           {/** -------- GRAMMER FEEDACK --------*/}
 
                           <h5>Grammar</h5>
-                          <div className="flex-column" style={{ gap: "20px" }}>
+                          <div className="flex-column" style={{ gap: '20px' }}>
                             <div className="flex-column" style={{ order: 1 }}>
                               <p className="title">Most Errors (Tenses)</p>
                               <StyledEmojiList>
-                                {["past", "present", "future"].map((data, j) => (
+                                {['past', 'present', 'future'].map((data, j) => (
                                   <div
-                                    className={values.grammar.mostErrors === data ? "active" : ""}
+                                    className={values.grammar.mostErrors === data ? 'active' : ''}
                                     key={j.toString()}
                                   >
                                     <p>{data}</p>
@@ -336,10 +336,10 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                                     <div
                                       className={
                                         values.grammar[
-                                          title.value as keyof (typeof values)["grammar"]
+                                          title.value as keyof (typeof values)['grammar']
                                         ] === data
-                                          ? "active"
-                                          : ""
+                                          ? 'active'
+                                          : ''
                                       }
                                       key={j.toString()}
                                     >
@@ -357,7 +357,7 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                           </div>
                           <div className="flex-column">
                             <label htmlFor="feedback title">Grammar feedback</label>
-                            <textarea readOnly style={{ height: "auto", minHeight: 200 }}>
+                            <textarea readOnly style={{ height: 'auto', minHeight: 150 }}>
                               {values.grammar.other}
                             </textarea>
                           </div>
@@ -367,7 +367,23 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                           {values.generalFeedback && (
                             <div className="flex-column">
                               <h5>General Feedback</h5>
-                              <p>{values.generalFeedback}</p>
+                              <p
+                                style={{
+                                  backgroundColor: 'rgba(0,0,0,0.1)',
+                                  padding: '10px',
+                                  borderRadius: '10px',
+                                }}
+                              >
+                                {values.generalFeedback}
+                              </p>
+                            </div>
+                          )}
+                          {values.homework && (
+                            <div className="flex-column">
+                              <h5>Homework</h5>
+                              <textarea readOnly style={{ height: 'auto', minHeight: 150 }}>
+                                {values.homework}
+                              </textarea>
                             </div>
                           )}
                         </>
@@ -375,7 +391,7 @@ const TutorFeedbackModal: React.FC<ITutorFeedbackModal> = ({
                       <div className="flex-between place-center">
                         {!feedbackFromTutor && (
                           <Button type="submit" disabled={isSubmitting}>
-                            {isSubmitting ? "Submitting your feedback" : "Submit"}
+                            {isSubmitting ? 'Submitting your feedback' : 'Submit'}
                           </Button>
                         )}
                       </div>

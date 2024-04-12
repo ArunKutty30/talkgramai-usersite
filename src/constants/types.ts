@@ -504,6 +504,7 @@ export interface INewTutorFeedback {
     sessionsPerWeek: number;
   };
   generalFeedback: string;
+  homework: string;
 }
 
 export interface IChat {

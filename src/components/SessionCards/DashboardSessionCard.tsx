@@ -11,6 +11,7 @@ import ImportContactsIcon from '@mui/icons-material/ImportContacts';
 import MuiButton from '@mui/material/Button';
 import InfoIcon from '@mui/icons-material/InfoOutlined';
 import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined';
+import toast from 'react-hot-toast';
 
 import Button from '../Button';
 import FeedbackModal from '../Modal/FeedbackModal';
@@ -24,9 +25,8 @@ import { getTutorDoc } from '../../services/tutorService';
 import { userStore } from '../../store/userStore';
 import RaiseDisputeModal from '../Modal/RaiseDisputeModal';
 import { config } from '../../constants/config';
-import TutorFeedbackModal from '../Modal/TutorFeedbackModa';
+import TutorFeedbackModal from '../Modal/TutorFeedbackModal';
 import Recordings from '../Recordings';
-import toast from 'react-hot-toast';
 import ChatModal from '../Modal/ChatModal';
 
 type ISessionType = 'upcoming' | 'previous' | 'missed';
