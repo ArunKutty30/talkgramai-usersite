@@ -68,7 +68,7 @@ const App: React.FC = () => {
             <Route
               path="/subscribe"
               element={
-                <Suspense fallback={null}>
+                <Suspense fallback={<div className="suspense-loader"></div>}>
                   <LazySubscribePage />
                 </Suspense>
               }
@@ -78,7 +78,7 @@ const App: React.FC = () => {
             <Route
               path="/disputes"
               element={
-                <Suspense fallback={null}>
+                <Suspense fallback={<div className="suspense-loader"></div>}>
                   <LazyDisputePage />
                 </Suspense>
               }
@@ -87,7 +87,7 @@ const App: React.FC = () => {
             <Route
               path="/lesson-plan"
               element={
-                <Suspense fallback={null}>
+                <Suspense fallback={<div className="suspense-loader"></div>}>
                   <LazyLessonPlanPage />
                 </Suspense>
               }
@@ -109,7 +109,7 @@ const App: React.FC = () => {
             <Route
               path="/profile/*"
               element={
-                <Suspense fallback={null}>
+                <Suspense fallback={<div className="suspense-loader"></div>}>
                   <LazyProfilePage />
                 </Suspense>
               }
