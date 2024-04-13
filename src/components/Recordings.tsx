@@ -4,13 +4,11 @@ import { ArrowRightCircle, ArrowLeftCircle } from 'styled-icons/bootstrap';
 import CircularProgress from '@mui/material/CircularProgress';
 import axios from 'axios';
 import { CloseCircleOutline } from 'styled-icons/evaicons-outline';
-import { Download } from '@mui/icons-material';
 
 import CustomModal from './Modal';
 import { IRecordings } from '../constants/types';
 import { config } from '../constants/config';
 // import RecordingVideoPlayer from './RecordingVideoPlayer';
-import Button from './Button';
 
 interface IRecordingsProps {
   isOpen: boolean;
@@ -120,23 +118,34 @@ const Recordings: React.FC<IRecordingsProps> = ({ isOpen, handleClose, meetingId
             )}
           </>
         ) : (
-          <StyledFlexColumn>
-            {recordingUrl?.map((m, index) => (
-              // <RecordingVideoPlayer key={index} videoKey={m} />
-              <Button
-                color="primary"
-                key={index}
-                endIcon={<Download />}
-                onClick={() =>
-                  window.open(
-                    `${config.BACKEND_URL}/meeting/recording?key=${encodeURIComponent(m)}`
-                  )
-                }
-              >
-                Download Video {index + 1}
-              </Button>
-            ))}
-          </StyledFlexColumn>
+          <>
+            <StyledVideo>
+              {recordingUrl?.map((m, index) => (
+                <video
+                  controls
+                  key={index}
+                  style={{ display: index === activeIndex ? 'block' : 'none' }}
+                >
+                  <source
+                    src={`https://talkgram-videosdk-recordings.s3.ap-south-1.amazonaws.com/${encodeURIComponent(
+                      m
+                    )}`}
+                    type="video/mp4"
+                  />
+                </video>
+              ))}
+            </StyledVideo>
+            {activeIndex !== 0 && (
+              <button className="arrow-btn prev" onClick={() => handlePrev()}>
+                <ArrowLeftCircle />
+              </button>
+            )}
+            {activeIndex !== recordingUrl.length - 1 && (
+              <button className="arrow-btn" onClick={() => handleNext()}>
+                <ArrowRightCircle />
+              </button>
+            )}
+          </>
         )}
       </VideoModal>
     </CustomModal>
@@ -193,16 +202,6 @@ const StyledCloseIcon = styled.div`
 `;
 
 const StyledVideo = styled.div`
-  margin: auto;
-`;
-
-const StyledFlexColumn = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  justify-content: center;
-  max-width: 360px;
-  width: 100%;
   margin: auto;
 `;
 
