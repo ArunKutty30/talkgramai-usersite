@@ -162,11 +162,20 @@ const InterviewQuestion: React.FC<IInterviewQuestionProps> = ({ title, question 
   return (
     <StyledInterviewQuestions>
       <StyledInterviewQuestionsHeader>
-        <IconButton>
+        <IconButton
+          onClick={() => {
+            if (currentQuestion === 1) {
+              setStep(1);
+            } else {
+              setCurrentQuestion(currentQuestion - 1);
+            }
+          }}
+        >
           <ArrowBackIcon />
         </IconButton>
         <p>{title}</p>
-        <Button variant="secondary">End</Button>
+        <span></span>
+        {/* <Button variant="secondary">End</Button> */}
       </StyledInterviewQuestionsHeader>
       <StyledCard>
         <StyledSection1>
