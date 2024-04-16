@@ -21,8 +21,9 @@ import ForgetPassword from './pages/Auth/ForgetPassword';
 import QuestionSlider from './components/Slider';
 import VerifyMail from './pages/VerifyMail';
 import OnBoarding from './pages/Auth/OnBoarding';
-import Copyright from './components/Copyright';
 import Faq from './pages/Faq';
+import InterviewByAI from './pages/InterviewByAI';
+import DefaultLayout from './layout/DefaultLayout';
 
 const theme = createTheme({
   palette: {
@@ -56,12 +57,20 @@ const App: React.FC = () => {
               <div>
                 {shouldShowHeader && <Header />}
                 <Outlet />
-                <Copyright />
+                {/* <Copyright /> */}
               </div>
             }
           >
-            <Route path="/" element={<Home />} />
+            <Route
+              path="/"
+              element={
+                <DefaultLayout>
+                  <Home />
+                </DefaultLayout>
+              }
+            />
             <Route path="/book-session" element={<BookSession />} />
+            <Route path="/interview" element={<InterviewByAI />} />
             <Route path="/book-demo-session" element={<BookSession />} />
             <Route path="/sessions" element={<Sessions />} />
             <Route path="/refer-and-earn" element={<ReferAndEarn />} />

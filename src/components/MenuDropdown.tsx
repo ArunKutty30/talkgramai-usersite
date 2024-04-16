@@ -6,6 +6,16 @@ import MenuItem from '@mui/material/MenuItem';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { Link } from 'react-router-dom';
 
+const menuLinks = [
+  {
+    name: 'Interview',
+    link: '/interview',
+  },
+  { name: 'Refer', link: '/refer-and-earn' },
+  { name: 'Disputes', link: '/disputes' },
+  { name: 'FAQs', link: '/faqs' },
+];
+
 const StyledMenu = styled((props: MenuProps) => (
   <Menu
     elevation={0}
@@ -87,21 +97,13 @@ export default function MenuDropdown() {
         open={open}
         onClose={handleClose}
       >
-        <Link to="/refer-and-earn">
-          <MenuItem onClick={handleClose} disableRipple>
-            Refer
-          </MenuItem>
-        </Link>
-        <Link to="/disputes">
-          <MenuItem onClick={handleClose} disableRipple>
-            Disputes
-          </MenuItem>
-        </Link>
-        <Link to="/faqs">
-          <MenuItem onClick={handleClose} disableRipple>
-            FAQs
-          </MenuItem>
-        </Link>
+        {menuLinks.map((m) => (
+          <Link key={m.link} to={m.link}>
+            <MenuItem onClick={handleClose} disableRipple>
+              {m.name}
+            </MenuItem>
+          </Link>
+        ))}
       </StyledMenu>
     </div>
   );
