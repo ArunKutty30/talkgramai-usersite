@@ -198,6 +198,7 @@ const InterviewQuestion: React.FC<IInterviewQuestionProps> = ({ title, question 
           title="Sample Response"
           description={sampleResponse}
           disabled={!sampleResponse}
+          showSysthesis
         />
       </StyledCard>
     </StyledInterviewQuestions>
@@ -214,6 +215,10 @@ const StyledInterviewQuestions = styled.div`
   margin: 0 auto;
   gap: 20px;
   padding: 50px 0;
+
+  @media (max-width: 768px) {
+    max-width: 90%;
+  }
 `;
 
 const StyledInterviewQuestionsHeader = styled.div`

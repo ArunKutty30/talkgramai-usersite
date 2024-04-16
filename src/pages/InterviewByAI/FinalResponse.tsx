@@ -15,14 +15,8 @@ const FinalResponse = () => {
           <Accordion
             key={i.toString()}
             title={c.question}
-            description={
-              <>
-                <strong>Answer:</strong> {c.answer}
-                <br />
-                <br />
-                <strong>Feedback:</strong> {c.feedback}
-              </>
-            }
+            description={c.answer}
+            feedback={c.feedback}
             defaultExpanded
           />
         ))}
