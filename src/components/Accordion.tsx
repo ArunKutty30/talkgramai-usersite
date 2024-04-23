@@ -90,7 +90,7 @@ export default function Accordion({
               speak
             </Button>
           )}
-          <Typography>{description}</Typography>
+          <Typography sx={{ marginBottom: feedback ? '15px' : 0 }}>{description}</Typography>
           {feedback ? (
             typeof feedback === 'string' ? (
               <Typography>

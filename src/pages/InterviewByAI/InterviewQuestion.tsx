@@ -52,7 +52,8 @@ const InterviewQuestion: React.FC<IInterviewQuestionProps> = ({ title, question 
 
         if (elapsedTime >= 120) {
           clearInterval(intervalId);
-          setCurrentStep(3); // Automatically move to the next step after 2 minutes
+          setCurrentStep(3);
+          SpeechRecognition.stopListening();
         } else {
           elapsedTime++;
         }
@@ -64,6 +65,8 @@ const InterviewQuestion: React.FC<IInterviewQuestionProps> = ({ title, question 
         clearInterval(intervalId);
       }
     };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
 
   const handleSubmit = async () => {

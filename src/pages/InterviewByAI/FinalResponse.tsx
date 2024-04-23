@@ -3,9 +3,11 @@ import styled from 'styled-components';
 import { useInterviewStore } from '../../store/interviewStore';
 import Accordion from '../../components/Accordion';
 import Stack from '@mui/material/Stack';
+import { Button } from '../../components';
 
 const FinalResponse = () => {
   const collections = useInterviewStore((store) => store.collections);
+  const reset = useInterviewStore((store) => store.reset);
 
   return (
     <StyledFinalResponse>
@@ -20,6 +22,9 @@ const FinalResponse = () => {
             defaultExpanded
           />
         ))}
+        <Button style={{ marginTop: '15px' }} onClick={reset}>
+          Start Over
+        </Button>
       </Stack>
     </StyledFinalResponse>
   );
