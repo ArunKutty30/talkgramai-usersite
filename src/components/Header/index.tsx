@@ -377,6 +377,9 @@ const Header = ({ hide }: { hide?: boolean }) => {
               <NavLink to="/subscribe">Subscribe</NavLink>
             </li>
             <li>
+              <NavLink to="/ai-services">AI Services</NavLink>
+            </li>
+            <li>
               <NavLink to="/feedback-analysis">Feedback analysis</NavLink>
             </li>
             <MenuDropdown />

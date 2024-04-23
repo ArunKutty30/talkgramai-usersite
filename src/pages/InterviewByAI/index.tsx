@@ -16,7 +16,7 @@ const InterviewByAI: React.FC = () => {
   }, [reset]);
 
   return (
-    <div>
+    <div className="pb">
       {
         {
           1: <Step1 />,

@@ -7,12 +7,12 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import { Button } from '@mui/material';
+import Button from '@mui/material/Button';
 
 interface IAccordionProps extends Omit<AccordionProps, 'children'> {
   title: string;
   description: string;
-  feedback?: string;
+  feedback?: React.ReactNode;
   showSysthesis?: boolean;
 }
 
@@ -91,11 +91,15 @@ export default function Accordion({
             </Button>
           )}
           <Typography>{description}</Typography>
-          {feedback && (
-            <Typography>
-              <strong>Feedback:</strong> {feedback}
-            </Typography>
-          )}
+          {feedback ? (
+            typeof feedback === 'string' ? (
+              <Typography>
+                <strong>Feedback:</strong> {feedback}
+              </Typography>
+            ) : (
+              feedback
+            )
+          ) : null}
         </AccordionDetails>
       </MuiAccordion>
     </div>

@@ -7,10 +7,10 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { Link } from 'react-router-dom';
 
 const menuLinks = [
-  {
-    name: 'Interview',
-    link: '/interview',
-  },
+  // {
+  //   name: 'Interview',
+  //   link: '/interview',
+  // },
   { name: 'Refer', link: '/refer-and-earn' },
   { name: 'Disputes', link: '/disputes' },
   { name: 'FAQs', link: '/faqs' },

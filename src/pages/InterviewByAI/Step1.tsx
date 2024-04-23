@@ -29,6 +29,7 @@ const Step1 = () => {
 
       const { data } = await axios.post<IQuestionResponse>(`${config.BACKEND_URL}/ai/questions`, {
         jobDescription: selectedJobDescription.jobDescription,
+        noOfQuestions: config.NO_OF_QUESTIONS,
       });
 
       setQuestion(data.questions);

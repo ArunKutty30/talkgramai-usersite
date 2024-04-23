@@ -24,13 +24,14 @@ interface ISampleResponse {
 
 interface IFeedbackResponse {
   feedback: string;
+  scores: string;
 }
 
 const InterviewQuestion: React.FC<IInterviewQuestionProps> = ({ title, question }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [sampleResponse, setSampleResponse] = useState('');
-  const [feedback, setFeedback] = useState('');
+  const [feedback, setFeedback] = useState({ feedback: '', scores: '' });
   const [timer, setTimer] = useState('0:00 / 2:00');
   const setStep = useInterviewStore((store) => store.setStep);
   const currentQuestion = useInterviewStore((store) => store.currentQuestion);
@@ -78,7 +79,7 @@ const InterviewQuestion: React.FC<IInterviewQuestionProps> = ({ title, question 
       );
 
       setSampleResponse(sampleResponseData.sampleResponse);
-      setFeedback(feedbackData.feedback);
+      setFeedback(feedbackData);
 
       const responses = collections;
       responses.push({ question, answer: transcript, feedback: feedbackData.feedback });
@@ -147,17 +148,63 @@ const InterviewQuestion: React.FC<IInterviewQuestionProps> = ({ title, question 
     <Stack direction={'row'} spacing={2}>
       <Button
         onClick={() => {
-          if (currentQuestion === 3) {
+          if (currentQuestion === config.NO_OF_QUESTIONS) {
             setStep(3);
             return;
           }
           setCurrentQuestion(currentQuestion + 1);
         }}
       >
-        {currentQuestion === 3 ? 'View Review' : 'Next Question'}
+        {currentQuestion === config.NO_OF_QUESTIONS ? 'View Review' : 'Next Question'}
       </Button>
     </Stack>
   );
+
+  const renderScores = () => {
+    const normalizedString = feedback.scores.replace(/\n/g, '').trim();
+
+    // Regular expression to match key-value pairs
+    const regex = /(\w[\w\s]*):\s*(\d+)/g;
+    const keyValuePairs: { [key: string]: number } = {};
+
+    // Extract key-value pairs using regex
+    let match;
+    while ((match = regex.exec(normalizedString)) !== null) {
+      const key = match[1].trim(); // Capture group 1 is the key
+      const value = parseInt(match[2], 10); // Capture group 2 is the value, converted to integer
+      keyValuePairs[key] = value;
+    }
+
+    return (
+      <div
+        style={{
+          marginTop: '20px',
+        }}
+      >
+        <h6 style={{ marginBottom: 10 }}>Score</h6>
+        {Object.entries(keyValuePairs).map(([key, value]) => (
+          <div
+            key={key}
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              marginBottom: 8,
+            }}
+          >
+            <p>{key}</p>
+            {/* Apply conditional styling based on the score value */}
+            <strong
+              style={{
+                color: value <= 5 ? 'red' : 'green',
+              }}
+            >
+              {value as any}
+            </strong>
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <StyledInterviewQuestions>
@@ -193,7 +240,12 @@ const InterviewQuestion: React.FC<IInterviewQuestionProps> = ({ title, question 
             }[currentStep]
           }
         </StyledRecorder>
-        <Accordion title="Feedback" description={feedback} disabled={!feedback} />
+        <Accordion
+          title="Feedback"
+          description={feedback.feedback}
+          feedback={<>{feedback.scores && renderScores()}</>}
+          disabled={!feedback.feedback}
+        />
         <Accordion
           title="Sample Response"
           description={sampleResponse}
