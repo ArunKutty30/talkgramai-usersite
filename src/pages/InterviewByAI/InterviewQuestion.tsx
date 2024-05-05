@@ -107,7 +107,7 @@ const InterviewQuestion: React.FC<IInterviewQuestionProps> = ({ title, question 
       }}
       onClick={() => {
         setCurrentStep(2);
-        SpeechRecognition.startListening({ continuous: true });
+        SpeechRecognition.startListening({ continuous: true, language: 'en-US' });
       }}
     >
       <MicIcon sx={{ color: '#fff' }} />

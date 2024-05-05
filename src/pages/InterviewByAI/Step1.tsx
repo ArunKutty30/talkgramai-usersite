@@ -90,8 +90,13 @@ const StyledInterviewPageStep1 = styled.div`
   gap: 20px;
   padding: 50px 0;
 
+  @media (max-width: 768px) {
+    max-width: 90%;
+  }
+
   h2 {
     margin-bottom: 15px;
+    text-align: center;
   }
 `;
 
@@ -103,6 +108,14 @@ const StyledTagWrapper = styled.div`
   flex-wrap: wrap;
   width: 100%;
 
+  @media (max-width: 768px) {
+    display: grid;
+    grid-auto-flow: column;
+    overflow-x: auto;
+    justify-content: initial;
+    align-items: initial;
+  }
+
   button {
     font-size: 0.875em;
     padding: 8px 16px;
@@ -113,6 +126,7 @@ const StyledTagWrapper = styled.div`
     cursor: pointer;
     outline: none;
     border: 1px solid #c6c9cf;
+    white-space: nowrap;
 
     &.active {
       color: var(--primary);
