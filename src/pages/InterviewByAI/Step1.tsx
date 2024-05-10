@@ -127,6 +127,7 @@ const StyledTagWrapper = styled.div`
     outline: none;
     border: 1px solid #c6c9cf;
     white-space: nowrap;
+    max-height: 35px;
 
     &.active {
       color: var(--primary);
