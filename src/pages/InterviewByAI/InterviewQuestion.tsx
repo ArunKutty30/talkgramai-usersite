@@ -33,6 +33,7 @@ const InterviewQuestion: React.FC<IInterviewQuestionProps> = ({ title, question 
   const [sampleResponse, setSampleResponse] = useState('');
   const [feedback, setFeedback] = useState({ feedback: '', scores: '' });
   const [timer, setTimer] = useState('0:00 / 2:00');
+  const step = useInterviewStore((store) => store.step);
   const setStep = useInterviewStore((store) => store.setStep);
   const currentQuestion = useInterviewStore((store) => store.currentQuestion);
   const setCurrentQuestion = useInterviewStore((store) => store.setCurrentQuestion);
@@ -244,12 +245,15 @@ const InterviewQuestion: React.FC<IInterviewQuestionProps> = ({ title, question 
           }
         </StyledRecorder>
         <Accordion
+          id={`Feedback-${step}`}
           title="Feedback"
           description={feedback.feedback}
           feedback={<>{feedback.scores && renderScores()}</>}
           disabled={!feedback.feedback}
+          showSysthesis
         />
         <Accordion
+          id={`SampleResponse-${step}`}
           title="Sample Response"
           description={sampleResponse}
           disabled={!sampleResponse}

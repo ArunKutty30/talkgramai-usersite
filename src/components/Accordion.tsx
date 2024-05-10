@@ -8,6 +8,7 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import Button from '@mui/material/Button';
+import useSpeechStore from '../store/useSpeechStore';
 
 interface IAccordionProps extends Omit<AccordionProps, 'children'> {
   title: string;
@@ -23,40 +24,14 @@ export default function Accordion({
   showSysthesis,
   ...rest
 }: IAccordionProps) {
-  const [isPaused, setIsPaused] = React.useState(false);
-  const [speechSynthesisUtterance, setSpeechSynthesisUtterance] =
-    React.useState<SpeechSynthesisUtterance | null>(null);
+  const { activeId, startSpeech, isPaused, pauseResumeSpeech } = useSpeechStore();
 
   const handleSpeak = () => {
-    const speechSynthesis = window.speechSynthesis;
-
-    if (!speechSynthesisUtterance) {
-      if (speechSynthesis.speaking) {
-        speechSynthesis.cancel(); // Stop any currently speaking synthesis
-        setTimeout(() => {
-          // Delay new speech to ensure cancel completes
-          startSpeaking();
-        }, 100); // Delay of 100 ms
-      } else {
-        startSpeaking();
-      }
-    } else if (isPaused) {
-      speechSynthesis.resume();
-      setIsPaused(false);
+    if (activeId !== title) {
+      startSpeech(title, description);
     } else {
-      speechSynthesis.pause();
-      setIsPaused(true);
+      pauseResumeSpeech();
     }
-  };
-
-  const startSpeaking = () => {
-    let utterance = new SpeechSynthesisUtterance(description);
-    utterance.onend = () => {
-      setSpeechSynthesisUtterance(null);
-      setIsPaused(false); // Reset pause state on end
-    };
-    window.speechSynthesis.speak(utterance);
-    setSpeechSynthesisUtterance(utterance);
   };
 
   return (
@@ -72,34 +47,25 @@ export default function Accordion({
         <AccordionDetails>
           {showSysthesis && (
             <Button
-              onClick={() => handleSpeak()}
+              onClick={handleSpeak}
               variant="outlined"
               endIcon={
-                speechSynthesisUtterance ? (
-                  isPaused ? (
-                    <PlayArrowIcon />
-                  ) : (
-                    <PauseIcon />
-                  )
-                ) : (
-                  <VolumeUpIcon />
-                )
+                activeId === title ? isPaused ? <PlayArrowIcon /> : <PauseIcon /> : <VolumeUpIcon />
               }
               sx={{ textTransform: 'capitalize', mb: 2, borderRadius: '30px' }}
             >
-              speak
+              Speak
             </Button>
           )}
           <Typography sx={{ marginBottom: feedback ? '15px' : 0 }}>{description}</Typography>
-          {feedback ? (
-            typeof feedback === 'string' ? (
+          {feedback &&
+            (typeof feedback === 'string' ? (
               <Typography>
                 <strong>Feedback:</strong> {feedback}
               </Typography>
             ) : (
               feedback
-            )
-          ) : null}
+            ))}
         </AccordionDetails>
       </MuiAccordion>
     </div>
