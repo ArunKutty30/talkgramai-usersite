@@ -101,6 +101,13 @@ h5 {
   color: var(--text-primary);
 }
 
+h6 {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 130%;
+  color: var(--text-primary);
+}
+
 .primary {
   color: var(--primary);
 }
@@ -286,4 +293,10 @@ h5 {
   height: calc(100vh - 70px);
   display: grid;
   place-items: center;
+}
+
+@media (max-width: 990px) {
+  .pb {
+    padding-bottom: 50px;
+  }
 }

@@ -21,8 +21,9 @@ import ForgetPassword from './pages/Auth/ForgetPassword';
 import QuestionSlider from './components/Slider';
 import VerifyMail from './pages/VerifyMail';
 import OnBoarding from './pages/Auth/OnBoarding';
-import Copyright from './components/Copyright';
 import Faq from './pages/Faq';
+import InterviewByAI from './pages/InterviewByAI';
+import DefaultLayout from './layout/DefaultLayout';
 
 const theme = createTheme({
   palette: {
@@ -40,6 +41,7 @@ const LazyDisputePage = React.lazy(() => import('./pages/Dispute'));
 const LazySubscribePage = React.lazy(() => import('./pages/Subscribe'));
 const LazyLessonPlanPage = React.lazy(() => import('./pages/lessonPlan'));
 const LazyUserFeedbackReportPagePage = React.lazy(() => import('./pages/UserFeedbackReportPage'));
+const LazyAiServicesPage = React.lazy(() => import('./pages/AiServices'));
 
 const App: React.FC = () => {
   const isFetching = userStore((state) => state.isFetching);
@@ -56,15 +58,33 @@ const App: React.FC = () => {
               <div>
                 {shouldShowHeader && <Header />}
                 <Outlet />
-                <Copyright />
+                {/* <Copyright /> */}
               </div>
             }
           >
-            <Route path="/" element={<Home />} />
+            <Route
+              path="/"
+              element={
+                <DefaultLayout>
+                  <Home />
+                </DefaultLayout>
+              }
+            />
             <Route path="/book-session" element={<BookSession />} />
             <Route path="/book-demo-session" element={<BookSession />} />
             <Route path="/sessions" element={<Sessions />} />
             <Route path="/refer-and-earn" element={<ReferAndEarn />} />
+            <Route path="/ai-services">
+              <Route
+                path="/ai-services"
+                element={
+                  <Suspense fallback={<div className="suspense-loader"></div>}>
+                    <LazyAiServicesPage />
+                  </Suspense>
+                }
+              />
+              <Route path="/ai-services/interview" element={<InterviewByAI />} />
+            </Route>
             <Route
               path="/subscribe"
               element={

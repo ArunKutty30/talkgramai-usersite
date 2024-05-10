@@ -51,6 +51,11 @@ const Sidebar: React.FC<ISidebarProps> = ({ openSidebar, handleClose }) => {
                 </NavLink>
               </li>
               <li>
+                <NavLink onClick={handleClose} to="/ai-services">
+                  AI Services
+                </NavLink>
+              </li>
+              <li>
                 <NavLink onClick={handleClose} to="/disputes">
                   Disputes
                 </NavLink>

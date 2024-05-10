@@ -520,3 +520,9 @@ export interface ITutorBlockedUserDoc {
   id: string;
   blockedUsers: string[];
 }
+
+export interface IInterviewCollection {
+  question: string;
+  answer: string;
+  feedback: string;
+}
