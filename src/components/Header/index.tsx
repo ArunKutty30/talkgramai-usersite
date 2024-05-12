@@ -426,7 +426,6 @@ const Header = ({ hide }: { hide?: boolean }) => {
       {openModal && (
         <SubscriptionEndedModal isOpen={openModal} handleClose={() => setOpenModal(false)} />
       )}
-      {profileData && !profileData?.phoneNumberVerified && <VerifyPhoneNumberModal isOpen />}
     </StyledHeader>
   );
 };
