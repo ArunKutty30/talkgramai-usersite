@@ -3,7 +3,7 @@ import { config } from '../constants/config';
 export const BACKEND_URL =
   process.env.REACT_APP_MODE === 'DEV'
     ? 'http://localhost:8000'
-    : 'https://pink-pigeon-wear.cyclic.cloud';
+    : process.env.REACT_APP_BACKEND_URL;
 const API_BASE_URL = 'https://api.videosdk.live';
 const VIDEOSDK_TOKEN = process.env.REACT_APP_VIDEOSDK_TOKEN;
 
