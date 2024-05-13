@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useState } from "react";
-import styled from "styled-components";
-import { collection, onSnapshot, query, where, orderBy } from "firebase/firestore";
-import TransactionCard from "../../../components/TransactionCard";
-import { ITransactionDB } from "../../../constants/types";
-import { userStore } from "../../../store/userStore";
-import { SUBSCRIPTION_COLLECTION_NAME } from "../../../constants/data";
-import { db } from "../../../utils/firebase";
-import SessionCardLoader from "../../../components/Loader/SessionCardLoader";
+import React, { useCallback, useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { collection, onSnapshot, query, where, orderBy } from 'firebase/firestore';
+import TransactionCard from '../../../components/TransactionCard';
+import { ITransactionDB } from '../../../constants/types';
+import { userStore } from '../../../store/userStore';
+import { SUBSCRIPTION_COLLECTION_NAME } from '../../../constants/data';
+import { db } from '../../../utils/firebase';
+import SessionCardLoader from '../../../components/Loader/SessionCardLoader';
 
 const MyTransactions = () => {
   const user = userStore((store) => store.user);
@@ -16,14 +16,19 @@ const MyTransactions = () => {
   const handleGetData = useCallback(async () => {
     if (!user) return;
     const colRef = collection(db, SUBSCRIPTION_COLLECTION_NAME);
-    const q = query(colRef, where("user", "==", user.uid), orderBy("createdAt", "desc"));
+    const q = query(
+      colRef,
+      where('user', '==', user.uid),
+      where('status', 'in', ['SUCCESS', 'FAILED']),
+      orderBy('createdAt', 'desc')
+    );
 
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
         const slots: ITransactionDB[] = [];
         snapshot.forEach((doc) => {
-          const data = doc.data() as Omit<ITransactionDB, "id">;
+          const data = doc.data() as Omit<ITransactionDB, 'id'>;
           slots.push({
             id: doc.id,
             ...data,
@@ -33,7 +38,7 @@ const MyTransactions = () => {
         setLoading(false);
       },
       (error) => {
-        console.error("Error fetching upcoming sessions:", error);
+        console.error('Error fetching upcoming sessions:', error);
       }
     );
 
@@ -52,6 +57,8 @@ const MyTransactions = () => {
         <StyledTransactionsWrappper>
           {loading ? (
             <SessionCardLoader count={3} />
+          ) : !transactionData.length ? (
+            <>No Transaction Found</>
           ) : (
             transactionData.map((transaction) => (
               <TransactionCard key={transaction.id} {...transaction} />

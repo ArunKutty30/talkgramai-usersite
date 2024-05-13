@@ -1,14 +1,14 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import styled from "styled-components";
-import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import styled from 'styled-components';
+import { collection, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 
-import SubscriptionCard from "../../../components/MySubscriptionCard";
-import { userStore } from "../../../store/userStore";
-import { SUBSCRIPTION_COLLECTION_NAME } from "../../../constants/data";
-import { ITransactionDB } from "../../../constants/types";
-import { db } from "../../../utils/firebase";
-import SessionCardLoader from "../../../components/Loader/SessionCardLoader";
-import SubscriptionData from "./SubscriptionData";
+import SubscriptionCard from '../../../components/MySubscriptionCard';
+import { userStore } from '../../../store/userStore';
+import { SUBSCRIPTION_COLLECTION_NAME } from '../../../constants/data';
+import { ITransactionDB } from '../../../constants/types';
+import { db } from '../../../utils/firebase';
+import SessionCardLoader from '../../../components/Loader/SessionCardLoader';
+import SubscriptionData from './SubscriptionData';
 
 const MySubscriptions = () => {
   const user = userStore((store) => store.user);
@@ -23,9 +23,9 @@ const MySubscriptions = () => {
     const colRef = collection(db, SUBSCRIPTION_COLLECTION_NAME);
     const q = query(
       colRef,
-      where("user", "==", user.uid),
-      where("status", "==", "COMPLETED"),
-      orderBy("createdAt", "desc")
+      where('user', '==', user.uid),
+      where('status', '==', 'COMPLETED'),
+      orderBy('createdAt', 'desc')
     );
 
     const unsubscribe = onSnapshot(
@@ -33,7 +33,7 @@ const MySubscriptions = () => {
       (snapshot) => {
         const slots: ITransactionDB[] = [];
         snapshot.forEach((doc) => {
-          const data = doc.data() as Omit<ITransactionDB, "id">;
+          const data = doc.data() as Omit<ITransactionDB, 'id'>;
           slots.push({
             id: doc.id,
             ...data,
@@ -46,7 +46,7 @@ const MySubscriptions = () => {
         setLoading(false);
       },
       (error) => {
-        console.error("Error fetching upcoming sessions:", error);
+        console.error('Error fetching upcoming sessions:', error);
       }
     );
 
@@ -74,7 +74,7 @@ const MySubscriptions = () => {
 
     return {
       ...selectedData,
-      completedSession: selectedPlanSessions.filter((f) => f.status === "COMPLETED").length,
+      completedSession: selectedPlanSessions.filter((f) => f.status === 'COMPLETED').length,
     };
   }, [selectedData, overallBookedSession]);
 
@@ -90,14 +90,20 @@ const MySubscriptions = () => {
     <StyledContainer>
       <div>
         <StyledSubscriptions>
-          <h5>Present Subscriptions</h5>
-          <StyledSubscriptionsWrappper>
-            {presentData.map((m) => (
-              <div key={m.id} onClick={() => setSelectedData(m)}>
-                <SubscriptionCard key={m.id} isFinished={false} {...m} />
-              </div>
-            ))}
-          </StyledSubscriptionsWrappper>
+          {!presentData.length ? (
+            <>No Subscriptions found</>
+          ) : (
+            <>
+              <h5>Present Subscriptions</h5>
+              <StyledSubscriptionsWrappper>
+                {presentData.map((m) => (
+                  <div key={m.id} onClick={() => setSelectedData(m)}>
+                    <SubscriptionCard key={m.id} isFinished={false} {...m} />
+                  </div>
+                ))}
+              </StyledSubscriptionsWrappper>
+            </>
+          )}
         </StyledSubscriptions>
         {pastSubscriptions.length ? (
           <StyledSubscriptions>
