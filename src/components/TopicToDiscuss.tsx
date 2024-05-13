@@ -1,6 +1,6 @@
-import React from "react";
-import styled from "styled-components";
-import Card from "./TopicCard";
+import React from 'react';
+import styled from 'styled-components';
+import Card from './TopicCard';
 
 interface ITopicToDiscussProps {
   pointers: {
@@ -27,7 +27,7 @@ const TopicToDiscuss: React.FC<ITopicToDiscussProps> = ({ pointers }) => {
 };
 
 const TopicDiscussedWrapper = styled.div`
-  height: calc(100vh - 136.8px);
+  height: calc(100vh - 70px);
   background: #fff;
   overflow-y: auto;
   padding-bottom: 22px;
@@ -53,7 +53,7 @@ const CardHeading = styled.div`
     font-size: 32px;
     color: #140837;
     letter-spacing: 0.84px;
-    font-family: "Inter", sans-serif;
+    font-family: 'Inter', sans-serif;
     @media (max-width: 600px) {
       font-size: 18px;
     }

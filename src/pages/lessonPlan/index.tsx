@@ -1,20 +1,20 @@
-import React, { useMemo, useRef } from "react";
-import Slider from "react-slick";
-import { useSearchParams } from "react-router-dom";
-import styled from "styled-components";
+import React, { useMemo, useRef } from 'react';
+import Slider from 'react-slick';
+import { useSearchParams } from 'react-router-dom';
+import styled from 'styled-components';
 
-import { ReactComponent as VectorIcon } from "../../assets/icons/Vector.svg";
-import LeftIcon from "../../assets/icons/left-arrow.svg";
-import RightIcon from "../../assets/icons/right-arrow.svg";
-import { topicsData } from "../../utils/updatedtopic";
-import LessonLevel from "../../components/LessonLevel";
-import TopicToDiscuss from "../../components/TopicToDiscuss";
+import { ReactComponent as VectorIcon } from '../../assets/icons/Vector.svg';
+import LeftIcon from '../../assets/icons/left-arrow.svg';
+import RightIcon from '../../assets/icons/right-arrow.svg';
+import { topicsData } from '../../utils/updatedtopic';
+import LessonLevel from '../../components/LessonLevel';
+import TopicToDiscuss from '../../components/TopicToDiscuss';
 
 const LessonPlan: React.FC = () => {
   const sliderRef = useRef<Slider | null>(null);
   const [searchParams] = useSearchParams();
-  const category = searchParams.get("category");
-  const title = searchParams.get("title");
+  const category = searchParams.get('category');
+  const title = searchParams.get('title');
 
   const lessonData = useMemo(() => {
     if (!category || !title) return;
@@ -60,7 +60,7 @@ const LessonPlan: React.FC = () => {
             <VectorArrow>
               <VectorIcon />
             </VectorArrow>
-            <LessonPlanContainer style={{ height: "calc(100vh - 137px)" }}>
+            <LessonPlanContainer style={{ height: 'calc(100vh - 70px)' }}>
               <Heading>
                 <h3>TOPIC OF THE DAY</h3>
                 <h1>{lessonData.title}</h1>
@@ -97,7 +97,7 @@ const LessonPlan: React.FC = () => {
 };
 
 const LessonPlanWrapper = styled.div`
-  height: calc(100vh - 136.8px);
+  height: calc(100vh - 70px);
   background: #f7941f;
   position: relative;
 `;
@@ -115,7 +115,7 @@ const Heading = styled.div`
     font-size: 30px;
     letter-spacing: 0.606px;
     margin-bottom: 20px;
-    font-family: "Inter", sans-serif;
+    font-family: 'Inter', sans-serif;
     @media (max-width: 1020px) {
       font-size: 26px;
     }
