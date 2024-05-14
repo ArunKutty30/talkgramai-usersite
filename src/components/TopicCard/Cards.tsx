@@ -1,6 +1,12 @@
-import React from "react";
-import styled from "styled-components";
-import { ReactComponent as SingleQuotes } from "../../assets/icons/singleQuotes.svg";
+import React from 'react';
+import styled from 'styled-components';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import PauseIcon from '@mui/icons-material/Pause';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import IconButton from '@mui/material/IconButton';
+
+import useSpeechStore from '../../store/useSpeechStore';
+import { ReactComponent as SingleQuotes } from '../../assets/icons/singleQuotes.svg';
 
 interface ICards {
   title: string;
@@ -8,12 +14,27 @@ interface ICards {
 }
 
 const Cards: React.FC<ICards> = ({ title, description }) => {
+  const { activeId, startSpeech, isPaused, pauseResumeSpeech } = useSpeechStore();
+
+  const handleSpeak = () => {
+    if (activeId !== title) {
+      startSpeech(title, `${title}. ${description}`);
+    } else {
+      pauseResumeSpeech();
+    }
+  };
+
   return (
     <CardsContainer>
       <BackgroundSingleQuotes>
         <SingleQuotes />
       </BackgroundSingleQuotes>
-      <h5>{title}</h5>
+      <StyledFlex>
+        <h5>{title}</h5>
+        <IconButton color="primary" onClick={handleSpeak}>
+          {activeId === title ? isPaused ? <PlayArrowIcon /> : <PauseIcon /> : <VolumeUpIcon />}
+        </IconButton>
+      </StyledFlex>
       <DescriptionText>{description}</DescriptionText>
     </CardsContainer>
   );
@@ -31,13 +52,13 @@ const CardsContainer = styled.div`
     color: #df7e0b;
     font-size: 18px;
     letter-spacing: 0.606px;
-    margin-bottom: 20px;
   }
   p {
     letter-spacing: 0.4px;
     font-size: 14px;
     color: #423f4e;
     z-index: 100;
+    line-height: 150%;
   }
 `;
 
@@ -57,6 +78,14 @@ const BackgroundSingleQuotes = styled.div`
 const DescriptionText = styled.div`
   position: relative;
   z-index: 1000;
+  line-height: 150%;
+`;
+
+const StyledFlex = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 20px;
 `;
 
 export default Cards;

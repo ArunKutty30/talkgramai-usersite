@@ -1,6 +1,6 @@
-import React from "react";
-import styled from "styled-components";
-import Cards from "./TopicCard/Cards";
+import React from 'react';
+import styled from 'styled-components';
+import Cards from './TopicCard/Cards';
 
 interface ILessonLevelProps {
   title: string;
@@ -31,7 +31,7 @@ const LessonLevel: React.FC<ILessonLevelProps> = ({ title, data, color }) => {
 };
 
 const Wrapper = styled.div`
-  height: calc(100vh - 136.8px);
+  height: calc(100vh - 70px);
   background: #fff;
   position: relative;
 
@@ -65,7 +65,7 @@ const Heading = styled.div`
     font-size: 32px;
     color: #140837;
     letter-spacing: 0.84px;
-    font-family: "Inter", sans-serif;
+    font-family: 'Inter', sans-serif;
     @media (max-width: 425px) {
       font-size: 28px;
     }
