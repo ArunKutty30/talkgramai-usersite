@@ -127,6 +127,15 @@ const VerifyPhoneNumberModal: React.FC<IVerifyPhoneNumberModalProps> = ({ isOpen
     } catch (error) {
       console.log(error);
       setResendLoading(false);
+      if (error instanceof AxiosError) {
+        if (error.response?.data['error']) {
+          toast.error(error.response?.data['error'].message);
+        } else {
+          toast.error('Something went wrong.Please try again later');
+        }
+      } else {
+        toast.error('Something went wrong.Please try again later');
+      }
     }
   };
 
