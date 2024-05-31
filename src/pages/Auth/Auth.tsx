@@ -1,12 +1,12 @@
-import { onAuthStateChanged, User } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
-import { useCallback, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { USER_COLLECTION_NAME } from "../../constants/data";
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { useCallback, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { USER_COLLECTION_NAME } from '../../constants/data';
 
-import { userStore } from "../../store/userStore";
-import { generalStore } from "../../store/generalStore";
-import { auth, db } from "../../utils/firebase";
+import { userStore } from '../../store/userStore';
+import { generalStore } from '../../store/generalStore';
+import { auth, db } from '../../utils/firebase';
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -26,10 +26,10 @@ const Auth = () => {
       if (userSnapshot.exists()) {
         const userData = userSnapshot.data();
         console.log(userData);
-        navigate("/");
+        navigate('/');
       } else {
         // navigate("/onboarding");
-        // navigate("/");
+        navigate('/');
       }
     } catch (error) {
       console.log(error);
@@ -41,21 +41,19 @@ const Auth = () => {
   useEffect(() => {
     return onAuthStateChanged(auth, (data) => {
       console.log(data);
-      if (!isSignup) {
-        if (data) {
-          if (!data.emailVerified) {
-            setTimeout(() => {
-              updateFetching(false);
-            }, 0);
-            return navigate("/verify-mail");
-          }
-          updateUser(data);
-          getUserData(data);
-        } else {
+      if (data) {
+        if (!data.emailVerified) {
           setTimeout(() => {
             updateFetching(false);
           }, 0);
+          return navigate('/verify-mail');
         }
+        updateUser(data);
+        getUserData(data);
+      } else {
+        setTimeout(() => {
+          updateFetching(false);
+        }, 0);
       }
     });
 
