@@ -63,7 +63,7 @@ export const subscriptionList: TSubscriptionList[] = [
     offerPrice: 25,
     durationInMonth: 1,
     tag: { status: ITransactionStatus.INFO, text: 'Recommended For You' },
-    priceForSession: 300,
+    priceForSession: 200,
     // priceForSession: 220,
     recommended: false,
     benefits: [
@@ -76,7 +76,7 @@ export const subscriptionList: TSubscriptionList[] = [
   //   title: 'Two months',
   //   durationInMonth: 2,
   //   tag: { status: ITransactionStatus.SUCCESSFUL, text: 'Most Purchased' },
-  //   priceForSession: 300,
+  //   priceForSession: 200,
   //   // priceForSession: 200,
   //   recommended: false,
   //   benefits: [
@@ -89,7 +89,7 @@ export const subscriptionList: TSubscriptionList[] = [
     title: 'three months',
     durationInMonth: 3,
     tag: { status: ITransactionStatus.SUCCESSFUL, text: 'Most Purchased' },
-    priceForSession: 300,
+    priceForSession: 200,
     // priceForSession: 160,
     recommended: true,
     benefits: [
@@ -102,7 +102,7 @@ export const subscriptionList: TSubscriptionList[] = [
     title: 'six months',
     offerPrice: 25,
     durationInMonth: 6,
-    priceForSession: 300,
+    priceForSession: 200,
     // priceForSession: 150,
     recommended: false,
     benefits: [
@@ -115,7 +115,7 @@ export const subscriptionList: TSubscriptionList[] = [
     title: 'twelve months',
     offerPrice: 25,
     durationInMonth: 12,
-    priceForSession: 300,
+    priceForSession: 200,
     // priceForSession: 145,
     recommended: false,
     benefits: [

@@ -73,7 +73,7 @@ const SubscriptionCard: React.FC<ISubscriptionCard> = (props) => {
           <div style={{ width: '18px', height: '18px' }}>
             <Check />
           </div>
-          <span>You get a 50% Beta Launch Discount, making the Per-Session Cost ₹150 Only</span>
+          <span>You get a 50% Beta Launch Discount, making the Per-Session Cost ₹100 Only</span>
         </div>
         <div>
           <div style={{ width: '18px', height: '18px' }}>
