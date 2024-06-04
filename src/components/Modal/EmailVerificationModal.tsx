@@ -157,12 +157,12 @@ const EmailVerificationModal: React.FC<IEmailVerificationModalProps> = ({ isOpen
                     {({ values, setFieldValue }) => (
                       <Form className="flex-column">
                         <Grid container spacing={2}>
-                          <Grid item sm={6} xs={6}>
+                          {/* <Grid item sm={6} xs={6}>
                             <Button variant="primary-outline" type="submit" fullWidth>
                               Update Email
                             </Button>
-                          </Grid>
-                          <Grid item sm={6} xs={6}>
+                          </Grid> */}
+                          <Grid item sm={12} xs={12}>
                             <Button type="submit" fullWidth disabled={loading}>
                               Get OTP
                             </Button>
