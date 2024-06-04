@@ -72,6 +72,7 @@ export interface IUserProfileData {
   completedSession: number | undefined;
   phoneNumber?: string;
   phoneNumberVerified?: string;
+  emailVerified?: boolean;
 }
 
 export interface ITutorProfileData {

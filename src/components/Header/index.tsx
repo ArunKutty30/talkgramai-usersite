@@ -40,6 +40,7 @@ import {
 import { reminderStore } from '../../store/reminderStore';
 import MenuDropdown from '../MenuDropdown';
 import VerifyPhoneNumberModal from '../Modal/VerifyPhoneNumberModal';
+import EmailVerificationModal from '../Modal/EmailVerificationModal';
 
 const Header = ({ hide }: { hide?: boolean }) => {
   const user = userStore((state) => state.user);
@@ -66,6 +67,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
   const [openModal, setOpenModal] = useState(false);
   const setReminder = reminderStore((state) => state.setReminder);
   const updateSubscriptionDataFetching = userStore((store) => store.updateSubscriptionDataFetching);
+  const openVerifyPhoneNoModal = generalStore((store) => store.openVerifyPhoneNoModal);
 
   const handleCheckCurrentData = useCallback(async () => {
     if (!subscriptionData) return;
@@ -318,12 +320,12 @@ const Header = ({ hide }: { hide?: boolean }) => {
       if (data) {
         updateUser(data);
         console.log(data);
-        if (!data.emailVerified) {
-          setTimeout(() => {
-            updateFetching(false);
-          }, 0);
-          return navigate('/verify-mail');
-        }
+        // if (!data.emailVerified) {
+        //   setTimeout(() => {
+        //     updateFetching(false);
+        //   }, 0);
+        //   return navigate('/verify-mail');
+        // }
         getUserData(data);
         handleGetSubscriptionData(data);
       } else {
@@ -423,10 +425,14 @@ const Header = ({ hide }: { hide?: boolean }) => {
           </NavLink>
         </div>
       </StyledMobileMenu>
+
       {openModal && (
         <SubscriptionEndedModal isOpen={openModal} handleClose={() => setOpenModal(false)} />
       )}
-      {profileData && !profileData?.phoneNumberVerified && <VerifyPhoneNumberModal isOpen />}
+      {user && !user.emailVerified && !Boolean(profileData?.emailVerified) && (
+        <EmailVerificationModal isOpen />
+      )}
+      {openVerifyPhoneNoModal && <VerifyPhoneNumberModal isOpen />}
     </StyledHeader>
   );
 };

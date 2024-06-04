@@ -281,6 +281,10 @@ h6 {
   z-index: 90 !important;
 }
 
+.z-150 {
+  z-index: 150 !important;
+}
+
 .confetti {
   position: fixed;
   inset: 0;

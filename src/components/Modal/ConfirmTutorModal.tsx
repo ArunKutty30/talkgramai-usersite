@@ -39,6 +39,7 @@ import { bookSessionValidationSchema } from '../../constants/validationSchema';
 import { getRandomUniqueTopic } from '../../constants/formatter';
 import toast from 'react-hot-toast';
 import { handlePayForDemoClass } from '../../services/paymentService';
+import { generalStore } from '../../store/generalStore';
 
 const modalVaraints = {
   initial: {
@@ -120,6 +121,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
   const [completedLessonPlan, setCompletedLessonPlan] = useState<ILessonPlanDB[]>([]);
   const tempValues = useRef<IFormType | null>(null);
   const updateSubscriptionDataOutdated = userStore((state) => state.updateSubscriptionDataOutdated);
+  const setOpenVerifyPhoneNoModal = generalStore((store) => store.setOpenVerifyPhoneNoModal);
 
   const handleGetTutorData = useCallback(async () => {
     try {
@@ -226,6 +228,11 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
   const handleConfirmSession = async (values: IFormType, tempSubscriptionData?: any) => {
     try {
       if (!user || !profileData) return;
+
+      if (!Boolean(profileData?.phoneNumberVerified)) {
+        setOpenVerifyPhoneNoModal(true);
+        return;
+      }
 
       console.log(slotFormat(selectedDate));
       console.log('sessionLeft', sessionLeft);

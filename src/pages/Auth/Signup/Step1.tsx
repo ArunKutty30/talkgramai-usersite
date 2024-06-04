@@ -87,7 +87,7 @@ const Step1: React.FC<IStep1Props> = ({ handleSubmit, handleGoogleSignin, emailE
               {emailError && <div className="error-text">{emailError}</div>}
             </FormInputWrapper>
             <Button size="large" type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Verifing mail...' : 'Lets Start Creating Your Account'}
+              {isSubmitting ? 'Creating your account...' : 'Lets Start Creating Your Account'}
             </Button>
           </Form>
         )}
@@ -98,7 +98,7 @@ const Step1: React.FC<IStep1Props> = ({ handleSubmit, handleGoogleSignin, emailE
       <div>
         <button className="secondary-auth-btn" onClick={() => handleGoogleSignin()}>
           <img src={Google} alt="google logo" />
-          <span>Google</span>
+          <span style={{ fontWeight: '600' }}>Continue with Google</span>
         </button>
       </div>
       <p className="text-secondary" style={{ marginTop: '30px', textAlign: 'center' }}>

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Button, { ButtonProps } from '@mui/material/Button';
 
 interface IButtonProps extends Omit<ButtonProps, 'variant'> {
-  variant?: 'primary' | 'secondary' | 'error' | 'error-filled';
+  variant?: 'primary' | 'secondary' | 'error' | 'error-filled' | 'primary-outline';
   size?: 'small' | 'medium' | 'large';
   children: ReactNode;
 }
@@ -27,6 +27,17 @@ const StyledButton = styled(Button)`
     line-height: 22px;
     color: white;
     border-radius: 8px;
+  }
+
+  &.btn-primary-outline {
+    background-color: transparent;
+    opacity: 1;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--text-primary);
+    border-radius: 8px;
+    border: 1px solid #f7941f;
   }
 
   &.btn-secondary {

@@ -38,6 +38,7 @@ const validationSchema = Yup.object({
 const Login = () => {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (
     values: typeof initialState,
@@ -62,11 +63,14 @@ const Login = () => {
 
   const handleGoogleSignin = async () => {
     try {
+      setLoading(true);
       const provider = new GoogleAuthProvider();
       const data = await signInWithPopup(auth, provider);
       console.log(data);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -137,9 +141,13 @@ const Login = () => {
               or
             </p>
             <div>
-              <button className="secondary-auth-btn" onClick={() => handleGoogleSignin()}>
+              <button
+                className="secondary-auth-btn"
+                disabled={loading}
+                onClick={() => handleGoogleSignin()}
+              >
                 <img src={Google} alt="google logo" />
-                <span>Google</span>
+                <span style={{ fontWeight: '600' }}>Continue with Google</span>
               </button>
             </div>
             <p className="text-secondary" style={{ marginTop: '30px', textAlign: 'center' }}>

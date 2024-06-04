@@ -1,19 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import styled from 'styled-components';
 import { Formik, Form } from 'formik';
-import PhoneInput from 'react-phone-input-2';
 import VerificationInput from 'react-verification-input';
+import toast from 'react-hot-toast';
+import { AxiosError } from 'axios';
 
-import 'react-phone-input-2/lib/style.css';
 import ReactModal from './ReactModal';
 import Backdrop from './Backdrop';
 import Button from '../Button';
-import { countOccurrences } from '../../utils/helpers';
-import { sendOtpService, verifyOtpService } from '../../services/otpService';
+import { sendMailOtpService, verifyMailOtpService } from '../../services/otpService';
 import { userStore } from '../../store/userStore';
-import toast from 'react-hot-toast';
-import { AxiosError } from 'axios';
+import Grid from '@mui/material/Grid';
 
 const modalVaraints = {
   initial: {
@@ -37,16 +35,15 @@ const modalVaraints = {
   },
 };
 
-interface IVerifyPhoneNumberModalProps {
+interface IEmailVerificationModalProps {
   isOpen: boolean;
 }
 
 const initialValues = { phone: '' };
 
-const VerifyPhoneNumberModal: React.FC<IVerifyPhoneNumberModalProps> = ({ isOpen }) => {
+const EmailVerificationModal: React.FC<IEmailVerificationModalProps> = ({ isOpen }) => {
   const [verificationCode, setVerificationCode] = useState('');
   const [showVerification, setShowVerification] = useState<string | null>(null);
-  const isError = useRef(true);
   const [timer, setTimer] = useState(0);
   const user = userStore((store) => store.user);
   const [loading, setLoading] = useState(false);
@@ -66,13 +63,12 @@ const VerifyPhoneNumberModal: React.FC<IVerifyPhoneNumberModalProps> = ({ isOpen
     return () => clearInterval(intervalId);
   }, [timer]);
 
-  const handleSubmit = async (values: typeof initialValues) => {
+  const handleSubmit = async () => {
     try {
       if (!user) return;
-      console.log(values);
       setLoading(true);
-      await sendOtpService(user.uid, `+${values.phone}`);
-      setShowVerification(values.phone);
+      await sendMailOtpService(user.uid, user?.email || '');
+      setShowVerification(user?.email);
       setTimer(60);
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -94,9 +90,9 @@ const VerifyPhoneNumberModal: React.FC<IVerifyPhoneNumberModalProps> = ({ isOpen
       if (!user) return;
       console.log(verificationCode);
       setLoading(true);
-      await verifyOtpService(user.uid, verificationCode);
+      await verifyMailOtpService(user.uid, verificationCode);
 
-      toast.success('Phone number verified successfully');
+      toast.success('Email verified successfully');
 
       setTimeout(() => {
         window.location.reload();
@@ -121,7 +117,7 @@ const VerifyPhoneNumberModal: React.FC<IVerifyPhoneNumberModalProps> = ({ isOpen
     try {
       if (!user) return;
       setResendLoading(true);
-      await sendOtpService(user.uid, `+${showVerification}`);
+      await sendMailOtpService(user.uid, user?.email || '');
       setTimer(60);
       setResendLoading(false);
     } catch (error) {
@@ -141,7 +137,7 @@ const VerifyPhoneNumberModal: React.FC<IVerifyPhoneNumberModalProps> = ({ isOpen
 
   return (
     <ReactModal>
-      <Backdrop isOpen={isOpen} className="z-150">
+      <Backdrop isOpen={isOpen} className="z-90">
         <AnimatePresence>
           {isOpen && (
             <StyledModal
@@ -152,37 +148,26 @@ const VerifyPhoneNumberModal: React.FC<IVerifyPhoneNumberModalProps> = ({ isOpen
               exit="exit"
             >
               <StyledFormOne>
-                <h3>{!showVerification ? 'Verify Mobile Number' : 'Enter the OTP sent to'}</h3>
-
+                <h3>{!showVerification ? 'Please verify your email' : 'Enter the OTP sent to'}</h3>
+                <p style={{ textAlign: 'center' }}>
+                  click the "Get OTP" tab to get OTP to your mail id <b>{user?.email}</b>
+                </p>
                 {!showVerification ? (
                   <Formik initialValues={initialValues} onSubmit={handleSubmit}>
                     {({ values, setFieldValue }) => (
                       <Form className="flex-column">
-                        <PhoneInput
-                          country={'in'}
-                          value={values.phone}
-                          onChange={(phone) => setFieldValue('phone', phone)}
-                          countryCodeEditable={false}
-                          inputProps={{
-                            name: 'phone',
-                            required: true,
-                            autoFocus: true,
-                          }}
-                          isValid={(value, country: any) => {
-                            const stringLength = countOccurrences(country['format'], '.');
-
-                            if (value.length === stringLength) {
-                              isError.current = false;
-                              return true;
-                            } else {
-                              isError.current = true;
-                              return false;
-                            }
-                          }}
-                        />
-                        <Button type="submit" disabled={isError.current || loading}>
-                          SEND OTP
-                        </Button>
+                        <Grid container spacing={2}>
+                          <Grid item sm={6} xs={6}>
+                            <Button variant="primary-outline" type="submit" fullWidth>
+                              Update Email
+                            </Button>
+                          </Grid>
+                          <Grid item sm={6} xs={6}>
+                            <Button type="submit" fullWidth disabled={loading}>
+                              Get OTP
+                            </Button>
+                          </Grid>
+                        </Grid>
                       </Form>
                     )}
                   </Formik>
@@ -298,4 +283,4 @@ const StyledResendDiv = styled.div`
   justify-content: flex-end;
 `;
 
-export default VerifyPhoneNumberModal;
+export default EmailVerificationModal;

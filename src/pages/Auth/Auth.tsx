@@ -42,14 +42,17 @@ const Auth = () => {
     return onAuthStateChanged(auth, (data) => {
       console.log(data);
       if (data) {
-        if (!data.emailVerified) {
-          setTimeout(() => {
-            updateFetching(false);
-          }, 0);
-          return navigate('/verify-mail');
-        }
+        // if (!data.emailVerified) {
+        //   setTimeout(() => {
+        //     updateFetching(false);
+        //   }, 0);
+        //   return navigate('/verify-mail');
+        // }
         updateUser(data);
         getUserData(data);
+        // setTimeout(() => {
+        //   updateFetching(false);
+        // }, 0);
       } else {
         setTimeout(() => {
           updateFetching(false);

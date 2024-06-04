@@ -1,30 +1,26 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   signInWithPopup,
   GoogleAuthProvider,
-  sendEmailVerification,
   fetchSignInMethodsForEmail,
   createUserWithEmailAndPassword,
   updateProfile,
-} from "firebase/auth";
+} from 'firebase/auth';
+import axios from 'axios';
+import { Timestamp, doc, setDoc } from 'firebase/firestore';
 
-import { StyledAuthHeader, StyledDiv, StyledContainer, StyledAuthForm } from "./Signup.styled";
+import { StyledAuthHeader, StyledDiv, StyledContainer, StyledAuthForm } from './Signup.styled';
+import logo from '../../../assets/logo/logo.png';
+import AuthSlider from '../AuthSlider';
+import { auth, db } from '../../../utils/firebase';
+import Step1 from './Step1';
+import { USER_COLLECTION_NAME } from '../../../constants/data';
+import { config } from '../../../constants/config';
 
-import logo from "../../../assets/logo/logo.png";
-import AuthSlider from "../AuthSlider";
-import { auth, db } from "../../../utils/firebase";
-import Step1 from "./Step1";
-import { useNavigate } from "react-router-dom";
-import { USER_COLLECTION_NAME } from "../../../constants/data";
-import { Timestamp, doc, setDoc } from "firebase/firestore";
-import { config } from "../../../constants/config";
-import axios from "axios";
-
-export const step1State = { email: "", password: "", username: "" };
+export const step1State = { email: '', password: '', username: '' };
 
 const Signup: React.FC<{ newUser?: boolean }> = () => {
   const [emailError, setEmailError] = useState<string | null>(null);
-  const navigate = useNavigate();
 
   const checkEmailRegistered = async (email: string) => {
     try {
@@ -39,7 +35,7 @@ const Signup: React.FC<{ newUser?: boolean }> = () => {
     setEmailError(null);
     const isRegistered = await checkEmailRegistered(values.email);
     if (isRegistered) {
-      setEmailError("This email is already registered");
+      setEmailError('This email is already registered');
     } else {
       const { user } = await createUserWithEmailAndPassword(auth, values.email, values.password);
       await updateProfile(user, { displayName: values.username });
@@ -48,9 +44,9 @@ const Signup: React.FC<{ newUser?: boolean }> = () => {
       await setDoc(userDocRef, {
         displayName: values.username,
         email: user.email,
-        profileImg: "",
-        gender: "",
-        designation: "",
+        profileImg: '',
+        gender: '',
+        designation: '',
         issues: [],
         goals: [],
         interests: [],
@@ -67,9 +63,9 @@ const Signup: React.FC<{ newUser?: boolean }> = () => {
         });
       }
 
-      await sendEmailVerification(user);
-      console.log("MAIL SENT");
-      navigate("/verify-mail");
+      //  sendEmailVerification(user);
+      // console.log('MAIL SENT');
+      // navigate("/verify-mail");
     }
   };
 
