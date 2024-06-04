@@ -14,6 +14,7 @@ import { sendOtpService, verifyOtpService } from '../../services/otpService';
 import { userStore } from '../../store/userStore';
 import toast from 'react-hot-toast';
 import { AxiosError } from 'axios';
+import { generalStore } from '../../store/generalStore';
 
 const modalVaraints = {
   initial: {
@@ -51,6 +52,7 @@ const VerifyPhoneNumberModal: React.FC<IVerifyPhoneNumberModalProps> = ({ isOpen
   const user = userStore((store) => store.user);
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
+  const setOpenVerifyPhoneNoModal = generalStore((store) => store.setOpenVerifyPhoneNoModal);
 
   useEffect(() => {
     // Timer countdown logic
@@ -141,7 +143,15 @@ const VerifyPhoneNumberModal: React.FC<IVerifyPhoneNumberModalProps> = ({ isOpen
 
   return (
     <ReactModal>
-      <Backdrop isOpen={isOpen} className="z-150">
+      <Backdrop
+        isOpen={isOpen}
+        className="z-150"
+        handleClose={() => {
+          if (!showVerification) {
+            setOpenVerifyPhoneNoModal(false);
+          }
+        }}
+      >
         <AnimatePresence>
           {isOpen && (
             <StyledModal
