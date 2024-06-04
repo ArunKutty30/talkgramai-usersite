@@ -24,6 +24,7 @@ import OnBoarding from './pages/Auth/OnBoarding';
 import Faq from './pages/Faq';
 import InterviewByAI from './pages/InterviewByAI';
 import DefaultLayout from './layout/DefaultLayout';
+import UpdateEmailPage from './pages/Auth/UpdateEmailPage';
 
 const theme = createTheme({
   palette: {
@@ -150,6 +151,7 @@ const App: React.FC = () => {
             <Route path="/forget-password" element={<ForgetPassword />} />
           </Route>
           <Route path="/onboarding" element={<OnBoarding />} />
+          <Route path="/update-email" element={<UpdateEmailPage />} />
         </Routes>
       </ThemeProvider>
     </div>

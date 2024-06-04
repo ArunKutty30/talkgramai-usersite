@@ -5,13 +5,14 @@ import { Formik, Form } from 'formik';
 import VerificationInput from 'react-verification-input';
 import toast from 'react-hot-toast';
 import { AxiosError } from 'axios';
+import Grid from '@mui/material/Grid';
+import { useNavigate } from 'react-router-dom';
 
 import ReactModal from './ReactModal';
 import Backdrop from './Backdrop';
 import Button from '../Button';
 import { sendMailOtpService, verifyMailOtpService } from '../../services/otpService';
 import { userStore } from '../../store/userStore';
-import Grid from '@mui/material/Grid';
 
 const modalVaraints = {
   initial: {
@@ -48,6 +49,7 @@ const EmailVerificationModal: React.FC<IEmailVerificationModalProps> = ({ isOpen
   const user = userStore((store) => store.user);
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Timer countdown logic
@@ -159,12 +161,17 @@ const EmailVerificationModal: React.FC<IEmailVerificationModalProps> = ({ isOpen
                     {({ values, setFieldValue }) => (
                       <Form className="flex-column">
                         <Grid container spacing={2}>
-                          {/* <Grid item sm={6} xs={6}>
-                            <Button variant="primary-outline" type="submit" fullWidth>
+                          <Grid item sm={6} xs={6}>
+                            <Button
+                              variant="primary-outline"
+                              type="button"
+                              onClick={() => navigate('/update-email')}
+                              fullWidth
+                            >
                               Update Email
                             </Button>
-                          </Grid> */}
-                          <Grid item sm={12} xs={12}>
+                          </Grid>
+                          <Grid item sm={6} xs={6}>
                             <Button type="submit" fullWidth disabled={loading}>
                               Get OTP
                             </Button>
