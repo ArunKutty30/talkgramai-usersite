@@ -149,9 +149,11 @@ const EmailVerificationModal: React.FC<IEmailVerificationModalProps> = ({ isOpen
             >
               <StyledFormOne>
                 <h3>{!showVerification ? 'Please verify your email' : 'Enter the OTP sent to'}</h3>
-                <p style={{ textAlign: 'center' }}>
-                  click the "Get OTP" tab to get OTP to your mail id <b>{user?.email}</b>
-                </p>
+                {!showVerification && (
+                  <p style={{ textAlign: 'center' }}>
+                    click the "Get OTP" tab to get OTP to your mail id <b>{user?.email}</b>
+                  </p>
+                )}
                 {!showVerification ? (
                   <Formik initialValues={initialValues} onSubmit={handleSubmit}>
                     {({ values, setFieldValue }) => (
@@ -174,7 +176,7 @@ const EmailVerificationModal: React.FC<IEmailVerificationModalProps> = ({ isOpen
                 ) : (
                   <div className="flex-column">
                     <p style={{ textAlign: 'center' }} className="s-16">
-                      +{showVerification}
+                      {showVerification}
                     </p>
                     <div className="verification-input">
                       <VerificationInput
