@@ -40,6 +40,7 @@ import { getRandomUniqueTopic } from '../../constants/formatter';
 import toast from 'react-hot-toast';
 import { handlePayForDemoClass } from '../../services/paymentService';
 import { generalStore } from '../../store/generalStore';
+import VerifyPhoneNumberModal from './VerifyPhoneNumberModal';
 
 const modalVaraints = {
   initial: {
@@ -122,6 +123,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
   const tempValues = useRef<IFormType | null>(null);
   const updateSubscriptionDataOutdated = userStore((state) => state.updateSubscriptionDataOutdated);
   const setOpenVerifyPhoneNoModal = generalStore((store) => store.setOpenVerifyPhoneNoModal);
+  const openVerifyPhoneNoModal = generalStore((store) => store.openVerifyPhoneNoModal);
 
   const handleGetTutorData = useCallback(async () => {
     try {
@@ -225,12 +227,17 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
 
   console.log(slotFormat(selectedDate));
 
-  const handleConfirmSession = async (values: IFormType, tempSubscriptionData?: any) => {
+  const handleConfirmSession = async (
+    values: IFormType,
+    tempSubscriptionData?: any,
+    tempPhoneNumber?: string
+  ) => {
     try {
       if (!user || !profileData) return;
 
-      if (!Boolean(profileData?.phoneNumberVerified)) {
+      if (!Boolean(tempPhoneNumber) && !Boolean(profileData?.phoneNumberVerified)) {
         setOpenVerifyPhoneNoModal(true);
+        tempValues.current = values;
         return;
       }
 
@@ -242,7 +249,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
           setLoading(true);
           tempValues.current = values;
           try {
-            await handlePayForDemoClass(user, handleConfirmClass);
+            await handlePayForDemoClass(user, handleConfirmClass, tempPhoneNumber);
           } catch (error) {
             toast.error('something went wrong');
             setLoading(false);
@@ -367,201 +374,214 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
   };
 
   return (
-    <ReactModal>
-      <Backdrop handleClose={handleClose} isOpen={isOpen}>
-        <AnimatePresence>
-          {isOpen && (
-            <StyledConfirmTutorModal
-              onClick={(e) => e.stopPropagation()}
-              variants={modalVaraints}
-              animate="animate"
-              initial="initial"
-              exit="exit"
-            >
-              <Container>
-                <TutorDiv>
-                  <Profile>
-                    {tutorData ? (
-                      <>
-                        <Avatar
-                          size={72}
-                          profileImg={tutorData.profileImg}
-                          username={tutorData.username}
-                        />
-                        <div>
-                          <h4>{tutorData.username}</h4>
-                          {/* <p>Qualification</p> */}
-                        </div>
-                      </>
-                    ) : null}
-                  </Profile>
-                  <SessionDetails>
-                    <h3>Mentor Session</h3>
-                    <div>
-                      <p>Session Duration</p>
-                      <p className="head">30 Minutes</p>
-                    </div>
-                    <div>
-                      <p>About</p>
-                      <p className="head">
-                        {subscriptionData?.demoClass ? 'Demo Session' : 'Subscribed Session'}
-                      </p>
-                    </div>
-                  </SessionDetails>
-                </TutorDiv>
-                <Formik
-                  initialValues={formData || initialValues}
-                  onSubmit={handleSubmit}
-                  validationSchema={bookSessionValidationSchema}
-                  enableReinitialize
-                >
-                  {({ values, setValues, errors, setFieldValue, touched }) => (
-                    <Form>
-                      <ConfirmBookingSection
-                        style={{ pointerEvents: type === 'CANCEL' ? 'none' : 'auto' }}
-                      >
-                        <div className="flex-between">
-                          <h3>
-                            {type === 'CONFRIM'
-                              ? 'Confirm Booking'
-                              : type === 'EDIT'
-                              ? 'Edit your Session Details'
-                              : 'Cancel Your Session'}
-                          </h3>
-                        </div>
-                        <div className="flex-parent">
-                          <div className="flex">
-                            <img src={CalendarIcon} alt="" />
-                            <p>{customFormat(selectedDate, 'DD MMM YYYY')}</p>
-                          </div>
-                          <div className="flex">
-                            <img src={ClockIcon} alt="" />
-                            <p>
-                              {customFormat(selectedDate, 'hh:mm A')} -{' '}
-                              {dayjs(selectedDate).add(30, 'minute').format('hh:mm A')}
-                            </p>
-                          </div>
-                        </div>
+    <>
+      <ReactModal>
+        <Backdrop handleClose={handleClose} isOpen={isOpen}>
+          <AnimatePresence>
+            {isOpen && (
+              <StyledConfirmTutorModal
+                onClick={(e) => e.stopPropagation()}
+                variants={modalVaraints}
+                animate="animate"
+                initial="initial"
+                exit="exit"
+              >
+                <Container>
+                  <TutorDiv>
+                    <Profile>
+                      {tutorData ? (
                         <>
-                          <SelectTopic>
-                            {/* <p>Select a Topic</p> */}
-                            <div className="timedropdown">
-                              <Field as="select" name="topic">
-                                <option value="">Select a topic</option>
-                                {topicList.map((m, i) => (
-                                  <option key={i} value={m.value}>
-                                    {m.name}
-                                  </option>
-                                ))}
-                              </Field>
-                            </div>
-                            {errors.topic && touched.topic && (
-                              <p className="text-error">{errors.topic}</p>
-                            )}
-                          </SelectTopic>
-                          {values.topic === EnumTopic.CUSTOM_TOPIC && (
-                            <SelectTopicWrapper>
-                              <div className="topic-header">
-                                <p style={{ borderRight: '1px solid #ccc' }}>Choose a Topic</p>
-                                <p>Questions</p>
-                              </div>
-                              <div className="topic-content">
-                                <div className="topic-content-left">
-                                  {_.chain(topicsData)
-                                    .groupBy('category')
-                                    .map((value, key) => ({ category: key, topics: value }))
-                                    .value()
-                                    .map((topic, index) => (
-                                      <TopicAccordion
-                                        key={index.toString()}
-                                        topicData={topic}
-                                        completedLessonPlan={completedLessonPlan}
-                                        openAccordion={openAccordion}
-                                        setOpenAccordion={setOpenAccordion}
-                                        selectedTopicInterest={values.topicInfo}
-                                        setSelectedTopicInterest={(value) =>
-                                          setValues((v) => ({ ...v, topicInfo: value }))
-                                        }
-                                      />
-                                    ))}
-                                </div>
-                                <div className="topic-content-right">
-                                  <ol>
-                                    {getQuestions(
-                                      values.topicInfo.category,
-                                      values.topicInfo.title
-                                    ).map((m, index) => (
-                                      <li key={index}>{m}</li>
-                                    ))}
-                                  </ol>
-                                </div>
-                              </div>
-                            </SelectTopicWrapper>
-                          )}
-                          {(errors.topicInfo?.title || errors.topicInfo?.category) && (
-                            <p className="text-error">Please select one topic</p>
-                          )}
+                          <Avatar
+                            size={72}
+                            profileImg={tutorData.profileImg}
+                            username={tutorData.username}
+                          />
+                          <div>
+                            <h4>{tutorData.username}</h4>
+                            {/* <p>Qualification</p> */}
+                          </div>
                         </>
+                      ) : null}
+                    </Profile>
+                    <SessionDetails>
+                      <h3>Mentor Session</h3>
+                      <div>
+                        <p>Session Duration</p>
+                        <p className="head">30 Minutes</p>
+                      </div>
+                      <div>
+                        <p>About</p>
+                        <p className="head">
+                          {subscriptionData?.demoClass ? 'Demo Session' : 'Subscribed Session'}
+                        </p>
+                      </div>
+                    </SessionDetails>
+                  </TutorDiv>
+                  <Formik
+                    initialValues={formData || initialValues}
+                    onSubmit={handleSubmit}
+                    validationSchema={bookSessionValidationSchema}
+                    enableReinitialize
+                  >
+                    {({ values, setValues, errors, setFieldValue, touched }) => (
+                      <Form>
+                        <ConfirmBookingSection
+                          style={{ pointerEvents: type === 'CANCEL' ? 'none' : 'auto' }}
+                        >
+                          <div className="flex-between">
+                            <h3>
+                              {type === 'CONFRIM'
+                                ? 'Confirm Booking'
+                                : type === 'EDIT'
+                                ? 'Edit your Session Details'
+                                : 'Cancel Your Session'}
+                            </h3>
+                          </div>
+                          <div className="flex-parent">
+                            <div className="flex">
+                              <img src={CalendarIcon} alt="" />
+                              <p>{customFormat(selectedDate, 'DD MMM YYYY')}</p>
+                            </div>
+                            <div className="flex">
+                              <img src={ClockIcon} alt="" />
+                              <p>
+                                {customFormat(selectedDate, 'hh:mm A')} -{' '}
+                                {dayjs(selectedDate).add(30, 'minute').format('hh:mm A')}
+                              </p>
+                            </div>
+                          </div>
+                          <>
+                            <SelectTopic>
+                              {/* <p>Select a Topic</p> */}
+                              <div className="timedropdown">
+                                <Field as="select" name="topic">
+                                  <option value="">Select a topic</option>
+                                  {topicList.map((m, i) => (
+                                    <option key={i} value={m.value}>
+                                      {m.name}
+                                    </option>
+                                  ))}
+                                </Field>
+                              </div>
+                              {errors.topic && touched.topic && (
+                                <p className="text-error">{errors.topic}</p>
+                              )}
+                            </SelectTopic>
+                            {values.topic === EnumTopic.CUSTOM_TOPIC && (
+                              <SelectTopicWrapper>
+                                <div className="topic-header">
+                                  <p style={{ borderRight: '1px solid #ccc' }}>Choose a Topic</p>
+                                  <p>Questions</p>
+                                </div>
+                                <div className="topic-content">
+                                  <div className="topic-content-left">
+                                    {_.chain(topicsData)
+                                      .groupBy('category')
+                                      .map((value, key) => ({ category: key, topics: value }))
+                                      .value()
+                                      .map((topic, index) => (
+                                        <TopicAccordion
+                                          key={index.toString()}
+                                          topicData={topic}
+                                          completedLessonPlan={completedLessonPlan}
+                                          openAccordion={openAccordion}
+                                          setOpenAccordion={setOpenAccordion}
+                                          selectedTopicInterest={values.topicInfo}
+                                          setSelectedTopicInterest={(value) =>
+                                            setValues((v) => ({ ...v, topicInfo: value }))
+                                          }
+                                        />
+                                      ))}
+                                  </div>
+                                  <div className="topic-content-right">
+                                    <ol>
+                                      {getQuestions(
+                                        values.topicInfo.category,
+                                        values.topicInfo.title
+                                      ).map((m, index) => (
+                                        <li key={index}>{m}</li>
+                                      ))}
+                                    </ol>
+                                  </div>
+                                </div>
+                              </SelectTopicWrapper>
+                            )}
+                            {(errors.topicInfo?.title || errors.topicInfo?.category) && (
+                              <p className="text-error">Please select one topic</p>
+                            )}
+                          </>
 
-                        <AddDescriptionContainer>
-                          <p>Add some description to make your session more effective</p>
-                          <DescriptionInputContainer>
-                            <textarea
-                              readOnly={type === 'CANCEL'}
-                              // placeholder="Keep your description crisp and short. Here are few tips:"
-                              placeholder={`1. Keep your doubts specific\n2. Make sure you have your doubts ready before the session\n3. Share your goal for the session`}
-                              value={values.description}
-                              onChange={(e) => setFieldValue('description', e.target.value)}
-                              rows={5}
-                            />
-                            {/* <ol>
+                          <AddDescriptionContainer>
+                            <p>Add some description to make your session more effective</p>
+                            <DescriptionInputContainer>
+                              <textarea
+                                readOnly={type === 'CANCEL'}
+                                // placeholder="Keep your description crisp and short. Here are few tips:"
+                                placeholder={`1. Keep your doubts specific\n2. Make sure you have your doubts ready before the session\n3. Share your goal for the session`}
+                                value={values.description}
+                                onChange={(e) => setFieldValue('description', e.target.value)}
+                                rows={5}
+                              />
+                              {/* <ol>
                               <li>Keep your doubts specific</li>
                               <li>Make sure you have your doubts ready before the session</li>
                               <li>Share your goal for the session</li>
                             </ol> */}
-                          </DescriptionInputContainer>
-                        </AddDescriptionContainer>
-                        {message ? (
-                          <StyledSessionConfirmed
-                            style={{ color: type === 'CANCEL' ? 'var(--error)' : 'var(--primary)' }}
-                            className="session-confirmed"
-                          >
-                            {message}
-                          </StyledSessionConfirmed>
-                        ) : (
-                          <Button
-                            variant={type === 'CANCEL' ? 'error' : 'primary'}
-                            disabled={loading}
-                            type="submit"
-                            style={{ pointerEvents: 'auto' }}
-                          >
-                            {loading
-                              ? type === 'CONFRIM'
-                                ? 'Confirming session...'
-                                : 'Loading...'
-                              : type === 'CONFRIM'
-                              ? 'Confirm Session'
-                              : type === 'EDIT'
-                              ? 'Confirm Changes'
-                              : 'Cancel  Session'}
-                          </Button>
-                        )}
-                      </ConfirmBookingSection>
-                    </Form>
-                  )}
-                </Formik>
-              </Container>
-              <img
-                src={CloseIcon}
-                alt=""
-                className="modal-close-icon pointer"
-                onClick={handleClose}
-              />
-            </StyledConfirmTutorModal>
-          )}
-        </AnimatePresence>
-      </Backdrop>
-    </ReactModal>
+                            </DescriptionInputContainer>
+                          </AddDescriptionContainer>
+                          {message ? (
+                            <StyledSessionConfirmed
+                              style={{
+                                color: type === 'CANCEL' ? 'var(--error)' : 'var(--primary)',
+                              }}
+                              className="session-confirmed"
+                            >
+                              {message}
+                            </StyledSessionConfirmed>
+                          ) : (
+                            <Button
+                              variant={type === 'CANCEL' ? 'error' : 'primary'}
+                              disabled={loading}
+                              type="submit"
+                              style={{ pointerEvents: 'auto' }}
+                            >
+                              {loading
+                                ? type === 'CONFRIM'
+                                  ? 'Confirming session...'
+                                  : 'Loading...'
+                                : type === 'CONFRIM'
+                                ? 'Confirm Session'
+                                : type === 'EDIT'
+                                ? 'Confirm Changes'
+                                : 'Cancel  Session'}
+                            </Button>
+                          )}
+                        </ConfirmBookingSection>
+                      </Form>
+                    )}
+                  </Formik>
+                </Container>
+                <img
+                  src={CloseIcon}
+                  alt=""
+                  className="modal-close-icon pointer"
+                  onClick={handleClose}
+                />
+              </StyledConfirmTutorModal>
+            )}
+          </AnimatePresence>
+        </Backdrop>
+      </ReactModal>
+      {openVerifyPhoneNoModal && (
+        <VerifyPhoneNumberModal
+          handleCallback={(phoneNumber: string) => {
+            if (tempValues.current)
+              handleConfirmSession(tempValues.current, undefined, phoneNumber);
+          }}
+          isOpen
+        />
+      )}
+    </>
   );
 };
 

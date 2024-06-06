@@ -39,7 +39,6 @@ import {
 } from '../../services/bookSessionService';
 import { reminderStore } from '../../store/reminderStore';
 import MenuDropdown from '../MenuDropdown';
-import VerifyPhoneNumberModal from '../Modal/VerifyPhoneNumberModal';
 import EmailVerificationModal from '../Modal/EmailVerificationModal';
 
 const Header = ({ hide }: { hide?: boolean }) => {
@@ -67,7 +66,6 @@ const Header = ({ hide }: { hide?: boolean }) => {
   const [openModal, setOpenModal] = useState(false);
   const setReminder = reminderStore((state) => state.setReminder);
   const updateSubscriptionDataFetching = userStore((store) => store.updateSubscriptionDataFetching);
-  const openVerifyPhoneNoModal = generalStore((store) => store.openVerifyPhoneNoModal);
 
   const handleCheckCurrentData = useCallback(async () => {
     if (!subscriptionData) return;
@@ -432,7 +430,6 @@ const Header = ({ hide }: { hide?: boolean }) => {
       {user && !user.emailVerified && !Boolean(profileData?.emailVerified) && (
         <EmailVerificationModal isOpen />
       )}
-      {openVerifyPhoneNoModal && <VerifyPhoneNumberModal isOpen />}
     </StyledHeader>
   );
 };

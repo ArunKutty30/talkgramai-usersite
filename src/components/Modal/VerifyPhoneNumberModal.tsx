@@ -40,11 +40,15 @@ const modalVaraints = {
 
 interface IVerifyPhoneNumberModalProps {
   isOpen: boolean;
+  handleCallback: (phoneNumber: string) => void;
 }
 
 const initialValues = { phone: '' };
 
-const VerifyPhoneNumberModal: React.FC<IVerifyPhoneNumberModalProps> = ({ isOpen }) => {
+const VerifyPhoneNumberModal: React.FC<IVerifyPhoneNumberModalProps> = ({
+  isOpen,
+  handleCallback,
+}) => {
   const [verificationCode, setVerificationCode] = useState('');
   const [showVerification, setShowVerification] = useState<string | null>(null);
   const isError = useRef(true);
@@ -53,6 +57,8 @@ const VerifyPhoneNumberModal: React.FC<IVerifyPhoneNumberModalProps> = ({ isOpen
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
   const setOpenVerifyPhoneNoModal = generalStore((store) => store.setOpenVerifyPhoneNoModal);
+  const profileData = userStore((store) => store.profileData);
+  const updateProfileData = userStore((store) => store.updateProfileData);
 
   useEffect(() => {
     // Timer countdown logic
@@ -100,8 +106,18 @@ const VerifyPhoneNumberModal: React.FC<IVerifyPhoneNumberModalProps> = ({ isOpen
 
       toast.success('Phone number verified successfully');
 
+      if (profileData) {
+        updateProfileData({
+          ...profileData,
+          phoneNumber: `+${showVerification}`,
+          phoneNumberVerified: true,
+        });
+      }
+
       setTimeout(() => {
-        window.location.reload();
+        // window.location.reload();
+        handleCallback(`+${showVerification}`);
+        setOpenVerifyPhoneNoModal(false);
         setLoading(false);
       }, 2000);
     } catch (error) {
@@ -191,7 +207,7 @@ const VerifyPhoneNumberModal: React.FC<IVerifyPhoneNumberModalProps> = ({ isOpen
                           }}
                         />
                         <Button type="submit" disabled={isError.current || loading}>
-                          SEND OTP
+                          Send OTP
                         </Button>
                       </Form>
                     )}

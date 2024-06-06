@@ -71,7 +71,7 @@ export interface IUserProfileData {
   profileImg: string;
   completedSession: number | undefined;
   phoneNumber?: string;
-  phoneNumberVerified?: string;
+  phoneNumberVerified?: boolean;
   emailVerified?: boolean;
 }
 

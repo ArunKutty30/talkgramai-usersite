@@ -93,7 +93,8 @@ const handleStoreData = async (docId: string, userData: User) => {
 
 export const handlePayForDemoClass = async (
   user: User,
-  handleConfirmClass: (subscriptionData: any) => void
+  handleConfirmClass: (subscriptionData: any) => void,
+  phoneNumber?: string
 ) => {
   try {
     const REACT_APP_RAZORPAY_KEY = process.env.REACT_APP_RAZORPAY_KEY;
@@ -160,7 +161,7 @@ export const handlePayForDemoClass = async (
       prefill: {
         name: user.displayName,
         email: user.email,
-        contact: user.phoneNumber,
+        contact: phoneNumber,
       },
       notes: {
         address: 'Talkgram Corporate Office',

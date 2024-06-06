@@ -35,6 +35,7 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
 }) => {
   console.log(selectedPlan);
   const user = userStore((store) => store.user);
+  const profileData = userStore((store) => store.profileData);
   const [loading, setLoading] = useState(false);
   const [onRecordings, setOnRecordings] = useState(false);
   const [payemntModalOpen, setPaymentModalOpen] = useState(false);
@@ -110,7 +111,7 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
         amount: amount.toString(),
         currency: currency,
         name: 'Talkgram',
-        description: 'Test Transaction',
+        description: 'Subscription',
         image: { logo },
         order_id: order_id,
         handler: async function (response: any) {
@@ -133,7 +134,7 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
         prefill: {
           name: user.displayName,
           email: user.email,
-          contact: user.phoneNumber,
+          contact: profileData?.phoneNumber,
         },
         notes: {
           address: 'Talkgram Corporate Office',
