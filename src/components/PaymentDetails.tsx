@@ -76,10 +76,9 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
 
       const { amount, id: order_id, currency } = result.data;
 
-      const endDate =
-        process.env.REACT_APP_MODE === 'LOCAL'
-          ? dayjs(new Date()).add(selectedPlan.durationInMonth, 'day').toDate()
-          : dayjs(new Date()).add(selectedPlan.durationInMonth, 'month').toDate();
+      const endDate = dayjs(new Date())
+        .add(Number(selectedPlan.durationInMonth) * 28, 'day')
+        .toDate();
 
       await createSubscriptionDocWithOrderId(order_id, {
         user: user.uid,
