@@ -222,6 +222,10 @@ const SubscribedUserSession: React.FC = () => {
     setShowPopup(!showPopup);
   };
 
+  const sessionLeft =
+    (subscriptionData?.noOfSession || 0) -
+    ((subscriptionData?.bookedSession || 0) + (expiredClass || 0));
+
   return (
     <>
       <div className="pad">
@@ -301,13 +305,7 @@ const SubscribedUserSession: React.FC = () => {
 
           <Box className="sec-last-card-hold">
             <CurrentPlanCards title="Total Sessions" count={subscriptionData?.noOfSession || 0} />
-            <CurrentPlanCards
-              title="Sessions Left"
-              count={
-                (subscriptionData?.noOfSession || 0) -
-                ((subscriptionData?.bookedSession || 0) + (expiredClass || 0))
-              }
-            />
+            <CurrentPlanCards title="Sessions Left" count={sessionLeft < 0 ? 0 : sessionLeft} />
             <CurrentPlanCards
               title="Backlog Sessions"
               count={subscriptionData?.backlogSession || 0}
