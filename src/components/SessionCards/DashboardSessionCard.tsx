@@ -89,7 +89,7 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
   }, [handleGetData]);
 
   const navigate = useNavigate();
-  const sessionLink = `https://meet-talkgram.netlify.app/${meetingId}/?username=${profileData?.displayName}&uid=${user}`;
+  const sessionLink = `https://meet.talkgram.in/${meetingId}/?username=${profileData?.displayName}&uid=${user}`;
 
   const redirectToMeet = () => {
     window.open(sessionLink, '_blank');
