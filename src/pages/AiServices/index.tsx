@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import interviewIcon from '../../assets/icons/interview.png';
+
 const AiServices = () => {
   return (
     <StyledContainer>
@@ -10,27 +12,33 @@ const AiServices = () => {
         <StyledCardWrapper>
           <Link to="/ai-services/interview">
             <StyledCard>
+              <div className="card-image">
+                <img src={interviewIcon} alt="Interview with AI" />
+              </div>
               <h4>Interview with AI</h4>
               <ul>
                 <li>
                   <p>
-                    <strong>Customized Interview Questions:</strong> Receive questions that are
+                    <strong>Customized Interview Questions</strong>
+                    {/* Receive questions that are
                     specifically tailored to the job role you are applying for, ensuring you are
-                    well-prepared for relevant scenarios.
+                    well-prepared for relevant scenarios. */}
                   </p>
                 </li>
                 <li>
                   <p>
-                    <strong>Instant AI Feedback:</strong> After submitting your responses, get
+                    <strong>Instant AI Feedback</strong>
+                    {/* After submitting your responses, get
                     immediate feedback from an AI. The feedback includes constructive suggestions on
-                    how to improve your answers for a real interview.
+                    how to improve your answers for a real interview. */}
                   </p>
                 </li>
                 <li>
                   <p>
-                    <strong>Enhanced Interview Readiness:</strong> The tool helps you refine your
+                    <strong>Enhanced Interview Readiness</strong>
+                    {/* The tool helps you refine your
                     interview technique, boosting your confidence and improving your chances of
-                    making a positive impression on potential employers.
+                    making a positive impression on potential employers. */}
                   </p>
                 </li>
               </ul>
@@ -69,11 +77,34 @@ const StyledCardWrapper = styled.div`
 
 const StyledCard = styled.div`
   border-radius: 12px;
-  border: 2px solid rgba(248, 145, 32, 0.25);
-  background: rgba(217, 217, 217, 0.11);
-  box-shadow: rgba(0, 0, 0, 0.18) 0px 1px 1px 0px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  // background: rgba(217, 217, 217, 0.11);
+  background: rgba(255, 255, 255, 1);
+  // box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
   padding: 25px;
   cursor: pointer;
+  transition: background-color 200ms linear;
+
+  &:hover {
+    background-color: rgba(248, 145, 32, 0.09);
+  }
+
+  .card-image {
+    width: 70px;
+    height: 70px;
+    background-color: #fff;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
+    display: grid;
+    place-items: center;
+
+    img {
+      width: 60%;
+      height: 60%;
+      object-fit: contain;
+    }
+  }
 
   h4 {
     font-size: 22px;

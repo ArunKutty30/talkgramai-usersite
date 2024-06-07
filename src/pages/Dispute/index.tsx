@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from "react";
-import checked from "../../assets/icons/checked.png";
-import sandclock from "../../assets/icons/sandclock.png";
-import rocket from "../..//assets/icons/rocket.png";
-import styled from "styled-components";
+import React, { useState, useEffect } from 'react';
+import checked from '../../assets/icons/checked.png';
+import sandclock from '../../assets/icons/sandclock.png';
+import rocket from '../..//assets/icons/rocket.png';
+import styled from 'styled-components';
 //import SectionHeader from "../../components/SectionHeader";
-import DisputeTable from "../../components/DataTable/DisputeTable";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
-import { DISPUTE_COLLECTION_NAME } from "../../constants/data";
-import { db } from "../../utils/firebase";
-import { userStore } from "../../store/userStore";
-import { IDispute } from "../../constants/types";
+import DisputeTable from '../../components/DataTable/DisputeTable';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { DISPUTE_COLLECTION_NAME } from '../../constants/data';
+import { db } from '../../utils/firebase';
+import { userStore } from '../../store/userStore';
+import { IDispute } from '../../constants/types';
 
 const Dispute = () => {
-  const [selectedSession, setSelectedSession] = useState<"pending" | "resolved" | "all">("all");
+  const [selectedSession, setSelectedSession] = useState<'pending' | 'resolved' | 'all'>('all');
   const [disputes, setDisputes] = useState<IDispute[]>([]);
   const [disputesBasedOnCategory, setDisputesBasedOnCategory] = useState<IDispute[]>([]);
 
@@ -23,7 +23,7 @@ const Dispute = () => {
     let unsubscribe: () => void | undefined;
 
     if (User?.uid) {
-      const q = query(colRef, where("userId", "==", User.uid));
+      const q = query(colRef, where('userId', '==', User.uid));
 
       unsubscribe = onSnapshot(
         q,
@@ -38,10 +38,10 @@ const Dispute = () => {
           });
           setDisputes([...slots]);
           setDisputesBasedOnCategory([...slots]);
-          console.log("i came in");
+          console.log('i came in');
         },
         (error) => {
-          console.error("Error fetching upcoming sessions:", error);
+          console.error('Error fetching upcoming sessions:', error);
         }
       );
     }
@@ -57,15 +57,15 @@ const Dispute = () => {
     const filteredDisputes = disputes.filter((dispute: IDispute) => {
       return dispute?.status === selectedSession;
     });
-    setDisputesBasedOnCategory(selectedSession === "all" ? disputes : filteredDisputes);
+    setDisputesBasedOnCategory(selectedSession === 'all' ? disputes : filteredDisputes);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSession]);
 
   const pendingDisputesCount = disputes.filter(
-    (dispute: IDispute) => dispute.status === "pending"
+    (dispute: IDispute) => dispute.status === 'pending'
   ).length;
   const resolvedDisputesCount = disputes.filter(
-    (dispute: IDispute) => dispute.status === "resolved"
+    (dispute: IDispute) => dispute.status === 'resolved'
   ).length;
 
   return (
@@ -120,25 +120,25 @@ const Dispute = () => {
             <div>
               <button
                 onClick={() => {
-                  setSelectedSession("pending");
+                  setSelectedSession('pending');
                 }}
-                className={selectedSession === "pending" ? "active" : ""}
+                className={selectedSession === 'pending' ? 'active' : ''}
               >
                 Pending
               </button>
               <button
                 onClick={() => {
-                  setSelectedSession("resolved");
+                  setSelectedSession('resolved');
                 }}
-                className={selectedSession === "resolved" ? "active" : ""}
+                className={selectedSession === 'resolved' ? 'active' : ''}
               >
                 Resolved
               </button>
               <button
                 onClick={() => {
-                  setSelectedSession("all");
+                  setSelectedSession('all');
                 }}
-                className={selectedSession === "all" ? "active" : ""}
+                className={selectedSession === 'all' ? 'active' : ''}
               >
                 Total Tickets
               </button>
@@ -157,7 +157,7 @@ const StyledUserSessionStats = styled.div`
   margin-top: 2rem;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 64px;
+  gap: 30px;
   margin-bottom: 20px;
 
   @media (max-width: 1080px) {

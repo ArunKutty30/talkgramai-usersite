@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { Modal, Button } from "@mui/material";
-import ViewDisputeModal from "../Modal/ViewDisputeModal";
-import { IDispute } from "../../constants/types";
-import { Timestamp } from "firebase/firestore";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { Modal, Button } from '@mui/material';
+import ViewDisputeModal from '../Modal/ViewDisputeModal';
+import { IDispute } from '../../constants/types';
+import { Timestamp } from 'firebase/firestore';
 
 const DisputeTable = ({ disputes }: { disputes: IDispute[] }) => {
   const [disputeModalOpen, setDisputeModalOpen] = useState(false);
@@ -16,13 +16,13 @@ const DisputeTable = ({ disputes }: { disputes: IDispute[] }) => {
         <th>Date of Issue</th>
         <th>Session-ID</th>
         <th>Dispute Status</th>
-        <th></th>
+        <th>Actions</th>
       </tr>
     </thead>
   );
 
   function formatDate(dateOfIssue: Timestamp) {
-    if (!dateOfIssue) return ""; // Handle the case where dateOfIssue is not available.
+    if (!dateOfIssue) return ''; // Handle the case where dateOfIssue is not available.
 
     // Convert nanoseconds and seconds to milliseconds
     const milliseconds =
@@ -43,7 +43,11 @@ const DisputeTable = ({ disputes }: { disputes: IDispute[] }) => {
             <>
               <table>
                 {tableHeader}
-                <tbody></tbody>
+                <tbody>
+                  <tr>
+                    <td colSpan={5}>No Disputes</td>
+                  </tr>
+                </tbody>
               </table>
             </>
           ) : (
@@ -53,20 +57,20 @@ const DisputeTable = ({ disputes }: { disputes: IDispute[] }) => {
                 {disputes.map((dispute: IDispute) => (
                   <tr
                     key={dispute.sessionId}
-                    style={{ background: dispute?.status === "pending" ? "#FFD8DC" : "#E4FCE3" }}
+                    style={{ background: dispute?.status === 'pending' ? '#FFD8DC' : '#E4FCE3' }}
                   >
                     <td>{dispute?.id}</td>
                     <td>{formatDate(dispute?.dateOfIssue)}</td>
                     <td>{dispute?.sessionId}</td>
                     <td
-                      style={{ color: dispute?.status === "pending" ? "var(--error)" : "#4E7E00" }}
+                      style={{ color: dispute?.status === 'pending' ? 'var(--error)' : '#4E7E00' }}
                     >
                       {dispute?.status}
                     </td>
                     <td>
                       <Button
                         variant="outlined"
-                        sx={{ color: "black", border: "1px solid black" }}
+                        sx={{ color: 'black', border: '1px solid black' }}
                         onClick={() => {
                           setSelectedSessionDtls({
                             ...dispute,
@@ -85,10 +89,10 @@ const DisputeTable = ({ disputes }: { disputes: IDispute[] }) => {
           {disputeModalOpen && (
             <Modal
               sx={{
-                margin: "auto",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
+                margin: 'auto',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
               open={disputeModalOpen}
               onClose={() => {
@@ -122,6 +126,7 @@ const StyledTableWrapper = styled.div`
     border: 1px solid #ccc;
     height: 200px;
     overflowy: auto;
+    border-collapse: collapse;
 
     th {
       color: #000;
@@ -129,15 +134,14 @@ const StyledTableWrapper = styled.div`
       font-weight: 700;
       padding: 15px;
       text-align: center;
-      border: none;
+      border: 1px solid #ccc;
     }
 
     td {
       font-size: 16px;
       padding: 15px;
       text-align: center;
-      border: none;
-      border-top: 1px solid #ccc;
+      border: 1px solid #ccc;
     }
 
     td:first-child {
