@@ -290,7 +290,9 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
         isDemoClass = true;
       }
 
-      const endTime = dayjs(selectedDate).add(30, 'minute').toDate();
+      const meetDuration = isDemoClass ? 15 : 30;
+
+      const endTime = dayjs(selectedDate).add(meetDuration, 'minute').toDate();
 
       const meetingId = await createMeeting(
         user.uid,
@@ -407,12 +409,18 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
                       <h3>Mentor Session</h3>
                       <div>
                         <p>Session Duration</p>
-                        <p className="head">30 Minutes</p>
+                        <p className="head">
+                          {!subscriptionData && !profileData?.demoClassBooked
+                            ? '15 minutes'
+                            : '30 Minutes'}
+                        </p>
                       </div>
                       <div>
                         <p>About</p>
                         <p className="head">
-                          {subscriptionData?.demoClass ? 'Demo Session' : 'Subscribed Session'}
+                          {subscriptionData?.demoClass || !profileData?.demoClassBooked
+                            ? 'Demo Session'
+                            : 'Subscribed Session'}
                         </p>
                       </div>
                     </SessionDetails>
@@ -446,7 +454,12 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
                               <img src={ClockIcon} alt="" />
                               <p>
                                 {customFormat(selectedDate, 'hh:mm A')} -{' '}
-                                {dayjs(selectedDate).add(30, 'minute').format('hh:mm A')}
+                                {dayjs(selectedDate)
+                                  .add(
+                                    !subscriptionData && !profileData?.demoClassBooked ? 15 : 30,
+                                    'minute'
+                                  )
+                                  .format('hh:mm A')}
                               </p>
                             </div>
                           </div>
