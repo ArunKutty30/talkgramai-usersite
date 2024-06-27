@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { Field, Form, Formik } from 'formik';
 import _ from 'lodash';
+import toast from 'react-hot-toast';
 
 import Backdrop from './Backdrop';
 import Button from '../Button';
@@ -37,10 +38,10 @@ import TopicAccordion from '../TopicAccordion';
 import { topicsData } from '../../utils/updatedtopic';
 import { bookSessionValidationSchema } from '../../constants/validationSchema';
 import { getRandomUniqueTopic } from '../../constants/formatter';
-import toast from 'react-hot-toast';
-import { handlePayForDemoClass } from '../../services/paymentService';
+// import { handlePayForDemoClass } from '../../services/paymentService';
 import { generalStore } from '../../store/generalStore';
 import VerifyPhoneNumberModal from './VerifyPhoneNumberModal';
+import { createDemoClassSubscriptionService } from '../../services/subscriptionService';
 
 const modalVaraints = {
   initial: {
@@ -217,13 +218,13 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
     }
   };
 
-  const handleConfirmClass = (tempSubscriptionData: any) => {
-    console.log('ssss');
-    if (!tempValues.current) return;
-    console.log('ddd');
+  // const handleConfirmClass = (tempSubscriptionData: any) => {
+  //   console.log('ssss');
+  //   if (!tempValues.current) return;
+  //   console.log('ddd');
 
-    handleConfirmSession(tempValues.current, tempSubscriptionData);
-  };
+  //   handleConfirmSession(tempValues.current, tempSubscriptionData);
+  // };
 
   console.log(slotFormat(selectedDate));
 
@@ -249,7 +250,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
           setLoading(true);
           tempValues.current = values;
           try {
-            await handlePayForDemoClass(user, handleConfirmClass, tempPhoneNumber);
+            // await handlePayForDemoClass(user, handleConfirmClass, tempPhoneNumber);
           } catch (error) {
             toast.error('something went wrong');
             setLoading(false);
@@ -349,12 +350,84 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
     }
   };
 
+  const handleConfirmDemoSession = async (values: IFormType) => {
+    try {
+      if (!user || !profileData) return;
+
+      if (values.topic === EnumTopic.RANDOM_TOPIC) {
+        const uniqTopics: Set<string> = new Set();
+        completedLessonPlan.forEach((m) => {
+          uniqTopics.add(`${m.category}-${m.title}`);
+        });
+        const randomTopic = getRandomUniqueTopic(topicsData, uniqTopics);
+        values.topicInfo = {
+          category: randomTopic?.category || '',
+          title: randomTopic?.title || '',
+        };
+      }
+
+      setLoading(true);
+
+      const meetingId = await createMeeting(user.uid, dayjs(selectedDate).format(), true, true);
+      const subscriptionId = await createDemoClassSubscriptionService(user.uid);
+      await updateUserDoc(user.uid, { demoClassBooked: true });
+
+      const endTime = dayjs(selectedDate).add(15, 'minutes').toDate();
+
+      const bookSessionData: { [key: string]: any } = {
+        startTime: Timestamp.fromDate(selectedDate),
+        endTime: Timestamp.fromDate(endTime),
+        slotId: slotFormat(selectedDate),
+        user: user.uid,
+        tutor: tutorId,
+        subscriptionId: subscriptionId,
+        topic: values.topic,
+        topicInfo: values.topicInfo,
+        description: values.description,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+        status: 'UPCOMING',
+        meetingId,
+        cost: 0,
+        demoClass: true,
+        timelogs: null,
+      };
+      await createBookSessionDoc(tutorId, true, false, bookSessionData);
+
+      setLoading(false);
+      setMessage('Your Session has been Booked !!');
+      updateSubscriptionDataOutdated(true);
+
+      setTimeout(() => {
+        refetchUser();
+        navigate('/');
+      }, 2000);
+
+      sendBookingConfirmationMail({
+        userId: user.uid,
+        tutorId: tutorId,
+        date: dayjs(selectedDate).format('DD-MM-YYYY'),
+        time: dayjs(selectedDate).format('hh-mm a'),
+      });
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+      toast.error('something went wrong');
+    }
+  };
+
   const handleSubmit = async (values: IFormType) => {
     if (!user || !profileData) return;
 
     if (type === 'EDIT') return handleEditSession(values);
     if (type === 'CANCEL') return handleCancelSession();
-    if (type === 'CONFRIM') return handleConfirmSession(values);
+    if (type === 'CONFRIM') {
+      if (Boolean(profileData.demoClassBooked)) {
+        handleConfirmSession(values);
+      } else {
+        handleConfirmDemoSession(values);
+      }
+    }
   };
 
   const getQuestions = (category: string, title: string) => {
@@ -457,7 +530,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
                                 {dayjs(selectedDate)
                                   .add(
                                     !subscriptionData && !profileData?.demoClassBooked ? 15 : 30,
-                                    'minute'
+                                    'minutes'
                                   )
                                   .format('hh:mm A')}
                               </p>

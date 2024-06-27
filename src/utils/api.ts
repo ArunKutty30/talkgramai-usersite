@@ -7,7 +7,12 @@ export const BACKEND_URL =
 const API_BASE_URL = 'https://api.videosdk.live';
 const VIDEOSDK_TOKEN = process.env.REACT_APP_VIDEOSDK_TOKEN;
 
-export const createMeeting = async (userId: string, date: string, hasRecording: boolean) => {
+export const createMeeting = async (
+  userId: string,
+  date: string,
+  hasRecording: boolean,
+  demoClass?: boolean
+) => {
   if (!VIDEOSDK_TOKEN) throw new Error('Invalid token');
   const url = `${API_BASE_URL}/v2/rooms`;
 
@@ -33,7 +38,9 @@ export const createMeeting = async (userId: string, date: string, hasRecording: 
     body: JSON.stringify({
       autoCloseConfig: {
         type: 'session-ends',
-        duration: Number(config.SESSION_DURATION),
+        duration: Boolean(demoClass)
+          ? Number(config.DEMO_CLASS_SESSION_DURATION)
+          : Number(config.SESSION_DURATION),
       },
       autoStartConfig: autoStartConfig,
     }),

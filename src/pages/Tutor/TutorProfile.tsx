@@ -163,9 +163,7 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
                     <StyledTimingsWrapper>
                       {availableSlots[0].slots
                         .filter((f) => {
-                          const isUserSubscribed = profileData?.currentSubscriptionId
-                            ? true
-                            : false;
+                          const hasDemoClassBooked = profileData?.demoClassBooked ? true : false;
 
                           const isDemoClass = f.tutors.some(
                             (s) => s.tutorId === tutorId && s.isDemoClass
@@ -173,12 +171,12 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
 
                           console.log({
                             startTime: f.startTime.toISOString(),
-                            isUserSubscribed,
+                            hasDemoClassBooked,
                             isDemoClass,
                           });
 
-                          if (isUserSubscribed && isDemoClass) return false;
-                          if (!isUserSubscribed && !isDemoClass) return false;
+                          if (hasDemoClassBooked && isDemoClass) return false;
+                          if (!hasDemoClassBooked && !isDemoClass) return false;
 
                           return dayjs(f.startTime).isAfter(
                             dayjs().add(config.SHOW_AVAILABLE_SLOTS_BEFORE, 'minutes')
