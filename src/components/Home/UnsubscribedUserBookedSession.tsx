@@ -104,7 +104,7 @@ const SessionReminder = () => {
           gap: '15px',
         }}
       >
-        <p>You've completed the sessions successfully. Subscribe to continue</p>
+        {/* <p>You've completed the sessions successfully. Subscribe to continue</p> */}
       </Box>
     );
   }
