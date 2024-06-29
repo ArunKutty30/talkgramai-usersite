@@ -29,6 +29,7 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
   useLockedBody(true);
   const endDate = reminderStore((store) => store.endDate);
   const profileData = userStore((store) => store.profileData);
+  const [isDemoClass, setIsDemoClass] = useState(false);
 
   const handleGetData = useCallback(async () => {
     if (!tutorId) return;
@@ -194,6 +195,9 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
                               // } else {
                               //   toast.error('Booking on this date is restricted');
                               // }
+                              setIsDemoClass(
+                                slot.tutors.some((s) => s.tutorId === tutorId && s.isDemoClass)
+                              );
                             }}
                             className={
                               dayjs(slot.startTime).isSame(selectedDate)
@@ -235,6 +239,7 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
           handleClose={() => setOpenSelectedTutorModal(false)}
           selectedDate={selectedDate}
           tutorId={tutorId}
+          isDemoClass={isDemoClass}
         />
       )}
       {selectDateModal && (

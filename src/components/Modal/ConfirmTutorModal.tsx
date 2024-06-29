@@ -80,6 +80,7 @@ interface IConfirmTutorModal {
     };
     description: string;
   };
+  isDemoClass?: boolean;
 }
 
 interface IFormType {
@@ -107,6 +108,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
   tutorId,
   type = 'CONFRIM',
   formData,
+  isDemoClass,
 }) => {
   const [message, setMessage] = useState<string>();
   const [loading, setLoading] = useState(false);
@@ -528,10 +530,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
                               <p>
                                 {customFormat(selectedDate, 'hh:mm A')} -{' '}
                                 {dayjs(selectedDate)
-                                  .add(
-                                    !subscriptionData && !profileData?.demoClassBooked ? 15 : 30,
-                                    'minutes'
-                                  )
+                                  .add(isDemoClass ? 15 : 30, 'minutes')
                                   .format('hh:mm A')}
                               </p>
                             </div>
