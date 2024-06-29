@@ -123,7 +123,7 @@ export interface ITutorSlot {
   id: string;
   startTime: Date;
   endTime: Date;
-  tutors: { tutorId: string; isReserved: boolean }[];
+  tutors: { tutorId: string; isReserved: boolean; isDemoClass?: boolean }[];
 }
 
 export interface ITutorSlotDB {

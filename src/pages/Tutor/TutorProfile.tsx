@@ -17,6 +17,7 @@ import TutorProfileDetails from './components/TutorProfileDetails';
 import { getLocaleDate } from '../../constants/formatDate';
 import { config } from '../../constants/config';
 import { reminderStore } from '../../store/reminderStore';
+import { userStore } from '../../store/userStore';
 
 const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
   const [openSelectedTutorModal, setOpenSelectedTutorModal] = useState(false);
@@ -27,6 +28,7 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
   const [tutorData, setTutorData] = useState<ITutorProfileData | null>(null);
   useLockedBody(true);
   const endDate = reminderStore((store) => store.endDate);
+  const profileData = userStore((store) => store.profileData);
 
   const handleGetData = useCallback(async () => {
     if (!tutorId) return;
@@ -149,22 +151,37 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
                 <h6 className="mb-10">Available Time Slots </h6>
                 <p className="mb-24">Select a Time Slot to Proceed</p>
                 {availableSlots.length ? (
-                  !availableSlots[0].slots.filter((f) =>
-                    dayjs(f.startTime).isAfter(
+                  !availableSlots[0].slots.filter((f) => {
+                    return dayjs(f.startTime).isAfter(
                       dayjs().add(config.SHOW_AVAILABLE_SLOTS_BEFORE, 'minutes')
-                    )
-                  ).length ? (
+                    );
+                  }).length ? (
                     <StyledNoDiv>
                       <p>No Slots Available</p>
                     </StyledNoDiv>
                   ) : (
                     <StyledTimingsWrapper>
                       {availableSlots[0].slots
-                        .filter((f) =>
-                          dayjs(f.startTime).isAfter(
+                        .filter((f) => {
+                          const hasDemoClassBooked = profileData?.demoClassBooked ? true : false;
+
+                          const isDemoClass = f.tutors.some(
+                            (s) => s.tutorId === tutorId && s.isDemoClass
+                          );
+
+                          console.log({
+                            startTime: f.startTime.toISOString(),
+                            hasDemoClassBooked,
+                            isDemoClass,
+                          });
+
+                          if (hasDemoClassBooked && isDemoClass) return false;
+                          if (!hasDemoClassBooked && !isDemoClass) return false;
+
+                          return dayjs(f.startTime).isAfter(
                             dayjs().add(config.SHOW_AVAILABLE_SLOTS_BEFORE, 'minutes')
-                          )
-                        )
+                          );
+                        })
                         .map((slot, i) => (
                           <button
                             onClick={() => {
