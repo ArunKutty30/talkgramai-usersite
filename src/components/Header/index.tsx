@@ -87,8 +87,9 @@ const Header = ({ hide }: { hide?: boolean }) => {
         subscriptionData.endDate.toDate()
       );
 
+      console.log('sessioninfo', sessionInfo);
+
       if (sessionInfo.some((s) => s.status === 'COMPLETED')) {
-        console.log('DEMO CLASS FINISHED');
         await updateSubscriptionDoc(subscriptionData.id, { subscriptionStatus: 'EXPIRED' });
         updateSubscriptionData(null);
         updateSubscriptionDataFetching('SUCCESS');
@@ -195,7 +196,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
     updateSessionLeft,
     updateSubscriptionDataFetching,
   ]);
-
+  console.log(subscriptionData);
   useEffect(() => {
     const updateData = async () => {
       console.log('CALLED');

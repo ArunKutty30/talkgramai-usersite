@@ -371,9 +371,13 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
       setLoading(true);
 
       const meetingId = await createMeeting(user.uid, dayjs(selectedDate).format(), true, true);
-      const subscriptionId = await createDemoClassSubscriptionService(user.uid);
-      await updateUserDoc(user.uid, { demoClassBooked: true });
 
+      let subscriptionId = subscriptionData?.id;
+
+      if (!subscriptionData) {
+        subscriptionId = await createDemoClassSubscriptionService(user.uid);
+      }
+      await updateUserDoc(user.uid, { demoClassBooked: true });
       const endTime = dayjs(selectedDate).add(15, 'minutes').toDate();
 
       const bookSessionData: { [key: string]: any } = {

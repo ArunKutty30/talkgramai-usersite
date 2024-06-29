@@ -1,53 +1,120 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import styled from "styled-components";
-import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
-import ReactCountdown, { CountdownRenderProps } from "react-countdown";
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+import { collection, onSnapshot, orderBy, query, where } from 'firebase/firestore';
+import ReactCountdown, { CountdownRenderProps } from 'react-countdown';
+import Box from '@mui/material/Box';
 
-import SectionHeader from "../SectionHeader";
-import StickyNotesCard from "../StickyNotesCard";
+import SectionHeader from '../SectionHeader';
+import StickyNotesCard from '../StickyNotesCard';
 
-import Button from "../Button";
-import NoSessionIllustration from "../../assets/images/no_sessions.svg";
-import illustration1 from "../../assets/images/book_another_session.png";
-import { userStore } from "../../store/userStore";
-import { IBookingSession } from "../../constants/types";
-import { db } from "../../utils/firebase";
-import { BOOKINGS_COLLECTION_NAME } from "../../constants/data";
-import BaseModal from "../Modal/BaseModal";
-import { reminderStore } from "../../store/reminderStore";
-import { ReactComponent as BellIcon } from "../../assets/icons/bell-alert.svg";
-import { addPrefixZero } from "../../utils/helpers";
-import DashboardSessionCard from "../SessionCards/DashboardSessionCard";
+import Button from '../Button';
+import NoSessionIllustration from '../../assets/images/no_sessions.svg';
+import illustration1 from '../../assets/images/book_another_session.png';
+import { userStore } from '../../store/userStore';
+import { IBookingSession } from '../../constants/types';
+import { db } from '../../utils/firebase';
+import { BOOKINGS_COLLECTION_NAME } from '../../constants/data';
+import BaseModal from '../Modal/BaseModal';
+import { reminderStore } from '../../store/reminderStore';
+import { addPrefixZero } from '../../utils/helpers';
+import DashboardSessionCard from '../SessionCards/DashboardSessionCard';
 
 const SessionReminder = () => {
   const fetching = reminderStore((store) => store.fetching);
+  const isLastWeek = reminderStore((store) => store.isLastWeek);
   const endDate = reminderStore((store) => store.endDate);
   const session = reminderStore((store) => store.session);
+  const remainingSession = reminderStore((store) => store.session);
+  const subscriptionData = userStore((store) => store.subscriptionData);
 
   const renderer = ({ completed, hours, minutes, seconds, days }: CountdownRenderProps) => {
     if (completed) {
       return null;
     } else {
       return (
-        <div>
-          <BellIcon width={14} height={14} />
-          <p>
-            Your {session} session{session > 1 ? "s" : ""} for this week ends in{" "}
-            <b style={{ display: "inline-block", minWidth: "67px" }}>
-              {addPrefixZero(days)}d : {addPrefixZero(hours)}h : {addPrefixZero(minutes)}m :{" "}
-              {addPrefixZero(seconds)}s
-            </b>{" "}
-            hours !!
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'start',
+            gap: '15px',
+          }}
+        >
+          <p style={{ color: '#646464' }}>
+            Your remaining{' '}
+            <b>
+              {remainingSession} Session{remainingSession > 1 ? 's' : ''}
+            </b>{' '}
+            ends in{' '}
+            <b style={{ display: 'inline-block', minWidth: '67px' }}>
+              {addPrefixZero(days)}D : {addPrefixZero(hours)}H : {addPrefixZero(minutes)}M :{' '}
+              {addPrefixZero(seconds)}S
+            </b>{' '}
+            !!
           </p>
-        </div>
+        </Box>
+      );
+    }
+  };
+
+  const nextWeekRenderer = ({ completed, hours, minutes, seconds, days }: CountdownRenderProps) => {
+    if (completed) {
+      return null;
+    } else {
+      return (
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'start',
+            gap: '15px',
+          }}
+        >
+          <p style={{ color: '#646464' }}>Your next</p>
+          <h1>{subscriptionData?.sessionPerWeek} Sessions</h1>
+          <div>
+            {/* <BellIcon width={14} height={14} /> */}
+            <p>
+              {/* Your next week session booking starts in{" "} */}
+              starts in{' '}
+              <b style={{ display: 'inline-block', minWidth: '67px' }}>
+                {addPrefixZero(days)}D : {addPrefixZero(hours)}H : {addPrefixZero(minutes)}M :{' '}
+                {addPrefixZero(seconds)}S
+              </b>
+            </p>
+          </div>
+        </Box>
       );
     }
   };
 
   if (fetching) return null;
 
-  if (session <= 0) return null;
+  if (session <= 0 && isLastWeek) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'start',
+          gap: '15px',
+        }}
+      >
+        <p>You've completed the sessions successfully. Subscribe to continue</p>
+      </Box>
+    );
+  }
+
+  if (session <= 0)
+    return (
+      <StyledTimeReminder>
+        <ReactCountdown date={endDate} renderer={nextWeekRenderer} />
+      </StyledTimeReminder>
+    );
 
   return (
     <StyledTimeReminder>
@@ -68,10 +135,10 @@ const UnsubscribedUserBookedSession = () => {
     const colRef = collection(db, BOOKINGS_COLLECTION_NAME);
     const q = query(
       colRef,
-      where("user", "==", user.uid),
-      where("endTime", ">=", new Date()),
-      where("status", "==", "UPCOMING"),
-      orderBy("endTime", "asc")
+      where('user', '==', user.uid),
+      where('endTime', '>=', new Date()),
+      where('status', '==', 'UPCOMING'),
+      orderBy('endTime', 'asc')
     );
 
     const unsubscribe = onSnapshot(
@@ -92,7 +159,7 @@ const UnsubscribedUserBookedSession = () => {
         setSessions(slots.slice(0, 1));
       },
       (error) => {
-        console.error("Error fetching upcoming sessions:", error);
+        console.error('Error fetching upcoming sessions:', error);
       }
     );
 
@@ -285,7 +352,7 @@ const StyledTimeReminder = styled.div`
 
     p {
       color: var(--text-primary);
-      font-family: "Inter";
+      font-family: 'Inter';
       font-size: 14px;
       font-style: normal;
       font-weight: 400;
