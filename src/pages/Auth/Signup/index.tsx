@@ -16,6 +16,7 @@ import { auth, db } from '../../../utils/firebase';
 import Step1 from './Step1';
 import { USER_COLLECTION_NAME } from '../../../constants/data';
 import { config } from '../../../constants/config';
+import { axiosInstance } from '../../../utils/api';
 
 export const step1State = { email: '', password: '', username: '' };
 
@@ -61,6 +62,7 @@ const Signup: React.FC<{ newUser?: boolean }> = () => {
           to: user.email,
           username: values.username,
         });
+        axiosInstance.post('/zoho/lead', { username: values.username, email: values.email });
       }
 
       //  sendEmailVerification(user);

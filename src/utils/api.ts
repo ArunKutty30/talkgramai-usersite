@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { config } from '../constants/config';
 
 export const BACKEND_URL =
@@ -52,3 +53,7 @@ export const createMeeting = async (
 
   return roomId;
 };
+
+export const axiosInstance = axios.create({
+  baseURL: config.BACKEND_URL,
+});
