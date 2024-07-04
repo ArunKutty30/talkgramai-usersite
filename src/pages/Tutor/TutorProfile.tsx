@@ -29,6 +29,7 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
   useLockedBody(true);
   const endDate = reminderStore((store) => store.endDate);
   const profileData = userStore((store) => store.profileData);
+  const subscriptionData = userStore((store) => store.subscriptionData);
   const [isDemoClass, setIsDemoClass] = useState(false);
 
   const handleGetData = useCallback(async () => {
@@ -164,7 +165,11 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
                     <StyledTimingsWrapper>
                       {availableSlots[0].slots
                         .filter((f) => {
-                          const hasDemoClassBooked = profileData?.demoClassBooked ? true : false;
+                          const hasDemoClassBooked = profileData?.demoClassBooked
+                            ? subscriptionData?.demoClass
+                              ? false
+                              : true
+                            : false;
 
                           const isDemoClass = f.tutors.some(
                             (s) => s.tutorId === tutorId && s.isDemoClass

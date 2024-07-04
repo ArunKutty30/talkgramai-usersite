@@ -352,9 +352,15 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
     }
   };
 
-  const handleConfirmDemoSession = async (values: IFormType) => {
+  const handleConfirmDemoSession = async (values: IFormType, tempPhoneNumber?: string) => {
     try {
       if (!user || !profileData) return;
+
+      if (!Boolean(tempPhoneNumber) && !Boolean(profileData?.phoneNumberVerified)) {
+        setOpenVerifyPhoneNoModal(true);
+        tempValues.current = values;
+        return;
+      }
 
       if (values.topic === EnumTopic.RANDOM_TOPIC) {
         const uniqTopics: Set<string> = new Set();
@@ -664,8 +670,13 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
       {openVerifyPhoneNoModal && (
         <VerifyPhoneNumberModal
           handleCallback={(phoneNumber: string) => {
-            if (tempValues.current)
+            if (!tempValues.current) return;
+
+            if (isDemoClass) {
+              handleConfirmDemoSession(tempValues.current, phoneNumber);
+            } else {
               handleConfirmSession(tempValues.current, undefined, phoneNumber);
+            }
           }}
           isOpen
         />
