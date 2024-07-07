@@ -1,19 +1,19 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { Link } from "react-router-dom";
-import Modal from "@mui/material/Modal";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
+import Modal from '@mui/material/Modal';
 
-import TemporaryPaymentModal from "../Modal/TemporaryPaymentModal";
-import Button from "../Button";
-import doodle1 from "../../assets/icons/doodle1.svg";
-import doodle2 from "../../assets/icons/doodle2.svg";
-import doodle3 from "../../assets/icons/doodle3.svg";
-import doodle4 from "../../assets/icons/doodle4.svg";
-import illustration from "../../assets/images/unsubscribed_hero_illustration.png";
-import illustration1 from "../../assets/images/book_another_session.png";
-import { userStore } from "../../store/userStore";
-import StickyNotesCard from "../StickyNotesCard";
-import CustomModal from "../Modal";
+import TemporaryPaymentModal from '../Modal/TemporaryPaymentModal';
+import Button from '../Button';
+import doodle1 from '../../assets/icons/doodle1.svg';
+import doodle2 from '../../assets/icons/doodle2.svg';
+import doodle3 from '../../assets/icons/doodle3.svg';
+import doodle4 from '../../assets/icons/doodle4.svg';
+import illustration from '../../assets/images/unsubscribed_hero_illustration.png';
+import illustration1 from '../../assets/images/book_another_session.png';
+import { userStore } from '../../store/userStore';
+import StickyNotesCard from '../StickyNotesCard';
+import CustomModal from '../Modal';
 
 const SectionHeader = styled.div`
   padding: 40px 0 15px;
@@ -48,7 +48,7 @@ const HeroSection = styled.div`
 
       &::after {
         position: absolute;
-        content: "";
+        content: '';
         top: 0;
         left: 100%;
         width: 80px;
@@ -111,6 +111,7 @@ const HeroSection = styled.div`
 const UnsubscribedUser = () => {
   const user = userStore((store) => store.user);
   const [payemntModalOpen, setPaymentModalOpen] = useState(false);
+  const profileData = userStore((store) => store.profileData);
 
   return (
     <>
@@ -128,12 +129,22 @@ const UnsubscribedUser = () => {
               Daily practice gradually leads to the mastery of fluency, step by step.
             </p>
             <div className="flex">
-              <Link to="/book-session">
-                <Button>Try Demo Class</Button>
-              </Link>
-              <Link to="/subscribe">
-                <Button variant="secondary">Subscribe</Button>
-              </Link>
+              {!Boolean(profileData?.demoClassBooked) ? (
+                <>
+                  <Link to="/book-session">
+                    <Button>Try Demo Class</Button>
+                  </Link>
+                  <Link to="/subscribe">
+                    <Button variant="primary-outline">Subscribe</Button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link to="/subscribe">
+                    <Button>Subscribe</Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
           <div className="block-two">
@@ -145,19 +156,19 @@ const UnsubscribedUser = () => {
         </HeroSection>
         <Modal
           style={{
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            margin: "auto",
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            margin: 'auto',
           }}
           open={payemntModalOpen}
           onClose={() => {
             setPaymentModalOpen(false);
           }}
         >
-          <TemporaryPaymentModal amount={"99"} />
+          <TemporaryPaymentModal amount={'99'} />
         </Modal>
         <StyledGridTwo>
           <StickyNotesCard

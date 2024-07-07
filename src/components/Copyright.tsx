@@ -1,5 +1,5 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
 const Container = styled.div`
   display: flex;
@@ -17,7 +17,7 @@ const Container = styled.div`
 const Copyright = () => {
   return (
     <Container>
-      <p>2023 Talkgram 0.0.9, All Rights Reserved</p>
+      <p>2024 Talkgram 1.0.0, All Rights Reserved</p>
     </Container>
   );
 };

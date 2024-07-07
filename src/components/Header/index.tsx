@@ -40,6 +40,7 @@ import {
 import { reminderStore } from '../../store/reminderStore';
 import MenuDropdown from '../MenuDropdown';
 import EmailVerificationModal from '../Modal/EmailVerificationModal';
+import Banner from './Banner';
 
 const Header = ({ hide }: { hide?: boolean }) => {
   const user = userStore((state) => state.user);
@@ -342,8 +343,10 @@ const Header = ({ hide }: { hide?: boolean }) => {
   if (hide) return null;
 
   return (
-    <StyledHeader>
-      {/* <div
+    <>
+      <Banner />
+      <StyledHeader>
+        {/* <div
         style={{
           position: "fixed",
           width: "100%",
@@ -357,81 +360,82 @@ const Header = ({ hide }: { hide?: boolean }) => {
       >
         HEY , THIS APP IS NOW ON BETA VERSION !
       </div> */}
-      <StyledHeaderContainer>
-        <StyledHeaderLeft>
-          <StyledLogo>
-            <Link to="/">
-              <img src={logo} alt="logo" />
-            </Link>
-          </StyledLogo>
-          <StyledNavLinks>
-            <li>
-              <NavLink to="/">Home</NavLink>
-            </li>
-            <li>
-              <NavLink to="/book-session">Book Session</NavLink>
-            </li>
-            <li>
-              <NavLink to="/sessions">Sessions</NavLink>
-            </li>
-            <li>
-              <NavLink to="/subscribe">Subscribe</NavLink>
-            </li>
-            <li>
-              <NavLink to="/ai-services">AI Services</NavLink>
-            </li>
-            <li>
-              <NavLink to="/feedback-analysis">Feedback analysis</NavLink>
-            </li>
-            <MenuDropdown />
-          </StyledNavLinks>
-        </StyledHeaderLeft>
-        <StyledHeaderRight>
-          {subscriptionData ? (
-            <Link to="/book-session" className="book-session-link">
-              <Button>+ Book Session</Button>
-            </Link>
-          ) : (
-            <Link to="/" className="book-session-link" onClick={(e) => e.preventDefault()}>
-              <Button onClick={() => setOpenModal(true)}>+ Book Session</Button>
-            </Link>
-          )}
-          {/* <h5>{user && user.displayName}</h5> */}
-          <Link to="/profile">
-            {user && (
-              <Avatar
-                profileImg={profileData?.profileImg}
-                username={user?.displayName || user?.email}
-              />
+        <StyledHeaderContainer>
+          <StyledHeaderLeft>
+            <StyledLogo>
+              <Link to="/">
+                <img src={logo} alt="logo" />
+              </Link>
+            </StyledLogo>
+            <StyledNavLinks>
+              <li>
+                <NavLink to="/">Home</NavLink>
+              </li>
+              <li>
+                <NavLink to="/book-session">Book Session</NavLink>
+              </li>
+              <li>
+                <NavLink to="/sessions">Sessions</NavLink>
+              </li>
+              <li>
+                <NavLink to="/subscribe">Subscribe</NavLink>
+              </li>
+              <li>
+                <NavLink to="/ai-services">AI Services</NavLink>
+              </li>
+              <li>
+                <NavLink to="/feedback-analysis">Feedback analysis</NavLink>
+              </li>
+              <MenuDropdown />
+            </StyledNavLinks>
+          </StyledHeaderLeft>
+          <StyledHeaderRight>
+            {subscriptionData ? (
+              <Link to="/book-session" className="book-session-link">
+                <Button>+ Book Session</Button>
+              </Link>
+            ) : (
+              <Link to="/" className="book-session-link" onClick={(e) => e.preventDefault()}>
+                <Button onClick={() => setOpenModal(true)}>+ Book Session</Button>
+              </Link>
             )}
-          </Link>
-          <StyledMenu role="button" onClick={() => setOpenSidebar(true)}>
-            <MenuIcon />
-          </StyledMenu>
-        </StyledHeaderRight>
-      </StyledHeaderContainer>
-      <Sidebar openSidebar={openSidebar} handleClose={() => setOpenSidebar(false)} />
-      <StyledMobileMenu>
-        <div>
-          <NavLink to="/">
-            <HomeIcon />
-          </NavLink>
-          <NavLink to="/book-session">
-            <BookSessionIcon />
-          </NavLink>
-          <NavLink to="/sessions">
-            <SessionIcon />
-          </NavLink>
-        </div>
-      </StyledMobileMenu>
+            {/* <h5>{user && user.displayName}</h5> */}
+            <Link to="/profile">
+              {user && (
+                <Avatar
+                  profileImg={profileData?.profileImg}
+                  username={user?.displayName || user?.email}
+                />
+              )}
+            </Link>
+            <StyledMenu role="button" onClick={() => setOpenSidebar(true)}>
+              <MenuIcon />
+            </StyledMenu>
+          </StyledHeaderRight>
+        </StyledHeaderContainer>
+        <Sidebar openSidebar={openSidebar} handleClose={() => setOpenSidebar(false)} />
+        <StyledMobileMenu>
+          <div>
+            <NavLink to="/">
+              <HomeIcon />
+            </NavLink>
+            <NavLink to="/book-session">
+              <BookSessionIcon />
+            </NavLink>
+            <NavLink to="/sessions">
+              <SessionIcon />
+            </NavLink>
+          </div>
+        </StyledMobileMenu>
 
-      {openModal && (
-        <SubscriptionEndedModal isOpen={openModal} handleClose={() => setOpenModal(false)} />
-      )}
-      {user && !user.emailVerified && !Boolean(profileData?.emailVerified) && (
-        <EmailVerificationModal isOpen />
-      )}
-    </StyledHeader>
+        {openModal && (
+          <SubscriptionEndedModal isOpen={openModal} handleClose={() => setOpenModal(false)} />
+        )}
+        {user && !user.emailVerified && !Boolean(profileData?.emailVerified) && (
+          <EmailVerificationModal isOpen />
+        )}
+      </StyledHeader>
+    </>
   );
 };
 
