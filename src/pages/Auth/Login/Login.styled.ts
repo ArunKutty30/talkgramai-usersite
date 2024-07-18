@@ -29,6 +29,10 @@ export const StyledDiv = styled.div`
     width: 100%;
     cursor: pointer;
 
+    &:disabled {
+      cursor: no-drop;
+    }
+
     span {
       margin-left: 10px;
       font-size: 14px;

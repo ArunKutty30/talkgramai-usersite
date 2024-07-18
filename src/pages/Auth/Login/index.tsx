@@ -147,7 +147,9 @@ const Login = () => {
                 onClick={() => handleGoogleSignin()}
               >
                 <img src={Google} alt="google logo" />
-                <span style={{ fontWeight: '600' }}>Continue with Google</span>
+                <span style={{ fontWeight: '600' }}>
+                  {loading ? 'Loading...' : 'Continue with Google'}
+                </span>
               </button>
             </div>
             <p className="text-secondary" style={{ marginTop: '30px', textAlign: 'center' }}>

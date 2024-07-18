@@ -1,7 +1,8 @@
-import React from "react";
-import styled from "styled-components";
-import { customFormat } from "../../constants/formatDate";
-import { userStore } from "../../store/userStore";
+import React from 'react';
+import styled from 'styled-components';
+import { customFormat } from '../../constants/formatDate';
+import { userStore } from '../../store/userStore';
+import { reminderStore } from '../../store/reminderStore';
 // import { initiateAccessKey, loadScript } from "../../services/paymentService";
 // import axios from "axios";
 
@@ -10,6 +11,7 @@ const SubscriptionDetails: React.FC = () => {
   const currentPlanSessions = userStore((store) => store.currentPlanSessions);
   const expiredClass = userStore((state) => state.expiredClass);
   const missedClass = userStore((state) => state.missedClass);
+  const endDate = reminderStore((state) => state.endDate);
 
   return (
     <div>
@@ -51,8 +53,12 @@ const SubscriptionDetails: React.FC = () => {
                     <b>{expiredClass || 0}</b>
                   </div>
                   <div className="flex-between">
-                    <p>End Date</p>
-                    <b>{customFormat(subscriptionData.endDate.toDate(), "DD MMM YYYY")}</b>
+                    <p>Current Week End Date</p>
+                    <b>{customFormat(endDate, 'DD MMM YYYY hh:mm a')}</b>
+                  </div>
+                  <div className="flex-between">
+                    <p>Subscription End Date</p>
+                    <b>{customFormat(subscriptionData.endDate.toDate(), 'DD MMM YYYY')}</b>
                   </div>
                 </StyledFlexContainer>
               )}
