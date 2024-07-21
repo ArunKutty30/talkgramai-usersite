@@ -80,7 +80,7 @@ const Dispute = () => {
                 <h3>{pendingDisputesCount}</h3>
               </div>
               <div className="block-right">
-                <img src={checked} alt="" />
+                <img src={sandclock} alt="" />
               </div>
             </div>
           </StyledSessionStatsCard>
@@ -94,7 +94,7 @@ const Dispute = () => {
                 <h3>{resolvedDisputesCount}</h3>
               </div>
               <div className="block-right">
-                <img src={rocket} alt="" />
+                <img src={checked} alt="" />
               </div>
             </div>
           </StyledSessionStatsCard>
@@ -106,7 +106,7 @@ const Dispute = () => {
                 <h3>{disputes.length}</h3>
               </div>
               <div className="block-right">
-                <img src={sandclock} alt="" />
+                <img src={rocket} alt="" />
               </div>
             </div>
           </StyledSessionStatsCard>

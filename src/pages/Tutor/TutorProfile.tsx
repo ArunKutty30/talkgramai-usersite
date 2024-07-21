@@ -20,14 +20,14 @@ import { reminderStore } from '../../store/reminderStore';
 import { userStore } from '../../store/userStore';
 
 const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
+  useLockedBody(true);
+  const navigate = useNavigate();
   const [openSelectedTutorModal, setOpenSelectedTutorModal] = useState(false);
   const [selectDateModal, setSelectDateModal] = useState(false);
   const [tutorSlots, setTutorSlots] = useState<{ day: Date; slots: ITutorSlot[] }[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const navigate = useNavigate();
   const [tutorData, setTutorData] = useState<ITutorProfileData | null>(null);
-  useLockedBody(true);
-  const endDate = reminderStore((store) => store.endDate);
+  const currentWeekEndDate = reminderStore((store) => store.endDate);
   const profileData = userStore((store) => store.profileData);
   const subscriptionData = userStore((store) => store.subscriptionData);
   const [isDemoClass, setIsDemoClass] = useState(false);
@@ -42,8 +42,8 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
       const timeSlotsRef = collection(db, TIME_SLOTS_COLLECTION_NAME);
       const q = query(
         timeSlotsRef,
-        where('startTime', '>=', new Date())
-        // where("startTime", "<=", getEndOfTomorrow())
+        where('startTime', '>=', new Date()),
+        where('startTime', '<=', currentWeekEndDate)
       );
 
       const querySnapshot = await getDocs(q);
@@ -88,7 +88,7 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
     } catch (error) {
       console.log(error);
     }
-  }, [tutorId]);
+  }, [tutorId, currentWeekEndDate]);
 
   console.log(tutorSlots);
   useEffect(() => {
@@ -123,7 +123,7 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
                 <p className="mb-24">Start booking your session by selecting a date</p>
                 {tutorSlots.length ? (
                   <StyledAvailableSessionWrapper>
-                    {tutorSlots.slice(0, 3).map((slot, i) => (
+                    {tutorSlots.slice(0, 5).map((slot, i) => (
                       <div
                         className={
                           dayjs(slot.day).isSame(selectedDate, 'day')
@@ -192,7 +192,7 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
                           <button
                             onClick={() => {
                               setSelectedDate(slot.startTime);
-                              console.log(endDate);
+                              console.log(currentWeekEndDate);
                               // if (dayjs(slot.startTime).isBefore(endDate, 'minutes')) {
                               //   setSelectedDate(slot.startTime);
                               // } else if (dayjs(slot.startTime).isSame(endDate, 'minutes')) {

@@ -13,6 +13,7 @@ import { ITutorProfileData, ITutorSlotDB, TDropdownList } from '../../constants/
 import { useBookingFilterStore } from '../../store/useBookingFilterStore';
 import { userStore } from '../../store/userStore';
 import { getTutorBlockedUsersDoc, getTutorDoc } from '../../services/tutorService';
+import { reminderStore } from '../../store/reminderStore';
 
 const BookSessionWrapper = () => {
   const [selectedTime, setSelectedTime] = useState<TDropdownList>();
@@ -22,19 +23,25 @@ const BookSessionWrapper = () => {
   const [loading, setLoading] = useState(false);
   const [tutorsData, setTutorsData] = useState<ITutorProfileData[]>([]);
   const user = userStore((store) => store.user);
+  const currentWeekEndDate = reminderStore((store) => store.endDate);
 
-  const handleGetAvailableTutors = async (date: Date, user: User) => {
+  const handleGetAvailableTutors = async (date: Date, user: User, currentWeekEndDate: Date) => {
     try {
       setLoading(true);
       const timeSlotsRef = collection(db, TIME_SLOTS_COLLECTION_NAME);
 
-      const startData = dayjs().isSame(date, 'day') ? new Date() : getStartOfDay(date);
+      const startDate = dayjs().isSame(date, 'day') ? new Date() : getStartOfDay(date);
+      const isCurrentWeekEndDate = dayjs(date).isSame(currentWeekEndDate, 'day');
 
-      const q = query(
-        timeSlotsRef,
-        where('startTime', '>=', startData),
-        where('startTime', '<=', getEndOfDay(date))
-      );
+      const filters = [where('startTime', '>=', startDate)];
+
+      if (isCurrentWeekEndDate) {
+        filters.push(where('startTime', '<=', currentWeekEndDate));
+      } else {
+        filters.push(where('startTime', '<=', getEndOfDay(date)));
+      }
+
+      const q = query(timeSlotsRef, ...filters);
 
       const querySnapshot = await getDocs(q);
 
@@ -137,15 +144,15 @@ const BookSessionWrapper = () => {
       if (!user) return;
 
       if (!selectedFilter) {
-        await handleGetAvailableTutors(selectedDate, user);
+        await handleGetAvailableTutors(selectedDate, user, currentWeekEndDate);
         return;
       }
       if (selectedFilter === 'Select Time and Date') {
-        await handleGetAvailableTutors(selectedDate, user);
+        await handleGetAvailableTutors(selectedDate, user, currentWeekEndDate);
         return;
       }
       if (selectedFilter === 'Based on Interests') {
-        await handleGetAvailableTutors(selectedDate, user);
+        await handleGetAvailableTutors(selectedDate, user, currentWeekEndDate);
         return;
       }
       if (selectedFilter === 'Favourite Teacher') {
@@ -157,7 +164,7 @@ const BookSessionWrapper = () => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedFilter, selectedDate, user]);
+  }, [selectedFilter, selectedDate, user, currentWeekEndDate]);
 
   useEffect(() => {
     handleGetBookedSlotsByUser();
