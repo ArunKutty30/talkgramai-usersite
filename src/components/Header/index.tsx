@@ -41,6 +41,7 @@ import { reminderStore } from '../../store/reminderStore';
 import MenuDropdown from '../MenuDropdown';
 import EmailVerificationModal from '../Modal/EmailVerificationModal';
 import Banner from './Banner';
+import { getEndOfDay } from '../../constants/formatter';
 
 const Header = ({ hide }: { hide?: boolean }) => {
   const user = userStore((state) => state.user);
@@ -69,8 +70,15 @@ const Header = ({ hide }: { hide?: boolean }) => {
   const updateSubscriptionDataFetching = userStore((store) => store.updateSubscriptionDataFetching);
 
   const handleCheckCurrentData = useCallback(async () => {
-    if (!subscriptionData) return;
-
+    if (!subscriptionData) {
+      setReminder({
+        fetching: false,
+        endDate: getEndOfDay(new Date()),
+        session: 0,
+        isLastWeek: false,
+      });
+      return;
+    }
     let missedSession = 0;
 
     updateCancelledSession(
