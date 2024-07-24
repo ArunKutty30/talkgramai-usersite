@@ -73,7 +73,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
     if (!subscriptionData) {
       setReminder({
         fetching: false,
-        endDate: getEndOfDay(new Date()),
+        endDate: dayjs().add(3,'day').endOf('day').toDate(),
         session: 0,
         isLastWeek: false,
       });
