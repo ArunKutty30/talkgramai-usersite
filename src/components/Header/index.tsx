@@ -41,7 +41,6 @@ import { reminderStore } from '../../store/reminderStore';
 import MenuDropdown from '../MenuDropdown';
 import EmailVerificationModal from '../Modal/EmailVerificationModal';
 import Banner from './Banner';
-import { getEndOfDay } from '../../constants/formatter';
 
 const Header = ({ hide }: { hide?: boolean }) => {
   const user = userStore((state) => state.user);
@@ -73,7 +72,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
     if (!subscriptionData) {
       setReminder({
         fetching: false,
-        endDate: dayjs().add(3,'day').endOf('day').toDate(),
+        endDate: dayjs().add(3, 'day').endOf('day').toDate(),
         session: 0,
         isLastWeek: false,
       });
