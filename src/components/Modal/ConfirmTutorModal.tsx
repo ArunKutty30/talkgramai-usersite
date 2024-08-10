@@ -36,7 +36,10 @@ import {
 import ReactModal from './ReactModal';
 import TopicAccordion from '../TopicAccordion';
 import { topicsData } from '../../utils/updatedtopic';
-import { bookSessionValidationSchema } from '../../constants/validationSchema';
+import {
+  bookDemoSessionValidationSchema,
+  bookSessionValidationSchema,
+} from '../../constants/validationSchema';
 import { getRandomUniqueTopic } from '../../constants/formatter';
 // import { handlePayForDemoClass } from '../../services/paymentService';
 import { generalStore } from '../../store/generalStore';
@@ -273,7 +276,6 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
           uniqTopics.add(`${m.category}-${m.title}`);
         });
         const randomTopic = getRandomUniqueTopic(topicsData, uniqTopics);
-        console.log(randomTopic);
         values.topicInfo = {
           category: randomTopic?.category || '',
           title: randomTopic?.title || '',
@@ -431,6 +433,10 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
   const handleSubmit = async (values: IFormType) => {
     if (!user || !profileData) return;
 
+    if (Boolean(isDemoClass)) {
+      values.topic = 'Demo Class';
+    }
+
     if (type === 'EDIT') return handleEditSession(values);
     if (type === 'CANCEL') return handleCancelSession();
     if (type === 'CONFRIM') {
@@ -513,7 +519,9 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
                   <Formik
                     initialValues={formData || initialValues}
                     onSubmit={handleSubmit}
-                    validationSchema={bookSessionValidationSchema}
+                    validationSchema={
+                      isDemoClass ? bookDemoSessionValidationSchema : bookSessionValidationSchema
+                    }
                     enableReinitialize
                   >
                     {({ values, setValues, errors, setFieldValue, touched }) => (
@@ -545,85 +553,87 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
                               </p>
                             </div>
                           </div>
-                          <>
-                            <SelectTopic>
-                              {/* <p>Select a Topic</p> */}
-                              <div className="timedropdown">
-                                <Field as="select" name="topic">
-                                  <option value="">Select a topic</option>
-                                  {topicList.map((m, i) => (
-                                    <option key={i} value={m.value}>
-                                      {m.name}
-                                    </option>
-                                  ))}
-                                </Field>
-                              </div>
-                              {errors.topic && touched.topic && (
-                                <p className="text-error">{errors.topic}</p>
+                          {!Boolean(isDemoClass) && (
+                            <>
+                              <SelectTopic>
+                                {/* <p>Select a Topic</p> */}
+                                <div className="timedropdown">
+                                  <Field as="select" name="topic">
+                                    <option value="">Select a topic</option>
+                                    {topicList.map((m, i) => (
+                                      <option key={i} value={m.value}>
+                                        {m.name}
+                                      </option>
+                                    ))}
+                                  </Field>
+                                </div>
+                                {errors.topic && touched.topic && (
+                                  <p className="text-error">{errors.topic}</p>
+                                )}
+                              </SelectTopic>
+                              {values.topic === EnumTopic.CUSTOM_TOPIC && (
+                                <SelectTopicWrapper>
+                                  <div className="topic-header">
+                                    <p style={{ borderRight: '1px solid #ccc' }}>Choose a Topic</p>
+                                    <p>Questions</p>
+                                  </div>
+                                  <div className="topic-content">
+                                    <div className="topic-content-left">
+                                      {_.chain(topicsData)
+                                        .groupBy('category')
+                                        .map((value, key) => ({ category: key, topics: value }))
+                                        .value()
+                                        .map((topic, index) => (
+                                          <TopicAccordion
+                                            key={index.toString()}
+                                            topicData={topic}
+                                            completedLessonPlan={completedLessonPlan}
+                                            openAccordion={openAccordion}
+                                            setOpenAccordion={setOpenAccordion}
+                                            selectedTopicInterest={values.topicInfo}
+                                            setSelectedTopicInterest={(value) =>
+                                              setValues((v) => ({ ...v, topicInfo: value }))
+                                            }
+                                          />
+                                        ))}
+                                    </div>
+                                    <div className="topic-content-right">
+                                      <ol>
+                                        {getQuestions(
+                                          values.topicInfo.category,
+                                          values.topicInfo.title
+                                        ).map((m, index) => (
+                                          <li key={index}>{m}</li>
+                                        ))}
+                                      </ol>
+                                    </div>
+                                  </div>
+                                </SelectTopicWrapper>
                               )}
-                            </SelectTopic>
-                            {values.topic === EnumTopic.CUSTOM_TOPIC && (
-                              <SelectTopicWrapper>
-                                <div className="topic-header">
-                                  <p style={{ borderRight: '1px solid #ccc' }}>Choose a Topic</p>
-                                  <p>Questions</p>
-                                </div>
-                                <div className="topic-content">
-                                  <div className="topic-content-left">
-                                    {_.chain(topicsData)
-                                      .groupBy('category')
-                                      .map((value, key) => ({ category: key, topics: value }))
-                                      .value()
-                                      .map((topic, index) => (
-                                        <TopicAccordion
-                                          key={index.toString()}
-                                          topicData={topic}
-                                          completedLessonPlan={completedLessonPlan}
-                                          openAccordion={openAccordion}
-                                          setOpenAccordion={setOpenAccordion}
-                                          selectedTopicInterest={values.topicInfo}
-                                          setSelectedTopicInterest={(value) =>
-                                            setValues((v) => ({ ...v, topicInfo: value }))
-                                          }
-                                        />
-                                      ))}
-                                  </div>
-                                  <div className="topic-content-right">
-                                    <ol>
-                                      {getQuestions(
-                                        values.topicInfo.category,
-                                        values.topicInfo.title
-                                      ).map((m, index) => (
-                                        <li key={index}>{m}</li>
-                                      ))}
-                                    </ol>
-                                  </div>
-                                </div>
-                              </SelectTopicWrapper>
-                            )}
-                            {(errors.topicInfo?.title || errors.topicInfo?.category) && (
-                              <p className="text-error">Please select one topic</p>
-                            )}
-                          </>
+                              {(errors.topicInfo?.title || errors.topicInfo?.category) && (
+                                <p className="text-error">Please select one topic</p>
+                              )}
 
-                          <AddDescriptionContainer>
-                            <p>Add some description to make your session more effective</p>
-                            <DescriptionInputContainer>
-                              <textarea
-                                readOnly={type === 'CANCEL'}
-                                // placeholder="Keep your description crisp and short. Here are few tips:"
-                                placeholder={`1. Keep your doubts specific\n2. Make sure you have your doubts ready before the session\n3. Share your goal for the session`}
-                                value={values.description}
-                                onChange={(e) => setFieldValue('description', e.target.value)}
-                                rows={5}
-                              />
-                              {/* <ol>
+                              <AddDescriptionContainer>
+                                <p>Add some description to make your session more effective</p>
+                                <DescriptionInputContainer>
+                                  <textarea
+                                    readOnly={type === 'CANCEL'}
+                                    // placeholder="Keep your description crisp and short. Here are few tips:"
+                                    placeholder={`1. Keep your doubts specific\n2. Make sure you have your doubts ready before the session\n3. Share your goal for the session`}
+                                    value={values.description}
+                                    onChange={(e) => setFieldValue('description', e.target.value)}
+                                    rows={5}
+                                  />
+                                  {/* <ol>
                               <li>Keep your doubts specific</li>
                               <li>Make sure you have your doubts ready before the session</li>
                               <li>Share your goal for the session</li>
                             </ol> */}
-                            </DescriptionInputContainer>
-                          </AddDescriptionContainer>
+                                </DescriptionInputContainer>
+                              </AddDescriptionContainer>
+                            </>
+                          )}
                           {message ? (
                             <StyledSessionConfirmed
                               style={{

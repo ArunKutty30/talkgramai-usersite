@@ -37,13 +37,7 @@ export const createBookSessionDoc = async (
 
     const docRef = doc(db, TIME_SLOTS_COLLECTION_NAME, data.slotId);
     const userDocRef = doc(db, USER_COLLECTION_NAME, data.user);
-    const finishedTopicsColRef = doc(
-      db,
-      USER_COLLECTION_NAME,
-      data.user,
-      'FinishedTopics',
-      data.topicInfo.category
-    );
+
     const timeSlotData = await transaction.get(docRef);
     const userData = await transaction.get(userDocRef);
 
@@ -69,14 +63,24 @@ export const createBookSessionDoc = async (
       tutors: updatedArray,
     });
 
-    transaction.set(
-      finishedTopicsColRef,
-      {
-        category: data.topicInfo.category,
-        title: arrayUnion(data.topicInfo.title),
-      },
-      { merge: true }
-    );
+    if (data.topicInfo.title) {
+      const finishedTopicsColRef = doc(
+        db,
+        USER_COLLECTION_NAME,
+        data.user,
+        'FinishedTopics',
+        data.topicInfo.category
+      );
+
+      transaction.set(
+        finishedTopicsColRef,
+        {
+          category: data.topicInfo.category,
+          title: arrayUnion(data.topicInfo.title),
+        },
+        { merge: true }
+      );
+    }
 
     const subscriptionRef = doc(db, SUBSCRIPTION_COLLECTION_NAME, data.subscriptionId);
 

@@ -218,7 +218,7 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
               {tutorData && <img src={tutorData.profileImg} alt="" title={tutorData.username} />}
             </div>
           </div>
-          {topicInfo && (
+          {topicInfo && topicInfo.title && (
             <div
               style={{
                 display: 'flex',
@@ -248,7 +248,9 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
         <BlockLeft type={type}>
           <div className="align-start content">
             <h4 className="s-16 mb-8">
-              {topicInfo
+              {Boolean(demoClass)
+                ? 'Demo Class'
+                : topicInfo
                 ? `${topicInfo.category} - ${topicInfo.title}`
                 : typeof topic === 'string'
                 ? topic
@@ -339,7 +341,7 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
                   }
                 }}
               />
-              <Button variant="secondary" size="small" onClick={handleEditSession}>
+              <Button variant="primary-outline" size="small" onClick={handleEditSession}>
                 Edit Session
               </Button>
               <Button variant="error" size="small" onClick={handleCancelSession}>
