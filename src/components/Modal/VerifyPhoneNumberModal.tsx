@@ -1,19 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import styled from 'styled-components';
 import { Formik, Form } from 'formik';
 import PhoneInput from 'react-phone-input-2';
 import VerificationInput from 'react-verification-input';
+import toast from 'react-hot-toast';
+import { AxiosError } from 'axios';
 
 import 'react-phone-input-2/lib/style.css';
 import ReactModal from './ReactModal';
 import Backdrop from './Backdrop';
 import Button from '../Button';
-import { countOccurrences } from '../../utils/helpers';
+// import { countOccurrences } from '../../utils/helpers';
 import { sendOtpService, verifyOtpService } from '../../services/otpService';
 import { userStore } from '../../store/userStore';
-import toast from 'react-hot-toast';
-import { AxiosError } from 'axios';
 import { generalStore } from '../../store/generalStore';
 
 const modalVaraints = {
@@ -51,7 +51,6 @@ const VerifyPhoneNumberModal: React.FC<IVerifyPhoneNumberModalProps> = ({
 }) => {
   const [verificationCode, setVerificationCode] = useState('');
   const [showVerification, setShowVerification] = useState<string | null>(null);
-  const isError = useRef(true);
   const [timer, setTimer] = useState(0);
   const user = userStore((store) => store.user);
   const [loading, setLoading] = useState(false);
@@ -194,19 +193,19 @@ const VerifyPhoneNumberModal: React.FC<IVerifyPhoneNumberModalProps> = ({
                             required: true,
                             autoFocus: true,
                           }}
-                          isValid={(value, country: any) => {
-                            const stringLength = countOccurrences(country['format'], '.');
+                          // isValid={(value, country: any) => {
+                          //   const stringLength = countOccurrences(country['format'], '.');
 
-                            if (value.length === stringLength) {
-                              isError.current = false;
-                              return true;
-                            } else {
-                              isError.current = true;
-                              return false;
-                            }
-                          }}
+                          //   if (value.length === stringLength) {
+                          //     isError.current = false;
+                          //     return true;
+                          //   } else {
+                          //     isError.current = true;
+                          //     return false;
+                          //   }
+                          // }}
                         />
-                        <Button type="submit" disabled={isError.current || loading}>
+                        <Button type="submit" disabled={loading}>
                           Send OTP
                         </Button>
                       </Form>
@@ -324,4 +323,4 @@ const StyledResendDiv = styled.div`
   justify-content: flex-end;
 `;
 
-export default VerifyPhoneNumberModal;
+export default React.memo(VerifyPhoneNumberModal);
