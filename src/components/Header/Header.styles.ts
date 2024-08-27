@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const StyledHeader = styled.header`
   height: 70px;
@@ -13,7 +13,15 @@ export const StyledHeaderContainer = styled.div`
   display: flex;
   align-items: stretch;
   justify-content: space-between;
-  padding: 0 30px;
+  padding: 0 40px;
+
+  @media (max-width: 768px) {
+    padding: 0 30px;
+  }
+
+  @media (max-width: 576px) {
+    padding: 0 20px;
+  }
 `;
 
 export const StyledHeaderLeft = styled.div`
