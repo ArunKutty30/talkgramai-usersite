@@ -30,14 +30,16 @@ const Banner = () => {
               Apply now
             </Button>
           </div>
-          <img
-            src={CloseSvg}
-            alt="close-icon"
-            width={16}
-            height={16}
-            onClick={() => setShow(false)}
-            style={{ cursor: 'pointer' }}
-          />
+          <div className="close-icon">
+            <img
+              src={CloseSvg}
+              alt="close-icon"
+              width={16}
+              height={16}
+              onClick={() => setShow(false)}
+              style={{ cursor: 'pointer' }}
+            />
+          </div>
         </StyledBanner>
       </div>
     </StyledDiv>
@@ -57,9 +59,10 @@ const StyledBanner = styled.div`
   height: 50px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 32px;
   font-size: 14px;
+  position: relative;
 
   @media (max-width: 768px) {
     height: auto;
@@ -91,6 +94,21 @@ const StyledBanner = styled.div`
     span {
       font-size: 12px;
       text-transform: capitalize;
+    }
+  }
+
+  .close-icon {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    display: grid;
+    place-items: center;
+    padding: 2px;
+    border-radius: 100px;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.1);
     }
   }
 `;

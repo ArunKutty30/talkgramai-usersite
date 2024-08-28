@@ -36,7 +36,7 @@ const SubscribePage = () => {
     sessionList[0]
   );
   const [selectedPlan, setSelectedPlan] = useState<ISelectedPlan | null>(null);
-  const [applyOffer, setApplyOffer] = useState(false);
+  const [applyOffer, setApplyOffer] = useState(true);
 
   useEffect(() => {
     const noOfSessions = subscriptionList[1].durationInMonth * 4 * Number(sessionList[0].value);
