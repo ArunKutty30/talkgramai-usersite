@@ -18,6 +18,7 @@ export const BOOKINGS_COLLECTION_NAME = 'Bookings';
 export const SUBSCRIPTION_COLLECTION_NAME = 'Subscriptions';
 export const DISPUTE_COLLECTION_NAME = 'disputes';
 export const BLOCK_USER_COLLECTION_NAME = 'BlockUsers';
+export const INFLUENCER_COLLECTION_NAME = 'Influencers';
 /* ----------------------------------------------- */
 
 export const experienceList = [

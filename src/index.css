@@ -299,6 +299,10 @@ h6 {
   place-items: center;
 }
 
+.error-msg {
+  color: tomato;
+}
+
 @media (max-width: 990px) {
   .pb {
     padding-bottom: 50px;

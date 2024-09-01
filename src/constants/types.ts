@@ -527,3 +527,15 @@ export interface IInterviewCollection {
   answer: string;
   feedback: string;
 }
+
+export type TInfluencerDB = {
+  id: string;
+  referralCode: string;
+  name: string;
+  offer: {
+    type: 'percentage' | 'fixed';
+    value: number;
+  };
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+};
