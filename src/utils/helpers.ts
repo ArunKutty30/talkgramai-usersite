@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { TInfluencerDB } from '../constants/types';
 
 function separateIntoWeeks(startDate: Date, endDate: Date): number {
   // Calculate the difference in milliseconds between start and end date
@@ -82,4 +83,16 @@ export const countOccurrences = (inputString: string, character: string) => {
     }
   }
   return count;
+};
+
+export const calculateReferralDiscount = (
+  total: number,
+  referralCodeDetails: Omit<TInfluencerDB, 'id'>
+) => {
+  if (referralCodeDetails.offer.type === 'percentage') {
+    total = total * (referralCodeDetails.offer.value / 100);
+    return total;
+  }
+
+  return referralCodeDetails.offer.value;
 };

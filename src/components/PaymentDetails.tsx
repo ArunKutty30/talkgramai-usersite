@@ -1,26 +1,31 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import dayjs from 'dayjs';
-import { User } from 'firebase/auth';
 import { Timestamp } from 'firebase/firestore';
 import Modal from '@mui/material/Modal';
 import { CheckCircleFill } from 'styled-icons/bootstrap';
 import { Checkbox, FormControlLabel } from '@mui/material';
+import { useDebounce } from 'usehooks-ts';
 
 import Button from './Button';
 import logo from '../assets/logo/logo_short.png';
 import { ReactComponent as DiscountIcon } from '../assets/icons/noto_confetti.svg';
 import { userStore } from '../store/userStore';
-import { createSubscriptionDocWithOrderId } from '../services/subscriptionService';
-import { updateUserDoc } from '../services/userService';
+import {
+  createSubscriptionDocWithOrderId,
+  updateSubscriptionDoc,
+} from '../services/subscriptionService';
 import { loadScript } from '../services/paymentService';
 import { formatCurrency } from '../constants/formatter';
 import { BACKEND_URL } from '../utils/api';
-import { ICategory, ISelectedPlan } from '../constants/types';
+import { ICategory, ISelectedPlan, TInfluencerDB } from '../constants/types';
 import CustomModal from './Modal';
 import TemporaryPaymentModal from './Modal/TemporaryPaymentModal';
 import { config } from '../constants/config';
+import { getReferralCodeDetails } from '../services/referralService';
+import { calculateReferralDiscount } from '../utils/helpers';
+import toast from 'react-hot-toast';
 
 interface IPaymentDetailsProps {
   selectedPlan: ISelectedPlan;
@@ -33,22 +38,84 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
   setApplyOffer,
   applyOffer,
 }) => {
-  console.log(selectedPlan);
   const user = userStore((store) => store.user);
   const profileData = userStore((store) => store.profileData);
   const [loading, setLoading] = useState(false);
   const [onRecordings, setOnRecordings] = useState(false);
   const [payemntModalOpen, setPaymentModalOpen] = useState(false);
+  const [referralCodeError, setReferralCodeError] = useState('');
+  const [referralCodeDetails, setReferralCodeDetails] = useState<Omit<TInfluencerDB, 'id'> | null>(
+    null
+  );
+  const [referralCode, setReferralCode] = useState('');
+  const debouncedReferralCode = useDebounce(referralCode, 500);
+  const updateSubscriptionData = userStore((state) => state.updateSubscriptionData);
 
-  const handleStoreData = async (docId: string, userData: User) => {
+  useEffect(() => {
+    const handleGetReferralDetails = async (code: string) => {
+      try {
+        setReferralCodeError('');
+
+        const refDetails = await getReferralCodeDetails(code);
+        if (!refDetails) {
+          setReferralCodeDetails(null);
+          setReferralCodeError('Invalid referral code');
+          return;
+        }
+
+        setReferralCodeDetails(refDetails);
+      } catch (error) {}
+    };
+
+    if (debouncedReferralCode) {
+      handleGetReferralDetails(debouncedReferralCode);
+    } else {
+      setReferralCodeDetails(null);
+    }
+  }, [debouncedReferralCode]);
+
+  const handleStoreData = async (docId: string, subscriptionObj: Record<string, any>) => {
     try {
-      await updateUserDoc(userData.uid, { currentSubscriptionId: docId, isNewUser: false });
-      console.log('success');
+      // await updateUserDoc(userData.uid, { currentSubscriptionId: docId, isNewUser: false });
+      await updateSubscriptionDoc(docId, { status: 'SUCCESS', updatedAt: Timestamp.now() });
+      updateSubscriptionData(subscriptionObj as any);
+      toast.success('payment completed successfully');
+      setLoading(false);
+
       window.location.href = '/book-session';
     } catch (error) {
       console.log(error);
     }
   };
+
+  const priceDistribution = useMemo(() => {
+    // Calculate the total and discounts
+    const baseTotal = selectedPlan.noOfSessions * selectedPlan.priceForSession;
+
+    const generalDiscountAmount = applyOffer
+      ? baseTotal * (50 / 100) // Assuming 50% is the general discount percentage
+      : 0;
+
+    const referralDiscountAmount = referralCodeDetails
+      ? calculateReferralDiscount(baseTotal - generalDiscountAmount, referralCodeDetails)
+      : 0;
+
+    const recordingFee = onRecordings
+      ? selectedPlan.noOfSessions * config.PER_SESSION_RECORDING_FEE
+      : 0;
+
+    const totalDiscount = generalDiscountAmount + referralDiscountAmount;
+    const finalTotal = baseTotal - totalDiscount + recordingFee;
+
+    return {
+      baseTotal,
+      finalTotal,
+      totalDiscount,
+      recordingFee,
+      referralDiscountAmount,
+      generalDiscountAmount,
+    };
+  }, [applyOffer, onRecordings, selectedPlan, referralCodeDetails]);
 
   const handlePay = async () => {
     try {
@@ -67,7 +134,7 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
       }
 
       const result = await axios.post(`${BACKEND_URL}/payment/orders`, {
-        amount: grandTotal * 100,
+        amount: priceDistribution.finalTotal * 100,
       });
 
       if (!result) {
@@ -81,7 +148,7 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
         .add(Number(selectedPlan.durationInMonth) * 28, 'day')
         .toDate();
 
-      await createSubscriptionDocWithOrderId(order_id, {
+      const subscriptionObj = {
         user: user.uid,
         type: ICategory.TUTOR_TALK,
         plan: selectedPlan.title,
@@ -91,7 +158,7 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
         sessionPerWeek: selectedPlan.sessionPerWeek,
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
-        totalPrice: grandTotal,
+        totalPrice: priceDistribution.finalTotal,
         noOfSession: selectedPlan.noOfSessions,
         completedSession: 0,
         cancelledSession: 0,
@@ -101,10 +168,32 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
         subscriptionStatus: 'SUBSCRIBED',
         recording: onRecordings,
         chargesBreakdown: {
+          baseTotal: priceDistribution.baseTotal,
           sessionsFee: selectedPlan.total,
-          recordingFee: selectedPlan.noOfSessions * config.PER_SESSION_RECORDING_FEE,
+          recordingFee: priceDistribution.recordingFee,
+          generalDiscount: {
+            applied: applyOffer,
+            percentage: 50,
+            amount: priceDistribution.generalDiscountAmount,
+          },
+          referralDiscount: {
+            applied: !!referralCodeDetails,
+            code: referralCode,
+            percentage:
+              referralCodeDetails?.offer.type === 'percentage'
+                ? referralCodeDetails.offer.value
+                : null,
+            fixedAmount:
+              referralCodeDetails?.offer.type === 'fixed' ? referralCodeDetails.offer.value : null,
+            amount: priceDistribution.referralDiscountAmount,
+          },
+          totalDiscount: priceDistribution.totalDiscount,
+          finalTotal: priceDistribution.finalTotal,
         },
-      });
+      };
+
+      // Store the subscription data
+      await createSubscriptionDocWithOrderId(order_id, subscriptionObj);
 
       const options = {
         key: process.env.REACT_APP_RAZORPAY_KEY,
@@ -117,18 +206,11 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
         handler: async function (response: any) {
           try {
             console.log(response);
-            // const data = {
-            //   orderCreationId: order_id,
-            //   razorpayPaymentId: response.razorpay_payment_id,
-            //   razorpayOrderId: response.razorpay_order_id,
-            //   razorpaySignature: response.razorpay_signature,
-            // };
-
-            handleStoreData(order_id, user);
+            handleStoreData(order_id, subscriptionObj);
           } catch (error) {
             console.log(error);
             setLoading(false);
-            alert('something went wrong');
+            toast.error('something went wrong');
           }
         },
         prefill: {
@@ -142,36 +224,23 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
         theme: {
           color: '#f7941f',
         },
+        modal: {
+          ondismiss: function () {
+            console.log('Checkout form closed by the user');
+            setLoading(false);
+            toast.error('payment failed. try again');
+          },
+        },
       };
 
       const razorpayWindow = window as any;
-
       const paymentObject = new razorpayWindow.Razorpay(options);
       paymentObject.open();
-
-      setTimeout(() => {
-        setLoading(false);
-      }, 2000);
     } catch (error) {
       console.log(error);
       setLoading(false);
     }
   };
-
-  const grandTotal = useMemo(() => {
-    let total = 0;
-    if (applyOffer) {
-      total += selectedPlan.noOfSessions * selectedPlan.priceForSession * ((100 - 50) / 100);
-    } else {
-      total += selectedPlan.noOfSessions * selectedPlan.priceForSession;
-    }
-
-    if (onRecordings) {
-      total += selectedPlan.noOfSessions * config.PER_SESSION_RECORDING_FEE;
-    }
-
-    return total;
-  }, [applyOffer, onRecordings, selectedPlan]);
 
   return (
     <StyledPaymentDetails id="checkout">
@@ -213,87 +282,58 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
           )}
         </button>
       </div>
-      {/* <div className="addons flex-between">
-        <div>
-          <h5>Get access to all courses</h5>
-          <p className="s-12">
-            Checking this box will activate with subscription at a discounted amount. Only for first
-            100 users
-          </p>
-        </div>
-        <input type="checkbox" />
-      </div> */}
-      {/* <div className="form-input">
+      <div className="form-input">
+        <label htmlFor="coupon">Referral Code</label>
         <input
-          type="number"
-          name="pincode"
-          id="pincode"
-          placeholder="Enter your pincode here (needed only once)"
+          id="coupon"
+          type="text"
+          placeholder="Enter Referral Code"
+          value={referralCode}
+          onChange={(e) => setReferralCode(e.target.value)}
         />
-        <p>To be required in bill receipt</p>
-      </div> */}
+        {referralCodeError && <span className="error-msg">{referralCodeError}</span>}
+      </div>
+      <div className="flex-end">
+        <FormControlLabel
+          control={
+            <Checkbox checked={onRecordings} onChange={(e) => setOnRecordings(e.target.checked)} />
+          }
+          label={`Add Recording (₹${config.PER_SESSION_RECORDING_FEE}/session)`}
+        />
+      </div>
       <div className="cost-split">
         <div className="flex-between mb-10">
           <p>Plan Price :</p>
-          <p>
-            Rs{' '}
-            {formatCurrency(
-              selectedPlan.noOfSessions * selectedPlan.priceForSession * ((100 - 0) / 100)
-            )}
-          </p>
+          <p>Rs {formatCurrency(priceDistribution.baseTotal)}</p>
         </div>
-        <div className="flex-between mb-10">
-          <p>Coupon Discount :</p>
-          <p>
-            - Rs{' '}
-            {applyOffer
-              ? formatCurrency(
-                  selectedPlan.noOfSessions * selectedPlan.priceForSession * (50 / 100)
-                )
-              : 0}
-          </p>
-        </div>
-        <div className="flex-between mb-10">
-          <p>Sub Total :</p>
-          <p>
-            Rs{' '}
-            {applyOffer
-              ? formatCurrency(
-                  selectedPlan.noOfSessions * selectedPlan.priceForSession * ((100 - 50) / 100)
-                )
-              : formatCurrency(
-                  selectedPlan.noOfSessions * selectedPlan.priceForSession * ((100 - 0) / 100)
-                )}
-          </p>
-        </div>
-        <div className="flex-between mb-10">
-          <p>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={onRecordings}
-                  onChange={(e) => setOnRecordings(e.target.checked)}
-                />
-              }
-              label="Recordings"
-            />
-          </p>
-          {onRecordings && (
+        {applyOffer && (
+          <div className="flex-between mb-10">
+            <p>General Discount (50%):</p>
+            <p>- Rs {formatCurrency(priceDistribution.generalDiscountAmount)}</p>
+          </div>
+        )}
+        {referralCodeDetails && (
+          <div className="flex-between mb-10">
             <p>
-              {selectedPlan.noOfSessions} sessions X ₹ {config.PER_SESSION_RECORDING_FEE} =&gt;
-              &nbsp; Rs{' '}
-              {formatCurrency(selectedPlan.noOfSessions * config.PER_SESSION_RECORDING_FEE)}{' '}
+              Referral Discount (
+              {referralCodeDetails.offer.type === 'percentage'
+                ? `${referralCodeDetails.offer.value}%`
+                : `₹${referralCodeDetails.offer.value}`}
+              ):
             </p>
-          )}
+            <p>- Rs {formatCurrency(priceDistribution.referralDiscountAmount)}</p>
+          </div>
+        )}
+        {onRecordings && (
+          <div className="flex-between mb-10">
+            <p>Recording Fee:</p>
+            <p>Rs {formatCurrency(priceDistribution.recordingFee)}</p>
+          </div>
+        )}
+        <div className="flex-between">
+          <p>Grand Total :</p>
+          <p>Rs {formatCurrency(priceDistribution.finalTotal)}</p>
         </div>
-        {/* <div className="flex-between">
-          <p>Discount ( 25%) :</p>
-          <p>Rs {formatCurrency(0)}</p>
-        </div> */}
-      </div>
-      <div className="flex-between">
-        <p>Grand Total :</p>
-        <p>Rs {formatCurrency(grandTotal)}</p>
       </div>
       <Button
         onClick={() => {
@@ -301,7 +341,7 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
           // setPaymentModalOpen(true);
         }}
       >
-        Pay Rs {formatCurrency(grandTotal)}
+        Pay Rs {formatCurrency(priceDistribution.finalTotal)}
       </Button>
       <CustomModal isOpen={loading}>
         <StyledPaymentProcessing>
@@ -504,7 +544,7 @@ const StyledPaymentDetails = styled.div`
       font-weight: 400;
       line-height: normal;
       width: 100%;
-      padding: 15px;
+      padding: 8px 15px;
       border-radius: 9px;
       border: 1px solid rgba(227, 227, 227, 0.54);
       background: rgba(3, 0, 36, 0.03);
