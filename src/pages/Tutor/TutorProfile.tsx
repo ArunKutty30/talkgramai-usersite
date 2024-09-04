@@ -164,6 +164,7 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
                   ) : (
                     <StyledTimingsWrapper>
                       {availableSlots[0].slots
+                        .filter((f) => f.tutors.some((s) => s.tutorId === tutorId))
                         .filter((f) => {
                           const hasDemoClassBooked = profileData?.demoClassBooked
                             ? subscriptionData?.demoClass
@@ -171,8 +172,8 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
                               : true
                             : false;
 
-                          const isDemoClass = f.tutors.some(
-                            (s) => s.tutorId === tutorId && s.isDemoClass
+                          const isDemoClass = Boolean(
+                            f.tutors.find((s) => s.tutorId === tutorId && s.isDemoClass)
                           );
 
                           console.log({
