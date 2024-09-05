@@ -79,8 +79,6 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
         slots,
       }));
 
-      console.log(groupedSlotsArray);
-
       setTutorSlots(groupedSlotsArray);
       if (groupedSlotsArray.length) {
         setSelectedDate(groupedSlotsArray[0].day);
@@ -90,13 +88,11 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
     }
   }, [tutorId, currentWeekEndDate]);
 
-  console.log(tutorSlots);
   useEffect(() => {
     handleGetData();
   }, [handleGetData]);
 
   const availableSlots = tutorSlots.filter((f) => dayjs(f.day).isSame(selectedDate, 'day'));
-  console.log(availableSlots);
 
   const confirmTutorBtnDisabled = useMemo(() => {
     if (!availableSlots.length) return true;
@@ -166,11 +162,16 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
                       {availableSlots[0].slots
                         .filter((f) => f.tutors.some((s) => s.tutorId === tutorId))
                         .filter((f) => {
-                          const hasDemoClassBooked = profileData?.demoClassBooked
-                            ? subscriptionData?.demoClass
-                              ? false
-                              : true
-                            : false;
+                          let sessionKind: 'DEMO' | 'SUBSCRIBED' | null = null;
+
+                          if (profileData?.demoClassBooked) {
+                            sessionKind = 'SUBSCRIBED';
+                          }
+
+                          if (subscriptionData) {
+                            if (subscriptionData?.demoClass) sessionKind = 'DEMO';
+                            else sessionKind = 'SUBSCRIBED';
+                          }
 
                           const isDemoClass = Boolean(
                             f.tutors.find((s) => s.tutorId === tutorId && s.isDemoClass)
@@ -178,12 +179,11 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
 
                           console.log({
                             startTime: f.startTime.toISOString(),
-                            hasDemoClassBooked,
+                            sessionKind,
                             isDemoClass,
                           });
 
-                          if (hasDemoClassBooked && isDemoClass) return false;
-                          if (!hasDemoClassBooked && !isDemoClass) return false;
+                          if (sessionKind === 'SUBSCRIBED' && isDemoClass) return false;
 
                           return dayjs(f.startTime).isAfter(
                             dayjs().add(config.SHOW_AVAILABLE_SLOTS_BEFORE, 'minutes')
