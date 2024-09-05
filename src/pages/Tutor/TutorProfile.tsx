@@ -99,6 +99,45 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
     return !availableSlots[0].slots.some((s) => dayjs(s.startTime).isSame(selectedDate));
   }, [availableSlots, selectedDate]);
 
+  const filteredAvailableSlots = useMemo(() => {
+    if (!availableSlots.length) return [];
+
+    return availableSlots[0].slots
+      .filter((f) => f.tutors.some((s) => s.tutorId === tutorId))
+      .filter((f) => {
+        let sessionKind: 'DEMO' | 'SUBSCRIBED' | null = null;
+
+        if (profileData?.demoClassBooked) {
+          sessionKind = 'SUBSCRIBED';
+        } else {
+          sessionKind = 'DEMO';
+        }
+
+        if (subscriptionData) {
+          if (subscriptionData?.demoClass) sessionKind = 'DEMO';
+          else sessionKind = 'SUBSCRIBED';
+        }
+
+        const isDemoClass = Boolean(f.tutors.find((s) => s.tutorId === tutorId && s.isDemoClass));
+
+        console.log({
+          startTime: f.startTime.toISOString(),
+          sessionKind,
+          isDemoClass,
+        });
+
+        if (sessionKind === 'SUBSCRIBED' && isDemoClass) return false;
+
+        if (sessionKind === 'DEMO' && !isDemoClass) return false;
+
+        return dayjs(f.startTime).isAfter(
+          dayjs().add(config.SHOW_AVAILABLE_SLOTS_BEFORE, 'minutes')
+        );
+      });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [availableSlots, subscriptionData]);
+
   if (!tutorId) return null;
 
   return (
@@ -157,70 +196,42 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
                     <StyledNoDiv>
                       <p>No Slots Available</p>
                     </StyledNoDiv>
+                  ) : !filteredAvailableSlots.length ? (
+                    <StyledNoDiv>
+                      <p>No Slots Available</p>
+                    </StyledNoDiv>
                   ) : (
                     <StyledTimingsWrapper>
-                      {availableSlots[0].slots
-                        .filter((f) => f.tutors.some((s) => s.tutorId === tutorId))
-                        .filter((f) => {
-                          let sessionKind: 'DEMO' | 'SUBSCRIBED' | null = null;
-
-                          if (profileData?.demoClassBooked) {
-                            sessionKind = 'SUBSCRIBED';
+                      {filteredAvailableSlots.map((slot, i) => (
+                        <button
+                          onClick={() => {
+                            setSelectedDate(slot.startTime);
+                            console.log(currentWeekEndDate);
+                            // if (dayjs(slot.startTime).isBefore(endDate, 'minutes')) {
+                            //   setSelectedDate(slot.startTime);
+                            // } else if (dayjs(slot.startTime).isSame(endDate, 'minutes')) {
+                            //   setSelectedDate(slot.startTime);
+                            // } else {
+                            //   toast.error('Booking on this date is restricted');
+                            // }
+                            setIsDemoClass(
+                              slot.tutors.some((s) => s.tutorId === tutorId && s.isDemoClass)
+                            );
+                          }}
+                          className={
+                            dayjs(slot.startTime).isSame(selectedDate)
+                              ? 'available-timings active'
+                              : 'available-timings'
                           }
-
-                          if (subscriptionData) {
-                            if (subscriptionData?.demoClass) sessionKind = 'DEMO';
-                            else sessionKind = 'SUBSCRIBED';
-                          }
-
-                          const isDemoClass = Boolean(
-                            f.tutors.find((s) => s.tutorId === tutorId && s.isDemoClass)
-                          );
-
-                          console.log({
-                            startTime: f.startTime.toISOString(),
-                            sessionKind,
-                            isDemoClass,
-                          });
-
-                          if (sessionKind === 'SUBSCRIBED' && isDemoClass) return false;
-
-                          return dayjs(f.startTime).isAfter(
-                            dayjs().add(config.SHOW_AVAILABLE_SLOTS_BEFORE, 'minutes')
-                          );
-                        })
-                        .map((slot, i) => (
-                          <button
-                            onClick={() => {
-                              setSelectedDate(slot.startTime);
-                              console.log(currentWeekEndDate);
-                              // if (dayjs(slot.startTime).isBefore(endDate, 'minutes')) {
-                              //   setSelectedDate(slot.startTime);
-                              // } else if (dayjs(slot.startTime).isSame(endDate, 'minutes')) {
-                              //   setSelectedDate(slot.startTime);
-                              // } else {
-                              //   toast.error('Booking on this date is restricted');
-                              // }
-                              setIsDemoClass(
-                                slot.tutors.some((s) => s.tutorId === tutorId && s.isDemoClass)
-                              );
-                            }}
-                            className={
-                              dayjs(slot.startTime).isSame(selectedDate)
-                                ? 'available-timings active'
-                                : 'available-timings'
-                            }
-                            key={i.toString()}
-                            disabled={slot.tutors.some(
-                              (s) => s.tutorId === tutorId && s.isReserved
-                            )}
-                          >
-                            <p>{dayjs(slot.startTime).format('hh:mm a')}</p>
-                            {slot.tutors.some((s) => s.tutorId === tutorId && s.isReserved) ? (
-                              <span>Reserved</span>
-                            ) : null}
-                          </button>
-                        ))}
+                          key={i.toString()}
+                          disabled={slot.tutors.some((s) => s.tutorId === tutorId && s.isReserved)}
+                        >
+                          <p>{dayjs(slot.startTime).format('hh:mm a')}</p>
+                          {slot.tutors.some((s) => s.tutorId === tutorId && s.isReserved) ? (
+                            <span>Reserved</span>
+                          ) : null}
+                        </button>
+                      ))}
                     </StyledTimingsWrapper>
                   )
                 ) : (
