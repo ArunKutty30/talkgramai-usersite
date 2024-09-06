@@ -39,11 +39,21 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
       const userData = await getDoc(docRef);
       setTutorData(userData.data() as ITutorProfileData);
 
+      let tempCurrentWeekEndDate = currentWeekEndDate;
+
+      if (!profileData?.demoClassBooked) {
+        tempCurrentWeekEndDate = dayjs(currentWeekEndDate).add(3, 'days').toDate();
+      }
+
+      if (subscriptionData) {
+        tempCurrentWeekEndDate = currentWeekEndDate;
+      }
+
       const timeSlotsRef = collection(db, TIME_SLOTS_COLLECTION_NAME);
       const q = query(
         timeSlotsRef,
         where('startTime', '>=', new Date()),
-        where('startTime', '<=', currentWeekEndDate)
+        where('startTime', '<=', tempCurrentWeekEndDate)
       );
 
       const querySnapshot = await getDocs(q);
@@ -86,7 +96,7 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
     } catch (error) {
       console.log(error);
     }
-  }, [tutorId, currentWeekEndDate]);
+  }, [tutorId, currentWeekEndDate, subscriptionData, profileData]);
 
   useEffect(() => {
     handleGetData();
@@ -215,7 +225,9 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
                             //   toast.error('Booking on this date is restricted');
                             // }
                             setIsDemoClass(
-                              slot.tutors.some((s) => s.tutorId === tutorId && s.isDemoClass)
+                              Boolean(
+                                slot.tutors.find((s) => s.tutorId === tutorId && s.isDemoClass)
+                              )
                             );
                           }}
                           className={
@@ -224,10 +236,17 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
                               : 'available-timings'
                           }
                           key={i.toString()}
-                          disabled={slot.tutors.some((s) => s.tutorId === tutorId && s.isReserved)}
+                          disabled={Boolean(
+                            slot.tutors.find((s) => s.tutorId === tutorId && s.isReserved)
+                          )}
                         >
+                          {Boolean(
+                            slot.tutors.find((s) => s.tutorId === tutorId && s?.isDemoClass)
+                          ) && <span className="demo-flag">DEMO SESSION</span>}
                           <p>{dayjs(slot.startTime).format('hh:mm a')}</p>
-                          {slot.tutors.some((s) => s.tutorId === tutorId && s.isReserved) ? (
+                          {Boolean(
+                            slot.tutors.find((s) => s.tutorId === tutorId && s.isReserved)
+                          ) ? (
                             <span>Reserved</span>
                           ) : null}
                         </button>
@@ -409,6 +428,7 @@ const StyledTimingsWrapper = styled.div`
     justify-content: center;
     transition: background 200ms linear;
     cursor: pointer;
+    position: relative;
 
     &:hover {
       background: var(--primary-2, #fff1e0);
@@ -426,6 +446,17 @@ const StyledTimingsWrapper = styled.div`
     &.active {
       background: var(--primary-2, #fff1e0);
       border: 1.5px solid var(--primary);
+    }
+
+    .demo-flag {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background: var(--primary-2, #fff1e0);
+      padding: 2px 10px;
+      border-radius: 5px;
+      box-shadow: 0.1px 0.1px 5px rgba(0, 0, 0, 0.1);
+      border: 0.5px solid rgba(204, 204, 204, 0.8);
     }
 
     p {

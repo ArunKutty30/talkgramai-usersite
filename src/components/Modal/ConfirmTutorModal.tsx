@@ -509,9 +509,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
                       <div>
                         <p>About</p>
                         <p className="head">
-                          {subscriptionData?.demoClass || !profileData?.demoClassBooked
-                            ? 'Demo Session'
-                            : 'Subscribed Session'}
+                          {isDemoClass ? 'Demo Session' : 'Subscription Session'}
                         </p>
                       </div>
                     </SessionDetails>
