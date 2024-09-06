@@ -438,9 +438,13 @@ const Header = ({ hide }: { hide?: boolean }) => {
         {openModal && (
           <SubscriptionEndedModal isOpen={openModal} handleClose={() => setOpenModal(false)} />
         )}
-        {user && !user.emailVerified && !Boolean(profileData?.emailVerified) && (
-          <EmailVerificationModal isOpen />
-        )}
+        {user ? (
+          user.emailVerified ? null : !profileData ? null : Boolean(
+              profileData?.emailVerified
+            ) ? null : (
+            <EmailVerificationModal isOpen />
+          )
+        ) : null}
       </StyledHeader>
     </>
   );
