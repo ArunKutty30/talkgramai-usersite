@@ -120,7 +120,6 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
   const user = userStore((store) => store.user);
   const profileData = userStore((store) => store.profileData);
   const subscriptionData = userStore((store) => store.subscriptionData);
-  const overallBookedSession = userStore((store) => store.overallBookedSession);
   const refetchUser = userStore((store) => store.refetchUser);
   const sessionLeft = userStore((store) => store.sessionLeft);
   const [tutorData, setTutorData] = useState<ITutorProfileData>();
