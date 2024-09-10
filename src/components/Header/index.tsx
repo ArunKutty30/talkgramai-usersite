@@ -204,10 +204,9 @@ const Header = ({ hide }: { hide?: boolean }) => {
     updateSessionLeft,
     updateSubscriptionDataFetching,
   ]);
-  console.log(subscriptionData);
+
   useEffect(() => {
     const updateData = async () => {
-      console.log('CALLED');
       try {
         if (user) {
           const tempSubscriptionData = await getUserSubscriptionDoc(user.uid);
@@ -230,7 +229,6 @@ const Header = ({ hide }: { hide?: boolean }) => {
   const handleGetOverallSessionData = useCallback(async () => {
     try {
       if (!user) return;
-
       const overallBookedSession = await getUserCompletedSessionDoc(user.uid, new Date());
       updateOverallBookedSession(overallBookedSession);
     } catch (error) {

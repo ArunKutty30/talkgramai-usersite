@@ -291,8 +291,6 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
         cost = config.DEMO_CLASS_FEE;
         isDemoClass = true;
         await updateUserDoc(user.uid, { demoClassBooked: true });
-      } else if (overallBookedSession.length === 0) {
-        isDemoClass = true;
       }
 
       const meetDuration = isDemoClass ? 15 : 30;
