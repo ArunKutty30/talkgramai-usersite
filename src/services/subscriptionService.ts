@@ -18,7 +18,7 @@ import dayjs from 'dayjs';
 import { v4 } from 'uuid';
 
 import { SUBSCRIPTION_COLLECTION_NAME } from '../constants/data';
-import { ICategory, ISubscriptionDB } from '../constants/types';
+import { ICategory, ISubscriptionDB, EUserType } from '../constants/types';
 import { db } from '../utils/firebase';
 
 export const createSubscriptionDoc = async (data: DocumentData) => {
@@ -101,4 +101,30 @@ export const createDemoClassSubscriptionService = async (uid: string) => {
   await createSubscriptionDocWithOrderId(subscriptionId, subscriptionData);
 
   return subscriptionId;
+};
+
+export const getUserSusbcribedToDemo = async (userId: string) => {
+  const colRef = collection(db, SUBSCRIPTION_COLLECTION_NAME);
+  // const q = query(
+  //   colRef,
+  //   where('user', '==', userId),
+  //   where('status', 'in', ['COMPLETED', 'SUCCESS']),
+  //   where('demoClass', '==', true),
+  //   limit(1)
+  // );
+  // const queryResult = await getDocs(q);
+
+  // if (queryResult.docs.length) return true;
+
+  const q = query(
+    colRef,
+    where('user', '==', userId),
+    where('status', 'in', ['COMPLETED', 'SUCCESS']),
+    limit(1)
+  );
+  const queryResult = await getDocs(q);
+
+  if (!queryResult.docs.length) return EUserType.NEW_USER;
+
+  return EUserType.EXISTING_USER;
 };

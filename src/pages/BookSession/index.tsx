@@ -7,7 +7,6 @@ import { ICategory } from '../../constants/types';
 import { ReactComponent as LeftArrowIcon } from '../../assets/icons/chevron-left.svg';
 import BookSessionWrapper from './BookSessionWrapper';
 import { userStore } from '../../store/userStore';
-import SubscriptionEndedModal from '../../components/Modal/SubscriptionEndedModal';
 import Modal from '../../components/Modal';
 import { Button } from '../../components';
 import { reminderStore } from '../../store/reminderStore';
@@ -67,7 +66,6 @@ const BookSession = () => {
   const navigate = useNavigate();
   const subscriptionData = userStore((store) => store.subscriptionData);
   const expiredClass = userStore((store) => store.expiredClass);
-  const profileData = userStore((store) => store.profileData);
   const fetching = reminderStore((store) => store.fetching);
   const endDate = reminderStore((store) => store.endDate);
   const session = reminderStore((store) => store.session);
@@ -126,7 +124,6 @@ const BookSession = () => {
         </p>
         <BookSessionWrapper />
       </div>
-      {!subscriptionData && profileData?.demoClassBooked && <SubscriptionEndedModal isOpen />}
       {(subscriptionData?.bookedSession || 0) + (expiredClass || 0) ===
         subscriptionData?.noOfSession &&
         subscriptionData?.backlogSession === 0 && (

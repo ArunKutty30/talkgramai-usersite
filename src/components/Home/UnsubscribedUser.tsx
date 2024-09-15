@@ -14,6 +14,7 @@ import illustration1 from '../../assets/images/book_another_session.png';
 import { userStore } from '../../store/userStore';
 import StickyNotesCard from '../StickyNotesCard';
 import CustomModal from '../Modal';
+import { EUserType } from '../../constants/types';
 
 const SectionHeader = styled.div`
   padding: 40px 0 15px;
@@ -111,7 +112,7 @@ const HeroSection = styled.div`
 const UnsubscribedUser = () => {
   const user = userStore((store) => store.user);
   const [payemntModalOpen, setPaymentModalOpen] = useState(false);
-  const profileData = userStore((store) => store.profileData);
+  const userType = userStore((store) => store.userType);
 
   return (
     <>
@@ -129,7 +130,7 @@ const UnsubscribedUser = () => {
               Daily practice gradually leads to the mastery of fluency, step by step.
             </p>
             <div className="flex">
-              {!Boolean(profileData?.demoClassBooked) ? (
+              {userType === EUserType.NEW_USER ? (
                 <>
                   <Link to="/book-session">
                     <Button>Try Demo Class</Button>

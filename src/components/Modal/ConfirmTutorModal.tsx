@@ -15,7 +15,7 @@ import ClockIcon from '../../assets/icons/clock.svg';
 import CalendarIcon from '../../assets/icons/calendar.svg';
 import { customFormat, slotFormat } from '../../constants/formatDate';
 import Avatar from '../Avatar';
-import { EnumTopic, ILessonPlanDB, ITutorProfileData } from '../../constants/types';
+import { EnumTopic, EUserType, ILessonPlanDB, ITutorProfileData } from '../../constants/types';
 import { TUTOR_COLLECTION_NAME, topicList } from '../../constants/data';
 import { userStore } from '../../store/userStore';
 import { getCompletedLessonPlan, updateUserDoc } from '../../services/userService';
@@ -70,7 +70,7 @@ const modalVaraints = {
 
 interface IConfirmTutorModal {
   isOpen: boolean;
-  handleClose?: () => void;
+  handleClose?: (showSubscribeModal?: boolean) => void;
   selectedDate: Date;
   tutorId: string;
   type?: 'CONFRIM' | 'EDIT' | 'CANCEL';
@@ -119,6 +119,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
   const navigate = useNavigate();
   const user = userStore((store) => store.user);
   const profileData = userStore((store) => store.profileData);
+  const userType = userStore((store) => store.userType);
   const subscriptionData = userStore((store) => store.subscriptionData);
   const refetchUser = userStore((store) => store.refetchUser);
   const sessionLeft = userStore((store) => store.sessionLeft);
@@ -240,6 +241,11 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
     try {
       if (!user || !profileData) return;
 
+      if (!subscriptionData && userType === EUserType.EXISTING_USER) {
+        handleClose?.(true);
+        return;
+      }
+
       if (!Boolean(tempPhoneNumber) && !Boolean(profileData?.phoneNumberVerified)) {
         setOpenVerifyPhoneNoModal(true);
         tempValues.current = values;
@@ -250,7 +256,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
       console.log('sessionLeft', sessionLeft);
 
       if (!tempSubscriptionData) {
-        if (!subscriptionData && !profileData.demoClassBooked) {
+        if (!subscriptionData && userType === EUserType.NEW_USER) {
           setLoading(true);
           tempValues.current = values;
           try {
@@ -266,8 +272,6 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
       setLoading(true);
 
       let cost = config.TUTOR_FEE_PER_SESSION;
-
-      let isDemoClass = false;
 
       if (values.topic === EnumTopic.RANDOM_TOPIC) {
         const uniqTopics: Set<string> = new Set();
@@ -285,12 +289,6 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
       const currentSubscriptionId = tempSubscriptionData
         ? tempSubscriptionData.id
         : subscriptionData?.id;
-
-      if (currentSubscriptionData?.demoClass === true) {
-        cost = config.DEMO_CLASS_FEE;
-        isDemoClass = true;
-        await updateUserDoc(user.uid, { demoClassBooked: true });
-      }
 
       const meetDuration = isDemoClass ? 15 : 30;
 
@@ -327,7 +325,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
       if (sessionLeft === 1 && !useBacklogSession) bookSessionData.isLastSession = true;
       if (sessionLeft === 0 && remainingBacklogSessions === 1) bookSessionData.isLastSession = true;
 
-      await createBookSessionDoc(tutorId, isDemoClass, useBacklogSession, bookSessionData);
+      await createBookSessionDoc(tutorId, Boolean(isDemoClass), useBacklogSession, bookSessionData);
 
       setLoading(false);
       setMessage('Your Session has been Booked !!');
@@ -497,11 +495,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
                       <h3>Mentor Session</h3>
                       <div>
                         <p>Session Duration</p>
-                        <p className="head">
-                          {!subscriptionData && !profileData?.demoClassBooked
-                            ? '15 minutes'
-                            : '30 Minutes'}
-                        </p>
+                        <p className="head">{isDemoClass ? '15 minutes' : '30 Minutes'}</p>
                       </div>
                       <div>
                         <p>About</p>
@@ -665,7 +659,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
                   src={CloseIcon}
                   alt=""
                   className="modal-close-icon pointer"
-                  onClick={handleClose}
+                  onClick={() => handleClose?.()}
                 />
               </StyledConfirmTutorModal>
             )}

@@ -12,12 +12,13 @@ import ConfirmTutorModal from '../../components/Modal/ConfirmTutorModal';
 import { Button } from '../../components';
 import BookTutorModal from '../../components/Modal/BookTutorModal';
 import { ReactComponent as ArrowLeftIcon } from '../../assets/icons/arrow-left.svg';
-import { ITutorProfileData, ITutorSlot } from '../../constants/types';
+import { ITutorProfileData, ITutorSlot, EUserType } from '../../constants/types';
 import TutorProfileDetails from './components/TutorProfileDetails';
 import { getLocaleDate } from '../../constants/formatDate';
 import { config } from '../../constants/config';
 import { reminderStore } from '../../store/reminderStore';
 import { userStore } from '../../store/userStore';
+import SubscriptionEndedModal from '../../components/Modal/SubscriptionEndedModal';
 
 const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
   useLockedBody(true);
@@ -28,9 +29,10 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [tutorData, setTutorData] = useState<ITutorProfileData | null>(null);
   const currentWeekEndDate = reminderStore((store) => store.endDate);
-  const profileData = userStore((store) => store.profileData);
+  const userType = userStore((store) => store.userType);
   const subscriptionData = userStore((store) => store.subscriptionData);
   const [isDemoClass, setIsDemoClass] = useState(false);
+  const [openSubscribeToModal, setOpenSubscribeToModal] = useState(false);
 
   const handleGetData = useCallback(async () => {
     if (!tutorId) return;
@@ -41,7 +43,7 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
 
       let tempCurrentWeekEndDate = currentWeekEndDate;
 
-      if (!profileData?.demoClassBooked) {
+      if (userType === EUserType.NEW_USER) {
         tempCurrentWeekEndDate = dayjs(currentWeekEndDate).add(3, 'days').toDate();
       }
 
@@ -96,7 +98,7 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
     } catch (error) {
       console.log(error);
     }
-  }, [tutorId, currentWeekEndDate, subscriptionData, profileData]);
+  }, [tutorId, currentWeekEndDate, subscriptionData, userType]);
 
   useEffect(() => {
     handleGetData();
@@ -117,7 +119,7 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
       .filter((f) => {
         let sessionKind: 'DEMO' | 'SUBSCRIBED' | null = null;
 
-        if (profileData?.demoClassBooked) {
+        if (userType === EUserType.EXISTING_USER) {
           sessionKind = 'SUBSCRIBED';
         } else {
           sessionKind = 'DEMO';
@@ -272,7 +274,15 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
       {openSelectedTutorModal && (
         <ConfirmTutorModal
           isOpen={openSelectedTutorModal}
-          handleClose={() => setOpenSelectedTutorModal(false)}
+          handleClose={(showSubscribeModal) => {
+            if (Boolean(showSubscribeModal)) {
+              setOpenSelectedTutorModal(false);
+              setOpenSubscribeToModal(true);
+              return;
+            }
+
+            setOpenSelectedTutorModal(false);
+          }}
           selectedDate={selectedDate}
           tutorId={tutorId}
           isDemoClass={isDemoClass}
@@ -281,6 +291,7 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
       {selectDateModal && (
         <BookTutorModal isOpen={selectDateModal} handleClose={() => setSelectDateModal(false)} />
       )}
+      {openSubscribeToModal && <SubscriptionEndedModal isOpen />}
     </StyledTutorProfile>
   );
 };
