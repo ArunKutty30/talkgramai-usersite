@@ -13,7 +13,7 @@ import Button from '../Button';
 import CloseIcon from '../../assets/icons/close.svg';
 import ClockIcon from '../../assets/icons/clock.svg';
 import CalendarIcon from '../../assets/icons/calendar.svg';
-import { customFormat, slotFormat } from '../../constants/formatDate';
+import { customFormat } from '../../constants/formatDate';
 import Avatar from '../Avatar';
 import { EnumTopic, EUserType, ILessonPlanDB, ITutorProfileData } from '../../constants/types';
 import { TUTOR_COLLECTION_NAME, topicList } from '../../constants/data';
@@ -71,7 +71,10 @@ const modalVaraints = {
 interface IConfirmTutorModal {
   isOpen: boolean;
   handleClose?: (showSubscribeModal?: boolean) => void;
-  selectedDate: Date;
+  selectedDate: {
+    slotTime: Date;
+    id: string;
+  };
   tutorId: string;
   type?: 'CONFRIM' | 'EDIT' | 'CANCEL';
   formData?: {
@@ -184,8 +187,8 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
       sendBookingCancellationMail({
         userId: user.uid,
         tutorId: tutorId,
-        date: dayjs(selectedDate).format('DD-MM-YYYY'),
-        time: dayjs(selectedDate).format('hh-mm a'),
+        date: dayjs(selectedDate.slotTime).format('DD-MM-YYYY'),
+        time: dayjs(selectedDate.slotTime).format('hh-mm a'),
       });
     } catch (error) {
       console.log(error);
@@ -231,7 +234,7 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
   //   handleConfirmSession(tempValues.current, tempSubscriptionData);
   // };
 
-  console.log(slotFormat(selectedDate));
+  console.log(selectedDate);
 
   const handleConfirmSession = async (
     values: IFormType,
@@ -252,7 +255,6 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
         return;
       }
 
-      console.log(slotFormat(selectedDate));
       console.log('sessionLeft', sessionLeft);
 
       if (!tempSubscriptionData) {
@@ -292,11 +294,11 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
 
       const meetDuration = isDemoClass ? 15 : 30;
 
-      const endTime = dayjs(selectedDate).add(meetDuration, 'minute').toDate();
+      const endTime = dayjs(selectedDate.slotTime).add(meetDuration, 'minute').toDate();
 
       const meetingId = await createMeeting(
         user.uid,
-        dayjs(selectedDate).format(),
+        dayjs(selectedDate.slotTime).format(),
         Boolean(currentSubscriptionData?.recording)
       );
 
@@ -304,9 +306,9 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
       const useBacklogSession = session <= 0 && remainingBacklogSessions > 0;
 
       const bookSessionData: { [key: string]: any } = {
-        startTime: Timestamp.fromDate(selectedDate),
+        startTime: Timestamp.fromDate(selectedDate.slotTime),
         endTime: Timestamp.fromDate(endTime),
-        slotId: slotFormat(selectedDate),
+        slotId: selectedDate.id,
         user: user.uid,
         tutor: tutorId,
         subscriptionId: currentSubscriptionId,
@@ -339,8 +341,8 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
       sendBookingConfirmationMail({
         userId: user.uid,
         tutorId: tutorId,
-        date: dayjs(selectedDate).format('DD-MM-YYYY'),
-        time: dayjs(selectedDate).format('hh-mm a'),
+        date: dayjs(selectedDate.slotTime).format('DD-MM-YYYY'),
+        time: dayjs(selectedDate.slotTime).format('hh-mm a'),
       });
     } catch (error) {
       console.log(error);
@@ -373,7 +375,12 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
 
       setLoading(true);
 
-      const meetingId = await createMeeting(user.uid, dayjs(selectedDate).format(), true, true);
+      const meetingId = await createMeeting(
+        user.uid,
+        dayjs(selectedDate.slotTime).format(),
+        true,
+        true
+      );
 
       let subscriptionId = subscriptionData?.id;
 
@@ -381,12 +388,12 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
         subscriptionId = await createDemoClassSubscriptionService(user.uid);
       }
       await updateUserDoc(user.uid, { demoClassBooked: true });
-      const endTime = dayjs(selectedDate).add(15, 'minutes').toDate();
+      const endTime = dayjs(selectedDate.slotTime).add(15, 'minutes').toDate();
 
       const bookSessionData: { [key: string]: any } = {
-        startTime: Timestamp.fromDate(selectedDate),
+        startTime: Timestamp.fromDate(selectedDate.slotTime),
         endTime: Timestamp.fromDate(endTime),
-        slotId: slotFormat(selectedDate),
+        slotId: selectedDate.id,
         user: user.uid,
         tutor: tutorId,
         subscriptionId: subscriptionId,
@@ -415,8 +422,8 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
       sendBookingConfirmationMail({
         userId: user.uid,
         tutorId: tutorId,
-        date: dayjs(selectedDate).format('DD-MM-YYYY'),
-        time: dayjs(selectedDate).format('hh-mm a'),
+        date: dayjs(selectedDate.slotTime).format('DD-MM-YYYY'),
+        time: dayjs(selectedDate.slotTime).format('hh-mm a'),
       });
     } catch (error) {
       console.log(error);
@@ -530,13 +537,13 @@ const ConfirmTutorModal: React.FC<IConfirmTutorModal> = ({
                           <div className="flex-parent">
                             <div className="flex">
                               <img src={CalendarIcon} alt="" />
-                              <p>{customFormat(selectedDate, 'DD MMM YYYY')}</p>
+                              <p>{customFormat(selectedDate.slotTime, 'DD MMM YYYY')}</p>
                             </div>
                             <div className="flex">
                               <img src={ClockIcon} alt="" />
                               <p>
-                                {customFormat(selectedDate, 'hh:mm A')} -{' '}
-                                {dayjs(selectedDate)
+                                {customFormat(selectedDate.slotTime, 'hh:mm A')} -{' '}
+                                {dayjs(selectedDate.slotTime)
                                   .add(isDemoClass ? 15 : 30, 'minutes')
                                   .format('hh:mm A')}
                               </p>

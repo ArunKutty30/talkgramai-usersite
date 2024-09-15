@@ -409,7 +409,7 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
           type="CANCEL"
           isOpen={openModal === 'CANCEL'}
           handleClose={() => setOpenModal(undefined)}
-          selectedDate={startTime}
+          selectedDate={{ id, slotTime: startTime }}
           tutorId={tutor}
           formData={{ id, topic, description, topicInfo: topicInfo || { category: '', title: '' } }}
         />
@@ -419,7 +419,7 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
           type="EDIT"
           isOpen={openModal === 'EDIT'}
           handleClose={() => setOpenModal(undefined)}
-          selectedDate={startTime}
+          selectedDate={{ id, slotTime: startTime }}
           tutorId={tutor}
           formData={{ id, topic, description, topicInfo: topicInfo || { category: '', title: '' } }}
         />

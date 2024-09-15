@@ -26,7 +26,10 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
   const [openSelectedTutorModal, setOpenSelectedTutorModal] = useState(false);
   const [selectDateModal, setSelectDateModal] = useState(false);
   const [tutorSlots, setTutorSlots] = useState<{ day: Date; slots: ITutorSlot[] }[]>([]);
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<{
+    slotTime: Date;
+    id: string;
+  }>({ slotTime: new Date(), id: '' });
   const [tutorData, setTutorData] = useState<ITutorProfileData | null>(null);
   const currentWeekEndDate = reminderStore((store) => store.endDate);
   const userType = userStore((store) => store.userType);
@@ -104,11 +107,13 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
     handleGetData();
   }, [handleGetData]);
 
-  const availableSlots = tutorSlots.filter((f) => dayjs(f.day).isSame(selectedDate, 'day'));
+  const availableSlots = tutorSlots.filter((f) =>
+    dayjs(f.day).isSame(selectedDate.slotTime, 'day')
+  );
 
   const confirmTutorBtnDisabled = useMemo(() => {
     if (!availableSlots.length) return true;
-    return !availableSlots[0].slots.some((s) => dayjs(s.startTime).isSame(selectedDate));
+    return !availableSlots[0].slots.some((s) => dayjs(s.startTime).isSame(selectedDate.slotTime));
   }, [availableSlots, selectedDate]);
 
   const filteredAvailableSlots = useMemo(() => {
@@ -173,12 +178,12 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
                     {tutorSlots.slice(0, 5).map((slot, i) => (
                       <div
                         className={
-                          dayjs(slot.day).isSame(selectedDate, 'day')
+                          dayjs(slot.day).isSame(selectedDate.slotTime, 'day')
                             ? 'available-session active'
                             : 'available-session'
                         }
                         key={i.toString()}
-                        onClick={() => setSelectedDate(slot.day)}
+                        onClick={() => setSelectedDate({ slotTime: slot.day, id: '' })}
                       >
                         <p className="mb-10">{dayjs(slot.day).format('ddd')}</p>
                         <p>{getLocaleDate(slot.day)}</p>
@@ -217,7 +222,10 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
                       {filteredAvailableSlots.map((slot, i) => (
                         <button
                           onClick={() => {
-                            setSelectedDate(slot.startTime);
+                            setSelectedDate({
+                              slotTime: slot.startTime,
+                              id: slot.id,
+                            });
                             console.log(currentWeekEndDate);
                             // if (dayjs(slot.startTime).isBefore(endDate, 'minutes')) {
                             //   setSelectedDate(slot.startTime);
@@ -233,7 +241,7 @@ const TutorProfile: React.FC<{ tutorId: string }> = ({ tutorId }) => {
                             );
                           }}
                           className={
-                            dayjs(slot.startTime).isSame(selectedDate)
+                            dayjs(slot.startTime).isSame(selectedDate.slotTime)
                               ? 'available-timings active'
                               : 'available-timings'
                           }
