@@ -30,7 +30,7 @@ const SubscriptionDetails: React.FC = () => {
                   </div>
                   <div className="flex-between">
                     <p>Session/week</p>
-                    <b>{subscriptionData.sessionPerWeek}</b>
+                    <b>{subscriptionData?.sessionPerWeek || 1}</b>
                   </div>
                   {/* <div className="flex-between">
                     <p>Booked Sessions</p>

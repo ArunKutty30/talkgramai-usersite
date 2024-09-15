@@ -341,9 +341,11 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
                   }
                 }}
               />
-              <Button variant="primary-outline" size="small" onClick={handleEditSession}>
-                Edit Session
-              </Button>
+              {!Boolean(demoClass) && (
+                <Button variant="primary-outline" size="small" onClick={handleEditSession}>
+                  Edit Session
+                </Button>
+              )}
               <Button variant="error" size="small" onClick={handleCancelSession}>
                 Cancel Session
               </Button>
@@ -407,6 +409,7 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
       {openModal === 'CANCEL' && (
         <ConfirmTutorModal
           type="CANCEL"
+          isDemoClass={demoClass}
           isOpen={openModal === 'CANCEL'}
           handleClose={() => setOpenModal(undefined)}
           selectedDate={{ id, slotTime: startTime }}
@@ -417,6 +420,7 @@ const DashboardSessionCard: React.FC<ISessionCardProps> = (props) => {
       {openModal === 'EDIT' && (
         <ConfirmTutorModal
           type="EDIT"
+          isDemoClass={demoClass}
           isOpen={openModal === 'EDIT'}
           handleClose={() => setOpenModal(undefined)}
           selectedDate={{ id, slotTime: startTime }}

@@ -282,20 +282,20 @@ export const deleteDemoBookSessionDoc = async (id: string, topicInfo: ITopicInfo
     });
     transaction.update(userDocRef, { demoClassBooked: false });
 
-    const deleteTopicsColRef = doc(
-      db,
-      USER_COLLECTION_NAME,
-      bookSessionData.user,
-      'FinishedTopics',
-      topicInfo.category
-    );
-    transaction.set(
-      deleteTopicsColRef,
-      {
-        title: arrayRemove(topicInfo.title),
-      },
-      { merge: true }
-    );
+    // const deleteTopicsColRef = doc(
+    //   db,
+    //   USER_COLLECTION_NAME,
+    //   bookSessionData.user,
+    //   'FinishedTopics',
+    //   topicInfo.category
+    // );
+    // transaction.set(
+    //   deleteTopicsColRef,
+    //   {
+    //     title: arrayRemove(topicInfo.title),
+    //   },
+    //   { merge: true }
+    // );
   });
 };
 
