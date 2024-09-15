@@ -1,15 +1,15 @@
-import React from "react";
-import styled from "styled-components";
-import Button from "../Button";
-import { Link } from "react-router-dom";
-import Modal from ".";
+import React from 'react';
+import styled from 'styled-components';
+import Button from '../Button';
+import { Link } from 'react-router-dom';
+import Modal from '.';
 
 const SubscriptionEndedModal: React.FC<{ isOpen: boolean; handleClose?: () => void }> = ({
   isOpen,
   handleClose,
 }) => {
   return (
-    <Modal isOpen={isOpen} handleClose={handleClose} rootClassName="z-90">
+    <Modal isOpen={isOpen} handleClose={handleClose} rootClassName="z-100">
       <StyledModalDiv>
         <p>
           Oops! Looks like you have not subscribed to a plan yet. Explore our subscription plans and

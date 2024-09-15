@@ -67,6 +67,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
   const [openModal, setOpenModal] = useState(false);
   const setReminder = reminderStore((state) => state.setReminder);
   const updateSubscriptionDataFetching = userStore((store) => store.updateSubscriptionDataFetching);
+  const setHasDemoClassBooked = userStore((store) => store.setHasDemoClassBooked);
 
   const handleCheckCurrentData = useCallback(async () => {
     if (!subscriptionData) {
@@ -94,8 +95,6 @@ const Header = ({ hide }: { hide?: boolean }) => {
         subscriptionData.startDate.toDate(),
         subscriptionData.endDate.toDate()
       );
-
-      console.log('sessioninfo', sessionInfo);
 
       if (sessionInfo.some((s) => s.status === 'COMPLETED')) {
         await updateSubscriptionDoc(subscriptionData.id, { subscriptionStatus: 'EXPIRED' });
@@ -177,12 +176,10 @@ const Header = ({ hide }: { hide?: boolean }) => {
     const backlogSession = subscriptionData.backlogSession || 0;
 
     if (bookedSession + missedSession === subscriptionData.noOfSession && backlogSession === 0) {
-      console.log('UNSUBSCRIBE');
       const isCompleted = currentPlanSession.some(
         (s) => Boolean(s.isLastSession) && s.status === 'COMPLETED'
       );
       if (isCompleted) {
-        console.log('UNSUBSCRIBE THIS USER');
         await updateSubscriptionDoc(subscriptionData.id, { subscriptionStatus: 'EXPIRED' });
         updateSubscriptionData(null);
         updateSubscriptionDataFetching('SUCCESS');
@@ -219,7 +216,6 @@ const Header = ({ hide }: { hide?: boolean }) => {
     };
 
     if (isSubscriptionDataOutdated) {
-      console.log('SUBSCRIPTION DATA OUTDATED');
       updateData();
     }
 
@@ -229,6 +225,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
   const handleGetOverallSessionData = useCallback(async () => {
     try {
       if (!user) return;
+      setHasDemoClassBooked(user.uid);
       const overallBookedSession = await getUserCompletedSessionDoc(user.uid, new Date());
       updateOverallBookedSession(overallBookedSession);
     } catch (error) {
@@ -324,7 +321,6 @@ const Header = ({ hide }: { hide?: boolean }) => {
     return onAuthStateChanged(auth, (data) => {
       if (data) {
         updateUser(data);
-        console.log(data);
         // if (!data.emailVerified) {
         //   setTimeout(() => {
         //     updateFetching(false);

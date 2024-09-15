@@ -28,6 +28,10 @@ const SubscriptionDetails: React.FC = () => {
                     <p>Total Sessions</p>
                     <b>{subscriptionData.noOfSession}</b>
                   </div>
+                  <div className="flex-between">
+                    <p>Session/week</p>
+                    <b>{subscriptionData.sessionPerWeek}</b>
+                  </div>
                   {/* <div className="flex-between">
                     <p>Booked Sessions</p>
                     <b>{subscriptionData?.bookedSession ?? 0}</b>

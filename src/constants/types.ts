@@ -539,3 +539,8 @@ export type TInfluencerDB = {
   createdAt: Timestamp;
   updatedAt: Timestamp;
 };
+
+export enum EUserType {
+  EXISTING_USER = 'EXISTING_USER',
+  NEW_USER = 'NEW_USER',
+}
