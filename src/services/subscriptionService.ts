@@ -126,5 +126,9 @@ export const getUserSusbcribedToDemo = async (userId: string) => {
 
   if (!queryResult.docs.length) return EUserType.NEW_USER;
 
+  const data = queryResult.docs[0].data();
+  console.log(data);
+  if (data['demoClass'] && Boolean(data['demoClass'])) return EUserType.NEW_USER;
+
   return EUserType.EXISTING_USER;
 };
