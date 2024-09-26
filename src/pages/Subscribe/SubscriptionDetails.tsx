@@ -8,7 +8,6 @@ import { reminderStore } from '../../store/reminderStore';
 
 const SubscriptionDetails: React.FC = () => {
   const subscriptionData = userStore((store) => store.subscriptionData);
-  const currentPlanSessions = userStore((store) => store.currentPlanSessions);
   const expiredClass = userStore((state) => state.expiredClass);
   const missedClass = userStore((state) => state.missedClass);
   const endDate = reminderStore((state) => state.endDate);
@@ -36,10 +35,10 @@ const SubscriptionDetails: React.FC = () => {
                     <p>Booked Sessions</p>
                     <b>{subscriptionData?.bookedSession ?? 0}</b>
                   </div> */}
-                  <div className="flex-between">
+                  {/* <div className="flex-between">
                     <p>Completed Sessions</p>
                     <b>{currentPlanSessions?.length}</b>
-                  </div>
+                  </div> */}
                   <div className="flex-between">
                     <p>Backlog Sessions</p>
                     <b>{subscriptionData?.backlogSession ?? 0}</b>
