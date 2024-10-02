@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { doc, getDoc } from 'firebase/firestore';
 
 import CloseSvg from '../../assets/icons/x.svg';
 import Button from '../Button';
 import { userStore } from '../../store/userStore';
+import { db } from '../../utils/firebase';
+
+interface IBannerData {
+  subtitle: string;
+  title: string;
+  ctaLink: string;
+  cta: string;
+}
 
 const Banner = () => {
   const [show, setShow] = useState(true);
@@ -16,21 +25,38 @@ const Banner = () => {
 
   if (!show || subscriptionDataFetching === 'PENDING' || subscriptionData) return null;
 
+  return <BannerContainer setShow={setShow} />;
+};
+
+const BannerContainer = ({
+  setShow,
+}: {
+  setShow: (value: React.SetStateAction<boolean>) => void;
+}) => {
+  const [bannerData, setBannerData] = useState<IBannerData | null>(null);
+
+  useEffect(() => {
+    const docRef = doc(db, 'General', 'banner');
+    getDoc(docRef)
+      .then((res) => {
+        setBannerData(res.data() as IBannerData);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  if (!bannerData) return null;
+
   return (
     <StyledDiv>
       <div className="mx pad">
         <StyledBanner>
           <div className="content">
             <p>
-              15% additional off for students &nbsp;
-              <span>
-                <sup>*</sup>Terms & Conditions Apply
-              </span>
+              {bannerData?.title} &nbsp;
+              <span>{bannerData?.subtitle}</span>
             </p>
-            <Button
-              onClick={() => window.open('https://forms.gozen.io/lBb4mvDp37aY2PzNbW8Y', '_blank')}
-            >
-              Apply now
+            <Button onClick={() => window.open(bannerData?.ctaLink, '_blank')}>
+              {bannerData?.cta}
             </Button>
           </div>
           <div className="close-icon">
