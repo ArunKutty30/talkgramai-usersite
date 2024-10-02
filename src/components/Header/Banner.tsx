@@ -3,15 +3,18 @@ import styled from 'styled-components';
 
 import CloseSvg from '../../assets/icons/x.svg';
 import Button from '../Button';
+import { userStore } from '../../store/userStore';
 
 const Banner = () => {
   const [show, setShow] = useState(true);
+  const subscriptionData = userStore((store) => store.subscriptionData);
+  const subscriptionDataFetching = userStore((store) => store.subscriptionDataFetching);
 
   useEffect(() => {
     setShow(true);
   }, []);
 
-  if (!show) return null;
+  if (!show || subscriptionDataFetching === 'PENDING' || subscriptionData) return null;
 
   return (
     <StyledDiv>
