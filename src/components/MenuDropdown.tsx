@@ -65,7 +65,7 @@ export default function MenuDropdown() {
 
   return (
     <div style={{ marginLeft: '-6px' }}>
-      {/* <Button
+      <Button
         id="demo-customized-button"
         aria-controls={open ? 'demo-customized-menu' : undefined}
         aria-haspopup="true"
@@ -76,7 +76,7 @@ export default function MenuDropdown() {
         sx={{ color: 'rgb(98, 99, 94)', fontSize: '14px', textTransform: 'capitalize' }}
       >
         More
-      </Button> */}
+      </Button>
       <StyledMenu
         id="demo-customized-menu"
         MenuListProps={{

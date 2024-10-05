@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { onAuthStateChanged, sendEmailVerification } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import React, { useEffect, useState } from "react";
+import { onAuthStateChanged, sendEmailVerification } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
 
-import { auth } from '../utils/firebase';
-import { Button } from '../components';
-import { userStore } from '../store/userStore';
-import { generalStore } from '../store/generalStore';
-import { StyledAuthHeader, StyledContainer, StyledDiv } from './Auth/Login/Login.styled';
-import AuthSlider from './Auth/AuthSlider';
-import logo from '../assets/logo/logo.png';
+import { auth } from "../utils/firebase";
+import { Button } from "../components";
+import { userStore } from "../store/userStore";
+import { generalStore } from "../store/generalStore";
+import { StyledAuthHeader, StyledContainer, StyledDiv } from "./Auth/Login/Login.styled";
+import AuthSlider from "./Auth/AuthSlider";
+import logo from "../assets/logo/logo.png";
 
 const VerifyMail = () => {
   const setShowHeader = generalStore((store) => store.setShowHeader);
@@ -26,11 +26,11 @@ const VerifyMail = () => {
     return onAuthStateChanged(auth, (data) => {
       console.log(data);
       if (data) {
-        if (data.emailVerified) return navigate('/');
+        if (data.emailVerified) return navigate("/");
         // updateUser(data);
         // getUserData(data);
       } else {
-        navigate('/login');
+        navigate("/login");
         // setTimeout(() => {
         //   updateFetching(false);
         // }, 0);
@@ -46,7 +46,7 @@ const VerifyMail = () => {
       await user.reload();
       // if (user.emailVerified) navigate("/onboarding");
       if (user.emailVerified) {
-        window.location.href = '/';
+        window.location.href = "/";
       } else {
         window.location.reload();
       }
@@ -60,7 +60,7 @@ const VerifyMail = () => {
       if (!user) return;
       setSending(true);
       await sendEmailVerification(user);
-      console.log('EMAIL SENT');
+      console.log("EMAIL SENT");
     } catch (error) {
       console.log(error);
     } finally {
@@ -72,7 +72,7 @@ const VerifyMail = () => {
     try {
       setLogoutLoading(true);
       await auth.signOut();
-      navigate('/login');
+      navigate("/login");
     } catch (error) {
       console.log(error);
     } finally {
@@ -88,8 +88,8 @@ const VerifyMail = () => {
         </StyledAuthHeader>
         <StyledVerifyMailWrapper>
           <h3>Verify your email address</h3>
-          <p style={{ fontSize: '1rem' }}>
-            To start using Simple Trade, confirm your email address with the email we sent to <br />
+          <p style={{ fontSize: "1rem" }}>
+            To start using Talkgram, confirm your email address with the email we sent to <br />
             <strong>{user?.email}</strong>
           </p>
           <Button onClick={() => handleCheckVerify()}>Click here once verified</Button>
@@ -99,7 +99,7 @@ const VerifyMail = () => {
             variant="secondary"
             onClick={() => handleResend()}
           >
-            {send ? 'Resending...' : 'Resend'}
+            {send ? "Resending..." : "Resend"}
           </Button>
           <Button
             disabled={logoutLoading}
@@ -107,11 +107,11 @@ const VerifyMail = () => {
             variant="secondary"
             onClick={() => handleLogout()}
           >
-            {logoutLoading ? 'Redirecting...' : 'Back to login'}
+            {logoutLoading ? "Redirecting..." : "Back to login"}
           </Button>
         </StyledVerifyMailWrapper>
       </StyledContainer>
-      {/* <AuthSlider /> */}
+      <AuthSlider />
     </StyledDiv>
   );
 };

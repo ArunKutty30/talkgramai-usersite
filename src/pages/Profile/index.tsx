@@ -54,9 +54,9 @@ const Profile = () => {
       <div className="pad">
         <StyledProfileLinks>
           <NavLink to="my-details">My Details</NavLink>
-          {/* <NavLink to="my-subscriptions">My Subscriptions</NavLink>
+          <NavLink to="my-subscriptions">My Subscriptions</NavLink>
           <NavLink to="transactions">Transactions</NavLink>
-          <NavLink to="favourite-tutors">Favourite Tutors</NavLink> */}
+          <NavLink to="favourite-tutors">Favourite Tutors</NavLink>
           {/* <NavLink to="feedback-analysis">Feedback Analysis</NavLink> */}
         </StyledProfileLinks>
         <Routes>

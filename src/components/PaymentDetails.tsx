@@ -219,7 +219,7 @@ const PaymentDetails: React.FC<IPaymentDetailsProps> = ({
           contact: profileData?.phoneNumber,
         },
         notes: {
-          address: 'Simple Trade Corporate Office',
+          address: 'Talkgram Corporate Office',
         },
         theme: {
           color: '#f7941f',

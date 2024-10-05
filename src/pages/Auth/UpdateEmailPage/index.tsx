@@ -63,8 +63,8 @@ const UpdateEmailPage: React.FC<{ newUser?: boolean }> = () => {
           <Step1 handleSubmit={handleSubmitStep1} emailError={emailError} />
         </StyledAuthForm>
       </StyledContainer>
-      <p className="text-secondary">2023 Simple Trade, All Rights Reserved</p>
-      {/* <AuthSlider /> */}
+      <p className="text-secondary">2023 Talkgram, All Rights Reserved</p>
+      <AuthSlider />
     </StyledDiv>
   );
 };
