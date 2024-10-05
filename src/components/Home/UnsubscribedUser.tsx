@@ -125,27 +125,16 @@ const UnsubscribedUser = () => {
         </SectionHeader>
         <HeroSection>
           <div className="block-one">
-            <h1 className="mb-15">Ready to take your English to the next level?</h1>
+            <h1 className="mb-15">Ready to take your Trading to the next level?</h1>
             <p className="s-14">
-              Daily practice gradually leads to the mastery of fluency, step by step.
+              Daily practice gradually leads to the mastery of trading, step by step.
             </p>
             <div className="flex">
-              {userType === EUserType.NEW_USER ? (
-                <>
-                  <Link to="/book-session">
-                    <Button>Try Demo Class</Button>
-                  </Link>
-                  <Link to="/subscribe">
-                    <Button variant="primary-outline">Subscribe</Button>
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link to="/subscribe">
-                    <Button>Subscribe</Button>
-                  </Link>
-                </>
-              )}
+              <>
+                <Link to="/subscribe">
+                  <Button>Buy Course</Button>
+                </Link>
+              </>
             </div>
           </div>
           <div className="block-two">
@@ -189,7 +178,7 @@ const UnsubscribedUser = () => {
           />
           <StickyNotesCard
             title="Refer a Friend"
-            description="Invite Friends to Talkgram and Expand Your Learning Circle!"
+            description="Invite Friends to Simple Trade and Expand Your Learning Circle!"
             image={illustration1}
             backgroundColor="#D3ECD3"
             to="/refer-and-earn"

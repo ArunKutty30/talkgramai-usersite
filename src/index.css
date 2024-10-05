@@ -10,7 +10,7 @@
   color: #2e2d2d;
 
   --background: white;
-  --primary: rgb(247, 148, 31);
+  --primary: #59419d;
   --text-primary: #2e2d2d;
   --text-secondary: #606060;
   --text-ternary: #808080;
@@ -26,7 +26,7 @@
 
   --card-background: #fff;
 
-  --btn-primary: linear-gradient(180deg, #f7941f 0%, #f76d1f 100%);
+  --btn-primary: linear-gradient(180deg, #59419d 0%, #59419d 100%);
 
   --header-height: 70px;
 }

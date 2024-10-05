@@ -95,8 +95,8 @@ const Signup: React.FC<{ newUser?: boolean }> = () => {
           />
         </StyledAuthForm>
       </StyledContainer>
-      <p className="text-secondary">2023 Talkgram, All Rights Reserved</p>
-      <AuthSlider />
+      <p className="text-secondary">2023 Simple Trade, All Rights Reserved</p>
+      {/* <AuthSlider /> */}
     </StyledDiv>
   );
 };

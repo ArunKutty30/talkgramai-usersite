@@ -17,7 +17,7 @@ const Container = styled.div`
 const Copyright = () => {
   return (
     <Container>
-      <p>2024 Talkgram 1.0.0, All Rights Reserved</p>
+      <p>2024 Simple Trade 1.0.0, All Rights Reserved</p>
     </Container>
   );
 };

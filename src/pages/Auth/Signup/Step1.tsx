@@ -36,7 +36,7 @@ const Step1: React.FC<IStep1Props> = ({ handleSubmit, handleGoogleSignin, emailE
           <Form>
             <h2 style={{ marginBottom: '10px' }}>Welcome!</h2>
             <p className="text-secondary s-16" style={{ marginBottom: '30px', lineHeight: '1.3' }}>
-              Create an account on Talkgram & start your journey fluent English on the go{' '}
+              Create an account on Simple Trade & start your journey fluent English on the go{' '}
             </p>
             <FormInputWrapper>
               <FormInput>

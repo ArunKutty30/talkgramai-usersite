@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { updateProfile } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import React, { useState } from 'react';
+import { updateProfile } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 
 import {
   StyledAuthHeader,
@@ -8,19 +8,19 @@ import {
   StyledAuthHeaderFlex,
   StyledContainer,
   StyledAuthForm,
-} from "./Signup.styled";
+} from './Signup.styled';
 
-import logo from "../../../assets/logo/logo.png";
-import AuthSlider from "../AuthSlider";
-import { db } from "../../../utils/firebase";
-import Step2 from "./Step2";
-import Step3 from "./Step3";
-import { userStore } from "../../../store/userStore";
-import { USER_COLLECTION_NAME } from "../../../constants/data";
-import { uploadProfileImage } from "../../../services/storageService";
-import { generalStore } from "../../../store/generalStore";
-import axios from "axios";
-import { config } from "../../../constants/config";
+import logo from '../../../assets/logo/logo.png';
+import AuthSlider from '../AuthSlider';
+import { db } from '../../../utils/firebase';
+import Step2 from './Step2';
+import Step3 from './Step3';
+import { userStore } from '../../../store/userStore';
+import { USER_COLLECTION_NAME } from '../../../constants/data';
+import { uploadProfileImage } from '../../../services/storageService';
+import { generalStore } from '../../../store/generalStore';
+import axios from 'axios';
+import { config } from '../../../constants/config';
 
 interface IStep2State {
   username: string;
@@ -31,11 +31,11 @@ interface IStep2State {
 }
 
 export const step2State: IStep2State = {
-  username: "",
-  gender: "",
-  designation: "",
+  username: '',
+  gender: '',
+  designation: '',
   issues: [],
-  profileImg: "",
+  profileImg: '',
 };
 export const step3State: { goals: string[]; interests: string[] } = { goals: [], interests: [] };
 
@@ -61,7 +61,7 @@ const OnBoarding = () => {
       if (user) {
         const userDocRef = doc(db, USER_COLLECTION_NAME, user.uid);
         await updateProfile(user, { displayName: data.username });
-        let profileUrl = "";
+        let profileUrl = '';
         if (profileImg) {
           profileUrl = await uploadProfileImage(user.uid, profileImg.file);
         }
@@ -86,7 +86,7 @@ const OnBoarding = () => {
           });
         }
 
-        window.location.href = "/";
+        window.location.href = '/';
       }
     } catch (error) {
       console.log(error);
@@ -104,12 +104,12 @@ const OnBoarding = () => {
           <img src={logo} alt="logo" className="logo" />
           <StyledAuthHeaderFlex>
             <p
-              className={currentStep === 1 ? "active" : currentStep === 3 ? "inactive" : undefined}
+              className={currentStep === 1 ? 'active' : currentStep === 3 ? 'inactive' : undefined}
             >
               Step 1
             </p>
             <span>-</span>
-            <p className={currentStep === 2 ? "active" : undefined}>Step 2</p>
+            <p className={currentStep === 2 ? 'active' : undefined}>Step 2</p>
           </StyledAuthHeaderFlex>
         </StyledAuthHeader>
         <StyledAuthForm>
@@ -132,7 +132,7 @@ const OnBoarding = () => {
         </StyledAuthForm>
       </StyledContainer>
       <p className="text-secondary">2023 Talkgram, All Rights Reserved</p>
-      <AuthSlider />
+      {/* <AuthSlider /> */}
     </StyledDiv>
   );
 };

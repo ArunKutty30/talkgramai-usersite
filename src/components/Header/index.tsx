@@ -375,7 +375,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
               <li>
                 <NavLink to="/book-session">Book Session</NavLink>
               </li>
-              <li>
+              {/* <li>
                 <NavLink to="/sessions">Sessions</NavLink>
               </li>
               <li>
@@ -386,7 +386,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
               </li>
               <li>
                 <NavLink to="/feedback-analysis">Feedback analysis</NavLink>
-              </li>
+              </li> */}
               <MenuDropdown />
             </StyledNavLinks>
           </StyledHeaderLeft>
@@ -420,9 +420,9 @@ const Header = ({ hide }: { hide?: boolean }) => {
             <NavLink to="/">
               <HomeIcon />
             </NavLink>
-            <NavLink to="/book-session">
+            {/* <NavLink to="/book-session">
               <BookSessionIcon />
-            </NavLink>
+            </NavLink> */}
             <NavLink to="/sessions">
               <SessionIcon />
             </NavLink>

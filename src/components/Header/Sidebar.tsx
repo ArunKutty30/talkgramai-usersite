@@ -32,7 +32,7 @@ const Sidebar: React.FC<ISidebarProps> = ({ openSidebar, handleClose }) => {
               </li>
               <li>
                 <NavLink onClick={handleClose} to="/book-session">
-                  Book Session
+                  Courses
                 </NavLink>
               </li>
               <li>

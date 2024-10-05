@@ -236,7 +236,7 @@ const UnsubscribedUserBookedSession = () => {
             />
             <StickyNotesCard
               title="Refer a Friend"
-              description="Invite Friends to Talkgram and Expand Your Learning Circle!"
+              description="Invite Friends to Simple Trade and Expand Your Learning Circle!"
               image={illustration1}
               backgroundColor="#D3ECD3"
             />

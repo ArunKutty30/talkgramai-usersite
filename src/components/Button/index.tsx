@@ -37,7 +37,7 @@ const StyledButton = styled(Button)`
     line-height: 22px;
     color: var(--text-primary);
     border-radius: 8px;
-    border: 1px solid #f7941f;
+    border: 1px solid #59419d;
   }
 
   &.btn-secondary {
