@@ -1,0 +1,70 @@
+.dynamic-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+
+.relative-flex {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.w-100{
+    width: 100%;
+}
+
+.loader {
+    animation: spin 1s linear infinite;
+    height: 3rem;
+    width: 3rem;
+    color: #fbbf24;
+}
+
+.call-add {
+    height: 2.75rem;
+    width: 2.75rem;
+    color: white;
+    background-color: green;
+    border-radius: 50%;
+    padding: 0.7rem
+}
+
+.bg-red{
+    background-color: red;
+}
+
+
+.dynamic-title {
+    margin: auto 0;
+    font-size: 1.5rem;
+    font-weight: 900;
+    letter-spacing: -0.05em;
+    color: #ffffff;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.call-position{
+    position: fixed;
+    top: 1.5rem;
+    left: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    z-index: 1000
+}

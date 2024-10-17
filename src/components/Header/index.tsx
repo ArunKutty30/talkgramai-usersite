@@ -42,6 +42,8 @@ import MenuDropdown from '../MenuDropdown';
 import EmailVerificationModal from '../Modal/EmailVerificationModal';
 import Banner from './Banner';
 
+import { useUserPresence } from '../../utils/presence';
+
 const Header = ({ hide }: { hide?: boolean }) => {
   const user = userStore((state) => state.user);
   const profileData = userStore((state) => state.profileData);
@@ -316,6 +318,8 @@ const Header = ({ hide }: { hide?: boolean }) => {
       getUserData(user);
     }
   }, [isOutdated, user, getUserData]);
+
+  // useUserPresence(user?.uid);
 
   useEffect(() => {
     return onAuthStateChanged(auth, (data) => {

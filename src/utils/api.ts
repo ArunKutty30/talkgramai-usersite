@@ -8,6 +8,15 @@ export const BACKEND_URL =
 const API_BASE_URL = 'https://api.videosdk.live';
 const VIDEOSDK_TOKEN = process.env.REACT_APP_VIDEOSDK_TOKEN;
 
+export const getVideosdkToken = () => {
+  if (VIDEOSDK_TOKEN) {
+    return VIDEOSDK_TOKEN;
+  } else {
+    console.error("Error: ", Error("Please add a token or Auth Server URL"));
+  }
+};
+
+
 export const createMeeting = async (
   userId: string,
   date: string,
@@ -50,6 +59,20 @@ export const createMeeting = async (
   const { roomId } = await fetch(url, options)
     .then((response) => response.json())
     .catch((error) => console.error('error', error));
+
+  return roomId;
+};
+
+export const createCall = async () => {
+  const url = `${API_BASE_URL}/v2/rooms`;
+  const options = {
+    method: "POST",
+    headers: { Authorization: VIDEOSDK_TOKEN || "", "Content-Type": "application/json" },
+  };
+
+  const { roomId } = await fetch(url, options)
+    .then((response) => response.json())
+    .catch((error) => console.error("error", error));
 
   return roomId;
 };
