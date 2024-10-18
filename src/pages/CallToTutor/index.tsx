@@ -129,7 +129,7 @@ useEffect(() => {
         currentCallStatus.status === "ringing" ? `Ringing...` : "Call in progress"
       } />}
       {
-        !!currentCallStatus && <AudioCall username={user.displayName || user.email ||  user.uid} id={user.uid} meetingId={currentCallStatus.roomId} />
+        !!currentCallStatus && currentCallStatus.status !== "ended"  && <AudioCall username={user.displayName || user.email ||  user.uid} id={user.uid} meetingId={currentCallStatus.roomId} />
       }
 
       {onlineUsers.map((tutor) => {
