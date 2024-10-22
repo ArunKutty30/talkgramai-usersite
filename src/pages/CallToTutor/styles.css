@@ -47,6 +47,9 @@
     font-weight: 900;
     letter-spacing: -0.05em;
     color: #ffffff;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
 }
 
 @keyframes spin {

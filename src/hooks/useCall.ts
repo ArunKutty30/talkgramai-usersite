@@ -6,17 +6,21 @@ import { addDoc, getDocs, Timestamp, updateDoc } from 'firebase/firestore';
 
 import { collection, limit, onSnapshot, query, where } from 'firebase/firestore';
 import { User } from 'firebase/auth';
+import { Tutor } from './useOnlineUsers';
+import toast from 'react-hot-toast';
 
 const CALL_COLLECTION_NAME ="calls"
 const callRef = collection(db, CALL_COLLECTION_NAME);
 
-type CallStatus = {
+export type CallStatus = {
   callerId: string;
   callerName: string | null | undefined;
   receiver: string;
   roomId: string;
   status: string;
   createdAt: Timestamp;
+  updatedAt: Timestamp;
+  receiverName: string,
 }
 
 export const useCall = (user: User | null) => {
@@ -72,15 +76,40 @@ export const useCall = (user: User | null) => {
   }, [roomId]);
 
   // Initiate a call
-  const initiateCall = async (receiverId: string ) => {
+
+  const isBusy = async (tutorId: string) => {
+    const q = query(
+      callRef,
+      where('receiver', '==', tutorId),
+      where('status', '!=', 'ended'),
+      limit(1)
+    );
+    const querySnapshot = await getDocs(q);
+  
+    if (querySnapshot.size > 0) {
+      return true;
+    } 
+
+    return false
+  }
+
+  const initiateCall = async (tutor: Tutor ) => {
+    const busy = await isBusy(tutor.id);
+    if (busy) {
+      toast.error("Tutor is busy, try again later");
+      return null;
+    } 
     const roomId: string = await createCall();
+    // const roomId: string = "ABCVD";
     const calldoc: CallStatus = {
       callerId: userId,
-      callerName: user?.displayName,
-      receiver: receiverId,
+      callerName: user?.displayName  || user?.email,
+      receiver: tutor.id,
+      receiverName: tutor.name,
       roomId,
       status: 'ringing',
       createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
     }
     await addDoc(callRef, calldoc );
     setCallStatus(calldoc);

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { rtdb } from '../utils/firebase';
 import { ref, onValue, off } from 'firebase/database';
 
-type Tutor = {
+export type Tutor = {
   id: string,
   name:string,
   photoURL:string,
