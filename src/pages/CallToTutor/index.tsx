@@ -147,6 +147,7 @@ export default function CallToTutor() {
 
   useEffect(() => {
     checkMediaPermission();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   console.log(onlineUsers);
 
