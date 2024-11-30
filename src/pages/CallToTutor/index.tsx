@@ -187,7 +187,7 @@ export default function CallToTutor() {
             <div className="card" key={tutor.id}>
               <div className="flex-column">
                 <StyledAvatar>
-                  <b>{tutor.name.charAt(1)}</b>
+                  <b>{tutor.name.charAt(0).toUpperCase()}</b>
                 </StyledAvatar>
                 <div>
                   <strong>{tutor.name}</strong>
