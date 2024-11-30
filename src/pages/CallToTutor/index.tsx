@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import useOnlineUsers from '../../hooks/useOnlineUsers';
-
-import { createContext, useContext } from 'react';
+import React, { useEffect, useState, createContext, useContext } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
+import { CallDismiss } from 'styled-icons/fluentui-system-filled';
+import styled from 'styled-components';
+import CallIcon from '@mui/icons-material/Call';
+import useOnlineUsers from '../../hooks/useOnlineUsers';
 
 import {
   DynamicContainer,
@@ -11,13 +12,13 @@ import {
   DynamicTitle,
 } from '../../components/DynamicIsland';
 import './styles.css';
-import { CallDismiss } from 'styled-icons/fluentui-system-filled';
 import { CallStatus, useCall } from '../../hooks/useCall';
 import { userStore } from '../../store/userStore';
 import AudioCall from './Audiocall';
 import { useMediaDevice } from '@videosdk.live/react-sdk';
 import { Timestamp } from 'firebase/firestore';
 import Avatar from '../../components/Avatar';
+import { Button } from '../../components';
 
 type CallInfoProps = {
   onReject: () => void;
@@ -60,7 +61,7 @@ const DynamicAction = ({ onReject, callStatus }: CallInfoProps) => {
         <DynamicContainer className="dynamic-container">
           <div className="relative-flex w-100">
             <DynamicTitle className="dynamic-title">
-              <Avatar username={callStatus.receiverName} />
+              <Avatar className="avatar" username={callStatus.receiverName} />
               <div>
                 {callStatus.status === 'ringing' ? (
                   'ringing...'
@@ -69,7 +70,7 @@ const DynamicAction = ({ onReject, callStatus }: CallInfoProps) => {
                 )}
               </div>
             </DynamicTitle>
-            <div className="relative-flex">
+            <div className="call-controls">
               <CallDismiss onClick={onReject} className="call-add bg-red" />
             </div>
           </div>
@@ -154,13 +155,21 @@ export default function CallToTutor() {
   if (!user) return null;
 
   return (
-    <div
-      style={{
-        padding: 16,
-        display: 'flex',
-        gap: 4,
-      }}
-    >
+    <div className="mx pad">
+      {/* <DynamicIslandDemo
+        callStatus={{
+          callerId: 'string',
+          callerName: 'string | null | undefined;',
+          receiver: ' string;',
+          roomId: ' string;',
+          status: ' string;',
+          createdAt: Timestamp.now(),
+          updatedAt: Timestamp.now(),
+          receiverName: 'string',
+        }}
+        onReject={endCall}
+      /> */}
+
       {!!currentCallStatus && currentCallStatus.status !== 'ended' && (
         <DynamicIslandDemo callStatus={currentCallStatus} onReject={endCall} />
       )}
@@ -172,27 +181,88 @@ export default function CallToTutor() {
         />
       )}
 
-      {onlineUsers.map((tutor) => {
-        return (
-          <div
-            style={{
-              width: 100,
-              height: 100,
-              cursor: 'pointer',
-              backgroundColor: 'gray',
-              color: 'white',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 8,
-            }}
-            onClick={() => initiateCall(tutor)}
-            key={tutor.id}
-          >
-            {tutor.name}
-          </div>
-        );
-      })}
+      <StyledGrid>
+        {[
+          ...onlineUsers,
+          ...onlineUsers,
+          ...onlineUsers,
+          ...onlineUsers,
+          ...onlineUsers,
+          ...onlineUsers,
+        ].map((tutor) => {
+          return (
+            <div className="card" key={tutor.id}>
+              <div className="flex-column">
+                <StyledAvatar>
+                  <b>{tutor.name.charAt(1)}</b>
+                </StyledAvatar>
+                <div>
+                  <strong>{tutor.name}</strong>
+                </div>
+              </div>
+              <Button
+                style={{ backgroundColor: '#0bbb14' }}
+                fullWidth
+                onClick={() => initiateCall(tutor)}
+              >
+                <CallIcon />
+                <span style={{ marginLeft: 8, fontSize: 16 }}>Call</span>
+              </Button>
+            </div>
+          );
+        })}
+      </StyledGrid>
     </div>
   );
 }
+
+const StyledGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  padding: 50px 0px;
+
+  .card {
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgb(255, 255, 255);
+    padding: 25px;
+    cursor: pointer;
+    transition: background-color 200ms linear;
+    width: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+
+    .flex-column {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      width: 100%;
+      gap: 8px;
+      text-align: center;
+
+      strong {
+        font-size: 16px;
+      }
+    }
+  }
+`;
+
+const StyledAvatar = styled.div`
+  border-radius: 50%;
+  background: var(--primary);
+  width: 50%;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 50px;
+
+  b {
+    font-size: 40px;
+  }
+`;

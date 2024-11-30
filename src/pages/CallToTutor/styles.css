@@ -1,73 +1,107 @@
 .dynamic-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
 }
 
 .relative-flex {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+  height: 100%;
+  gap: 1rem;
+  padding: 50px 30px;
 }
 
-.w-100{
-    width: 100%;
+.w-100 {
+  width: 100%;
 }
 
 .loader {
-    animation: spin 1s linear infinite;
-    height: 3rem;
-    width: 3rem;
-    color: #fbbf24;
+  animation: spin 1s linear infinite;
+  height: 3rem;
+  width: 3rem;
+  color: #fbbf24;
 }
 
 .call-add {
-    height: 2.75rem;
-    width: 2.75rem;
-    color: white;
-    background-color: green;
-    border-radius: 50%;
-    padding: 0.7rem
+  height: 2.75rem;
+  width: 2.75rem;
+  color: white;
+  background-color: green;
+  border-radius: 50%;
+  padding: 0.7rem;
 }
 
-.bg-red{
-    background-color: red;
+.bg-red {
+  background-color: red;
 }
-
 
 .dynamic-title {
-    margin: auto 0;
-    font-size: 1.5rem;
-    font-weight: 900;
-    letter-spacing: -0.05em;
-    color: #ffffff;
-    display: flex;
-    gap: 1rem;
-    align-items: center;
+  margin: auto 0;
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  color: #ffffff;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-direction: column;
+}
+
+.dynamic-title .avatar {
+  width: 200px;
+  aspect-ratio: 1;
+}
+
+.dynamic-title .avatar span {
+  font-size: 60px;
 }
 
 @keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
+  from {
+    transform: rotate(0deg);
+  }
 
-    to {
-        transform: rotate(360deg);
-    }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-.call-position{
-    position: fixed;
-    top: 1.5rem;
-    left: 0;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    z-index: 1000
+.call-position {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  z-index: 1000;
+}
+
+.dynamic-island-container {
+  z-index: 10;
+  width: calc(100vw);
+  height: calc(100vh);
+  background-color: transparent;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+}
+
+.DynamicIslandContent {
+}
+
+@media (max-width: 768px) {
+  .dynamic-title .avatar {
+    width: 150px;
+    aspect-ratio: 1;
+  }
+
+  .dynamic-title .avatar span {
+    font-size: 45px;
+  }
 }

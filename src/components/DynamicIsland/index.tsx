@@ -15,11 +15,11 @@ import styled from 'styled-components';
 
 const stiffness = 400;
 const damping = 30;
-const MIN_WIDTH = 691;
-const MAX_HEIGHT_MOBILE_ULTRA = 400;
-const MAX_HEIGHT_MOBILE_MASSIVE = 700;
+// const MIN_WIDTH = 691;
+// const MAX_HEIGHT_MOBILE_ULTRA = 400;
+// const MAX_HEIGHT_MOBILE_MASSIVE = 700;
 
-const min = (a: number, b: number) => (a < b ? a : b);
+// const min = (a: number, b: number) => (a < b ? a : b);
 
 export type SizePresets =
   | 'reset'
@@ -272,19 +272,7 @@ const useScheduledAnimations = (animations: Array<{ size: SizePresets; delay: nu
 };
 
 const DynamicIslandContainer = ({ children }: { children: ReactNode }) => {
-  return (
-    <div style={{
-        zIndex: 10,
-        display: 'flex',
-        height: '100%',
-        width: '100%',
-        alignItems: 'flex-end',
-        justifyContent: 'center',
-        backgroundColor: 'transparent'
-      }}>
-      {children}
-    </div>
-  );
+  return <div className="dynamic-island-container">{children}</div>;
 };
 
 const DynamicIsland = ({ children, id, ...props }: { children: ReactNode; id: string }) => {
@@ -320,52 +308,47 @@ const calculateDimensions = (
   size: SizePresets,
   screenSize: string,
   currentSize: Preset
-): { width: string; height: number } => {
+): { width: string; height: string } => {
   const isMassiveOnMobile = size === 'massive' && screenSize === 'mobile';
   const isUltraOnMobile = size === 'ultra' && screenSize === 'mobile';
 
   if (isMassiveOnMobile) {
-    return { width: '350px', height: MAX_HEIGHT_MOBILE_MASSIVE };
+    // return { width: '360px', height: MAX_HEIGHT_MOBILE_MASSIVE };
+    return { width: '360px', height: '100%' };
   }
 
   if (isUltraOnMobile) {
-    return { width: '350px', height: MAX_HEIGHT_MOBILE_ULTRA };
+    // return { width: '360px', height: MAX_HEIGHT_MOBILE_ULTRA };
+    return { width: '360px', height: '100%' };
   }
 
-  const width = min(currentSize.width, MIN_WIDTH);
-  return { width: `${width}px`, height: currentSize.aspectRatio * width };
+  // const width = min(currentSize.width, MIN_WIDTH);
+  // return { width: `360px`, height: currentSize.aspectRatio * width };
+  return { width: `360px`, height: '100%' };
 };
 
 const StyledDiv = styled(motion.div)`
-margin-left: auto;
-margin-right: auto;
-height: 0;
-width: 0;
-display: flex;
-align-items: center;
-justify-content: center;
-border: 1px solid rgba(0, 0, 0, 0.1);
-background-color: black;
-text-align: center;
-color: black;
-transition: background-color 300ms ease-in-out, box-shadow 300ms ease-in-out;
+  margin-left: auto;
+  margin-right: auto;
+  height: 0;
+  width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  // border: 1px solid rgba(0, 0, 0, 0.1);
+  // background-color: black;
+  text-align: center;
+  color: black;
+  transition: background-color 300ms ease-in-out, box-shadow 300ms ease-in-out;
 
-&:focus-within {
- background-color: #1a1a1a; // neutral-900
-}
+  &:focus-within {
+    background-color: #1a1a1a; // neutral-900
+  }
 
-&:hover {
- box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-@media (prefers-color-scheme: dark) {
- border: 1px solid rgba(255, 255, 255, 0.05);
-
- &:focus-within {
-   background-color: black;
- }
-}
- `;
+  // &:hover {
+  //   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  // }
+`;
 
 const DynamicIslandContent = ({
   children,
@@ -385,10 +368,10 @@ const DynamicIslandContent = ({
 
   const dimensions = calculateDimensions(state.size, screenSize, currentSize);
 
-  
   return (
     <StyledDiv
       id={id}
+      className="DynamicIslandContent"
       animate={{
         width: dimensions.width,
         height: dimensions.height,
@@ -400,10 +383,10 @@ const DynamicIslandContent = ({
         },
         clipPath: `none`,
         transitionEnd: {
-          clipPath: `url(#squircle-${state.size})`,
+          // clipPath: `url(#squircle-${state.size})`,
         },
       }}
-      style={{  willChange }}
+      style={{ willChange }}
       {...props}
     >
       <AnimatePresence>{children}</AnimatePresence>
@@ -499,7 +482,7 @@ const DynamicTitle = ({ className, children }: MotionProps) => {
   const willChange = useWillChange();
 
   return (
-    <motion.h3
+    <motion.div
       className={className}
       initial={{ opacity: 0, scale: 0 }}
       animate={{
@@ -510,7 +493,7 @@ const DynamicTitle = ({ className, children }: MotionProps) => {
       style={{ willChange }}
     >
       {children}
-    </motion.h3>
+    </motion.div>
   );
 };
 
