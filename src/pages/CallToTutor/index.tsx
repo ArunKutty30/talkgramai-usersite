@@ -182,14 +182,7 @@ export default function CallToTutor() {
       )}
 
       <StyledGrid>
-        {[
-          ...onlineUsers,
-          ...onlineUsers,
-          ...onlineUsers,
-          ...onlineUsers,
-          ...onlineUsers,
-          ...onlineUsers,
-        ].map((tutor) => {
+        {onlineUsers.map((tutor) => {
           return (
             <div className="card" key={tutor.id}>
               <div className="flex-column">
