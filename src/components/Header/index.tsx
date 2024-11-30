@@ -387,8 +387,11 @@ const Header = ({ hide }: { hide?: boolean }) => {
                 <NavLink to="/ai-services">AI Services</NavLink>
               </li>
               <li>
-                <NavLink to="/feedback-analysis">Feedback analysis</NavLink>
+                <NavLink to="/call-to-tutor">Tutor call</NavLink>
               </li>
+              {/* <li>
+                <NavLink to="/feedback-analysis">Feedback analysis</NavLink>
+              </li> */}
               <MenuDropdown />
             </StyledNavLinks>
           </StyledHeaderLeft>
