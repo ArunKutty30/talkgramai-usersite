@@ -1,8 +1,10 @@
+import React from 'react';
 import useOnlineUsers, { Tutor } from '../../hooks/useOnlineUsers';
-import { SelectTutorCardWrapper } from '../../components/SelectTutor';
-import { SelectTutorCard } from '../../components/TutorCard';
+import CallIcon from '@mui/icons-material/Call';
+import styled from 'styled-components';
+import { Button } from '../../components';
 
-export default function OnlineTutorList({
+function OnlineTutorList({
   initiateCall,
 }: {
   initiateCall: (tutor: Tutor) => Promise<string | null>;
@@ -16,32 +18,98 @@ export default function OnlineTutorList({
           <p>No online Tutors found</p>
         </div>
       ) : (
-        <SelectTutorCardWrapper>
+        <StyledGrid>
           {onlineUsers.map((tutor) => {
             return (
-              <div
-                onClick={(e) => {
-                  e.preventDefault();
-                  initiateCall(tutor);
-                }}
-                key={tutor.id}
-              >
-                <SelectTutorCard>
-                  <div className="card-image mb-10">
+              <div key={tutor.id} className="card">
+                <div className="flex-column">
+                  <StyledAvatar>
                     {tutor.photoURL ? (
-                      <img src={tutor.photoURL} alt="profile" className="card-avatar" />
+                      <img src={tutor.photoURL} alt="profile" />
                     ) : (
-                      <div className="profile-text">{tutor.name?.slice(0, 1)}</div>
+                      <b>{tutor.name.charAt(0)}</b>
                     )}
+                  </StyledAvatar>
+                  <div>
+                    <strong>{tutor.name}</strong>
                   </div>
-                  <h6 className="mb-8">{tutor.name}</h6>
-                </SelectTutorCard>
+                </div>
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    initiateCall(tutor);
+                  }}
+                  style={{ backgroundColor: '#0bbb14' }}
+                  fullWidth
+                >
+                  <CallIcon />
+                  <span style={{ marginLeft: 8, fontSize: 16 }}>Call</span>
+                </Button>
               </div>
             );
           })}
-        </SelectTutorCardWrapper>
+        </StyledGrid>
       )}
     </div>
   );
 }
 
+const StyledGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+  padding: 50px 0px;
+
+  .card {
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgb(255, 255, 255);
+    padding: 25px;
+    cursor: pointer;
+    transition: background-color 200ms linear;
+    width: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+
+    .flex-column {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      width: 100%;
+      gap: 8px;
+      text-align: center;
+
+      strong {
+        font-size: 16px;
+      }
+    }
+  }
+`;
+
+const StyledAvatar = styled.div`
+  border-radius: 50%;
+  background: var(--primary);
+  width: 50%;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 50px;
+
+  b {
+    font-size: 40px;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+`;
+
+export default OnlineTutorList;

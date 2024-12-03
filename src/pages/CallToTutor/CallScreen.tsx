@@ -1,3 +1,4 @@
+import React from 'react';
 import { MeetingProvider, useMeeting } from '@videosdk.live/react-sdk';
 import { userStore } from '../../store/userStore';
 import { getVideosdkToken } from '../../utils/api';
@@ -10,15 +11,14 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useCall } from '../../hooks/useCall';
 
-
-function MeetingView({onMeetingLeave}: {onMeetingLeave: () => Promise<void>}) {
-  const navigate = useNavigate()
+function MeetingView({ onMeetingLeave }: { onMeetingLeave: () => Promise<void> }) {
+  const navigate = useNavigate();
   const { participants } = useMeeting({
-    onMeetingLeft: async() => {
-      await onMeetingLeave()
-      navigate("/call-to-tutor");
-      toast("Call Ended.")
-    }
+    onMeetingLeft: async () => {
+      await onMeetingLeave();
+      navigate('/call-to-tutor');
+      toast('Call Ended.');
+    },
   });
 
   return (
@@ -37,14 +37,14 @@ const CallScreen = () => {
   const token = getVideosdkToken() || '';
   const { id: meetingId } = useParams<{ id: string }>();
   const user = userStore((state) => state.user);
-  const { currentCallStatus, endCall } =  useCall(user)
+  const { currentCallStatus, endCall } = useCall(user);
 
   const hasPermissions = useHandlePermissions();
 
-  console.log(meetingId, user)
+  console.log(meetingId, user);
 
   if (!hasPermissions) return <div>Enable Microphone permission to continue.</div>;
-  
+
   if (!user || !meetingId || !currentCallStatus) return null;
 
   const username = user.displayName || user.email || user.uid;
@@ -62,13 +62,11 @@ const CallScreen = () => {
         // metaData: {
         //   profileIm
         // }
-        
       }}
       token={token}
       joinWithoutUserInteraction={true}
-      
     >
-      <MeetingView onMeetingLeave={async() => await endCall()} />
+      <MeetingView onMeetingLeave={async () => await endCall()} />
     </MeetingProvider>
   );
 };

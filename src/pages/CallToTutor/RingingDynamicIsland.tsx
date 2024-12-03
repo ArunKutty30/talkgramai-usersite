@@ -1,11 +1,10 @@
-
 import { CallDismiss } from 'styled-icons/fluentui-system-filled';
 import Avatar from '../../components/Avatar';
 import {
-    DynamicContainer,
-    DynamicIsland,
-    DynamicIslandProvider,
-    DynamicTitle,
+  DynamicContainer,
+  DynamicIsland,
+  DynamicIslandProvider,
+  DynamicTitle,
 } from '../../components/DynamicIsland';
 import { CallStatus } from '../../hooks/useCall';
 import './styles.css';
@@ -22,10 +21,10 @@ const DynamicAction = ({ onReject, callStatus }: CallInfoProps) => {
         <DynamicContainer className="dynamic-container">
           <div className="relative-flex w-100">
             <DynamicTitle className="dynamic-title">
-              <Avatar username={callStatus.receiverName} />
+              <Avatar className="avatar" username={callStatus.receiverName} />
               <div>ringing...</div>
             </DynamicTitle>
-            <div className="relative-flex">
+            <div className="call-controls">
               <CallDismiss onClick={onReject} className="call-add bg-red" />
             </div>
           </div>
