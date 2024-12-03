@@ -74,7 +74,7 @@ const SelectTutorFilterContainer = styled.div`
   }
 `;
 
-const SelectTutorCardWrapper = styled.div`
+export const SelectTutorCardWrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 20px 60px;
@@ -90,7 +90,7 @@ const HeaderBlockRight = styled.div`
   align-items: center;
 `;
 
-const StyledDataNotFound = styled.div`
+export const StyledDataNotFound = styled.div`
   height: 300px;
   display: grid;
   place-items: center;

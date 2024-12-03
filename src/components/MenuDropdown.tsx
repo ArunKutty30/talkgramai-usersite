@@ -14,6 +14,7 @@ const menuLinks = [
   { name: 'Refer', link: '/refer-and-earn' },
   { name: 'Disputes', link: '/disputes' },
   { name: 'FAQs', link: '/faqs' },
+  { name: "Call To Talk", link: '/call-to-tutor' },
 ];
 
 const StyledMenu = styled((props: MenuProps) => (

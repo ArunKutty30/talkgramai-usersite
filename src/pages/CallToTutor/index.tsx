@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import useOnlineUsers from '../../hooks/useOnlineUsers';
 
 import { createContext, useContext } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
@@ -18,7 +17,8 @@ import AudioCall from './Audiocall';
 import { useMediaDevice } from '@videosdk.live/react-sdk';
 import { Timestamp } from 'firebase/firestore';
 import Avatar from '../../components/Avatar';
-
+import OnlineTutorList from './OnlineTutorList';
+import {useNavigate} from "react-router-dom"
 type CallInfoProps = {
   onReject: () => void;
   callStatus: CallStatus;
@@ -131,25 +131,16 @@ export function FadeInStagger({ faster = false, ...props }) {
 }
 
 export default function CallToTutor() {
-  const onlineUsers = useOnlineUsers();
   const user = userStore((state) => state.user);
-
+  const navigate = useNavigate()
   const { initiateCall, currentCallStatus, endCall } = useCall(user);
 
-  const { requestPermission } = useMediaDevice();
-
-  const checkMediaPermission = async () => {
-    try {
-      //@ts-ignore
-      await requestPermission('audio');
-    } catch (ex) {}
-  };
-
   useEffect(() => {
-    checkMediaPermission();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  console.log(onlineUsers);
+    console.log("cs", currentCallStatus)
+    if (currentCallStatus && currentCallStatus.status === "connected"){
+      navigate("/call-to-tutor/" + currentCallStatus.roomId)
+    }
+  }, [currentCallStatus, navigate])
 
   if (!user) return null;
 
@@ -161,38 +152,18 @@ export default function CallToTutor() {
         gap: 4,
       }}
     >
-      {!!currentCallStatus && currentCallStatus.status !== 'ended' && (
+      {!!currentCallStatus && currentCallStatus.status === 'ringing' && (
         <DynamicIslandDemo callStatus={currentCallStatus} onReject={endCall} />
       )}
-      {!!currentCallStatus && currentCallStatus.status !== 'ended' && (
+      {/* {!!currentCallStatus && currentCallStatus.status !== 'ended' && (
         <AudioCall
           username={user.displayName || user.email || user.uid}
           id={user.uid}
           meetingId={currentCallStatus.roomId}
         />
-      )}
+      )} */}
 
-      {onlineUsers.map((tutor) => {
-        return (
-          <div
-            style={{
-              width: 100,
-              height: 100,
-              cursor: 'pointer',
-              backgroundColor: 'gray',
-              color: 'white',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 8,
-            }}
-            onClick={() => initiateCall(tutor)}
-            key={tutor.id}
-          >
-            {tutor.name}
-          </div>
-        );
-      })}
+      <OnlineTutorList initiateCall={initiateCall} />
     </div>
   );
 }

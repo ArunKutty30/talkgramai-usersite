@@ -44,6 +44,7 @@ const LazyLessonPlanPage = React.lazy(() => import('./pages/lessonPlan'));
 const LazyUserFeedbackReportPagePage = React.lazy(() => import('./pages/UserFeedbackReportPage'));
 const LazyAiServicesPage = React.lazy(() => import('./pages/AiServices'));
 const CallToTutor = React.lazy(() => import('./pages/CallToTutor'));
+const CallScreen = React.lazy(() => import('./pages/CallToTutor/CallScreen'));
 
 const App: React.FC = () => {
   const isFetching = userStore((state) => state.isFetching);
@@ -136,14 +137,22 @@ const App: React.FC = () => {
                 </Suspense>
               }
             />
-            <Route
-              path="/call-to-tutor/*"
-              element={
-                <Suspense fallback={<div className="suspense-loader"></div>}>
-                  <CallToTutor />
-                </Suspense>
-              }
-            />
+            
+            <Route path="/call-to-tutor">
+              <Route
+                path="/call-to-tutor"
+                element={
+                  <Suspense fallback={<div className="suspense-loader"></div>}>
+                    <CallToTutor />
+                  </Suspense>
+                }
+              />
+              <Route path="/call-to-tutor/:id" element={
+                  <Suspense fallback={<div className="suspense-loader"></div>}>
+                    <CallScreen />
+                  </Suspense>
+                } />
+            </Route>
 
             <Route path="*" element={<PageNotFound />} />
           </Route>

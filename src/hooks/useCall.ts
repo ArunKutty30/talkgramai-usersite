@@ -9,7 +9,7 @@ import { User } from 'firebase/auth';
 import { Tutor } from './useOnlineUsers';
 import toast from 'react-hot-toast';
 
-const CALL_COLLECTION_NAME ="calls"
+const CALL_COLLECTION_NAME = 'calls';
 const callRef = collection(db, CALL_COLLECTION_NAME);
 
 export type CallStatus = {
@@ -17,31 +17,48 @@ export type CallStatus = {
   callerName: string | null | undefined;
   receiver: string;
   roomId: string;
-  status: string;
+  status: 'ended' | 'ringing' | 'connected';
   createdAt: Timestamp;
   updatedAt: Timestamp;
-  receiverName: string,
-}
+  receiverName: string;
+};
 
 export const useCall = (user: User | null) => {
-  const userId = user?.uid || "";
+  const userId = user?.uid || '';
   const [currentCallStatus, setCallStatus] = useState<CallStatus | null>(null);
 
   const roomId = currentCallStatus?.roomId;
 
-  useEffect(() => { 
+  useEffect(() => {
     const q = query(
       callRef,
       where('callerId', '==', userId),
-      where('status', '==', 'ringing'),
+      where('status', 'in', ['ringing', 'connected']),
       limit(1)
     );
-  
+
+
+
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
         snapshot.forEach((doc) => {
           const callData = doc.data();
+
+          console.log("call status fetched")
+
+          onSnapshot(
+            doc.ref,
+            (docSnapshot) => {
+              const callData = docSnapshot.data();
+              console.log("call status updated")
+              setCallStatus(callData as CallStatus);
+            },
+            (error) => {
+              console.error('Error fetching upcoming sessions:', error);
+            }
+          ); 
+
           setCallStatus(callData as CallStatus);
         });
       },
@@ -52,30 +69,22 @@ export const useCall = (user: User | null) => {
     return () => unsubscribe();
   }, [userId]);
 
-  useEffect(() => {
-    if (roomId) {
-      const q = query(
-        callRef,
-        where("roomId", "==", roomId),
-      );
-
-      const unsubscribe = onSnapshot(
-        q,
-        (snapshot) => {
-          snapshot.forEach((doc) => {
-            const callData = doc.data();
-            setCallStatus(callData as CallStatus);
-          });
-        },
-        (error) => {
-          console.error("Error fetching upcoming sessions:", error);
-        }
-      );
-      return () => unsubscribe();
-    }
-  }, [roomId]);
-
-  // Initiate a call
+  // useEffect(() => {
+  //   if (currentCallRef) {
+  //     toast.success('Call updated');
+  //     const unsubscribe = onSnapshot(
+  //       currentCallRef,
+  //       (docSnapshot) => {
+  //         const callData = docSnapshot.data();
+  //         setCallStatus(callData as CallStatus);
+  //       },
+  //       (error) => {
+  //         console.error('Error fetching upcoming sessions:', error);
+  //       }
+  //     );
+  //     return () => unsubscribe();
+  //   }
+  // }, [currentCallRef]);
 
   const isBusy = async (tutorId: string) => {
     const q = query(
@@ -85,67 +94,47 @@ export const useCall = (user: User | null) => {
       limit(1)
     );
     const querySnapshot = await getDocs(q);
-  
+
     if (querySnapshot.size > 0) {
       return true;
-    } 
+    }
 
-    return false
-  }
+    return false;
+  };
 
-  const initiateCall = async (tutor: Tutor ) => {
+  const initiateCall = async (tutor: Tutor) => {
     const busy = await isBusy(tutor.id);
     if (busy) {
-      toast.error("Tutor is busy, try again later");
+      toast.error('Tutor is busy, try again later');
       return null;
-    } 
+    }
     const roomId: string = await createCall();
     // const roomId: string = "ABCVD";
     const calldoc: CallStatus = {
       callerId: userId,
-      callerName: user?.displayName  || user?.email,
+      callerName: user?.displayName || user?.email,
       receiver: tutor.id,
       receiverName: tutor.name,
       roomId,
       status: 'ringing',
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
-    }
-    await addDoc(callRef, calldoc );
+    };
+    await addDoc(callRef, calldoc);
     setCallStatus(calldoc);
     return roomId;
   };
 
-  // Accept a call
-  const acceptCall = async (roomId: string) => {
-    // const meeting = VideoSDK.initMeeting({
-    //   meetingId: roomId,
-    //   participantId: userId,
-    //   token: VIDEO_SDK_TOKEN,
-    // });
-
-    // await meeting.join();
-
-    // Update the call status in Firestore
-    // const callQuery = db.collection('calls').where('roomId', '==', roomId);
-    // const callSnapshot = await callQuery.get();
-
-    // callSnapshot.forEach(async (doc) => {
-    //   await doc.ref.update({ status: 'connected' });
-    // });
-
-    // setRoomId(roomId);
-  };
-
-
   const endCall = async () => {
     if (roomId) {
-      const callQuery = query(callRef, where("roomId", "==", roomId), limit(1));
+      const callQuery = query(callRef, where('roomId', '==', roomId), limit(1));
       const querySnapshot = await getDocs(callQuery);
 
       querySnapshot.forEach(async (doc) => {
-        await updateDoc(doc.ref, { status: "ended" });
+        await updateDoc(doc.ref, { status: 'ended' });
       });
+
+      console.log("call end done")
 
       setCallStatus(null);
     }
@@ -153,7 +142,6 @@ export const useCall = (user: User | null) => {
 
   return {
     initiateCall,
-    acceptCall,
     endCall,
     currentCallStatus,
   };
