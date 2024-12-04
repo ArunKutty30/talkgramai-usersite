@@ -34,17 +34,36 @@ function OnlineTutorList({
                     <strong>{tutor.name}</strong>
                   </div>
                 </div>
-                <Button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    initiateCall(tutor);
-                  }}
-                  style={{ backgroundColor: '#0bbb14' }}
-                  fullWidth
-                >
-                  <CallIcon />
-                  <span style={{ marginLeft: 8, fontSize: 16 }}>Call</span>
-                </Button>
+                {tutor.busy ? (
+                  <div
+                    style={{
+                      backgroundColor: '#f71b1b',
+                      width: '100%',
+                      fontFamily: 'Inter',
+                      borderRadius: '8px',
+                      padding: '11px 24px',
+                      fontWeight: 500,
+                      color: 'white',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <span style={{ fontSize: 16 }}>Busy</span>
+                  </div>
+                ) : (
+                  <Button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      initiateCall(tutor);
+                    }}
+                    style={{ backgroundColor: '#0bbb14' }}
+                    fullWidth
+                  >
+                    <CallIcon />
+                    <span style={{ marginLeft: 8, fontSize: 16 }}>Call</span>
+                  </Button>
+                )}
               </div>
             );
           })}

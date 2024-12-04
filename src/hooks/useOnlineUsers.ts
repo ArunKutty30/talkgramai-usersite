@@ -3,12 +3,13 @@ import { rtdb } from '../utils/firebase';
 import { ref, onValue, off } from 'firebase/database';
 
 export type Tutor = {
-  id: string,
-  name:string,
-  photoURL:string,
-  state:string,
-  last_changed:string,
-}
+  id: string;
+  name: string;
+  photoURL: string;
+  state: string;
+  last_changed: string;
+  busy: boolean;
+};
 
 const useOnlineUsers = () => {
   const [onlineUsers, setOnlineUsers] = useState<Tutor[]>([]);
