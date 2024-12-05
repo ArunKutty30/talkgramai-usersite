@@ -16,7 +16,7 @@ function MeetingView({ onMeetingLeave }: { onMeetingLeave: () => Promise<void> }
   const { participants } = useMeeting({
     onMeetingLeft: async () => {
       await onMeetingLeave();
-      navigate('/call-to-tutor');
+      navigate('/call-peers');
       toast('Call Ended.');
     },
   });

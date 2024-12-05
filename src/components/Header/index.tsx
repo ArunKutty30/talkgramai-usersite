@@ -42,6 +42,7 @@ import MenuDropdown from '../MenuDropdown';
 import EmailVerificationModal from '../Modal/EmailVerificationModal';
 import Banner from './Banner';
 import { useUserPresence } from '../../hooks/usePresence';
+import { useActiveCallHandler } from '../../hooks/useActiveCall';
 
 const Header = ({ hide }: { hide?: boolean }) => {
   const user = userStore((state) => state.user);
@@ -344,6 +345,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
   }, []);
 
   useUserPresence(user, profileData?.profileImg);
+  useActiveCallHandler(user);
 
   if (!showHeader) return null;
   if (hide) return null;
@@ -390,7 +392,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
                 <NavLink to="/ai-services">AI Services</NavLink>
               </li>
               <li>
-                <NavLink to="/call-to-tutor">Tutor call</NavLink>
+                <NavLink to="/call-peers">Peer call</NavLink>
               </li>
               {/* <li>
                 <NavLink to="/feedback-analysis">Feedback analysis</NavLink>

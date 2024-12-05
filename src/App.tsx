@@ -25,6 +25,7 @@ import Faq from './pages/Faq';
 import InterviewByAI from './pages/InterviewByAI';
 import DefaultLayout from './layout/DefaultLayout';
 import UpdateEmailPage from './pages/Auth/UpdateEmailPage';
+import RingingHandler from './components/RingingHandler';
 
 const theme = createTheme({
   palette: {
@@ -44,7 +45,7 @@ const LazyLessonPlanPage = React.lazy(() => import('./pages/lessonPlan'));
 const LazyUserFeedbackReportPagePage = React.lazy(() => import('./pages/UserFeedbackReportPage'));
 const LazyAiServicesPage = React.lazy(() => import('./pages/AiServices'));
 const CallToTutor = React.lazy(() => import('./pages/CallToTutor'));
-const CallScreen = React.lazy(() => import('./pages/CallToTutor/CallScreen'));
+const CallScreen = React.lazy(() => import('./pages/CallScreen'));
 
 const App: React.FC = () => {
   const isFetching = userStore((state) => state.isFetching);
@@ -60,6 +61,7 @@ const App: React.FC = () => {
             element={
               <div>
                 {shouldShowHeader && <Header />}
+                <RingingHandler />
                 <Outlet />
                 {/* <Copyright /> */}
               </div>
@@ -137,22 +139,24 @@ const App: React.FC = () => {
                 </Suspense>
               }
             />
-            
-            <Route path="/call-to-tutor">
-              <Route
-                path="/call-to-tutor"
-                element={
-                  <Suspense fallback={<div className="suspense-loader"></div>}>
-                    <CallToTutor />
-                  </Suspense>
-                }
-              />
-              <Route path="/call-to-tutor/:id" element={
-                  <Suspense fallback={<div className="suspense-loader"></div>}>
-                    <CallScreen />
-                  </Suspense>
-                } />
-            </Route>
+
+            <Route
+              path="/call-peers"
+              element={
+                <Suspense fallback={<div className="suspense-loader"></div>}>
+                  <CallToTutor />
+                </Suspense>
+              }
+            />
+
+            <Route
+              path="/call/:id"
+              element={
+                <Suspense fallback={<div className="suspense-loader"></div>}>
+                  <CallScreen />
+                </Suspense>
+              }
+            />
 
             <Route path="*" element={<PageNotFound />} />
           </Route>

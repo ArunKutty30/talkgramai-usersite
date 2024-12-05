@@ -8,6 +8,7 @@ import { collection, limit, onSnapshot, query, where, or, and } from 'firebase/f
 import { User } from 'firebase/auth';
 import { Tutor } from './useOnlineUsers';
 import toast from 'react-hot-toast';
+import { callsStore } from '../store/callsStore';
 
 const CALL_COLLECTION_NAME = 'calls';
 const callRef = collection(db, CALL_COLLECTION_NAME);
@@ -25,52 +26,53 @@ export type CallStatus = {
 
 export const useCall = (user: User | null) => {
   const userId = user?.uid || '';
-  const [currentCallStatus, setCallStatus] = useState<CallStatus | null>(null);
+  // const [currentCallStatus, setCallStatus] = useState<CallStatus | null>(null);
+  const { activeCall: currentCallStatus, setActiveCall: setCallStatus } = callsStore();
 
   const roomId = currentCallStatus?.roomId;
 
-  useEffect(() => {
-    // const q = query(
-    //   callRef,
-    //   where('callerId', '==', userId),
-    //   where('status', 'in', ['ringing', 'connected']),
-    //   limit(1),
-    // );
+  // useEffect(() => {
+  //   // const q = query(
+  //   //   callRef,
+  //   //   where('callerId', '==', userId),
+  //   //   where('status', 'in', ['ringing', 'connected']),
+  //   //   limit(1),
+  //   // );
 
-    const q = query(
-      callRef,
-      and(
-        or(where('callerId', '==', userId), where('receiver', '==', userId)),
-        where('status', 'in', ['ringing', 'connected']),
-      ),
-      limit(1),
-    );
+  //   const q = query(
+  //     callRef,
+  //     and(
+  //       or(where('callerId', '==', userId), where('receiver', '==', userId)),
+  //       where('status', 'in', ['ringing', 'connected']),
+  //     ),
+  //     limit(1),
+  //   );
 
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        snapshot.forEach((doc) => {
-          const callData = doc.data();
-          onSnapshot(
-            doc.ref,
-            (docSnapshot) => {
-              const callData = docSnapshot.data();
-              setCallStatus(callData as CallStatus);
-            },
-            (error) => {
-              console.error('Error fetching upcoming sessions:', error);
-            },
-          );
+  //   const unsubscribe = onSnapshot(
+  //     q,
+  //     (snapshot) => {
+  //       snapshot.forEach((doc) => {
+  //         const callData = doc.data();
+  //         onSnapshot(
+  //           doc.ref,
+  //           (docSnapshot) => {
+  //             const callData = docSnapshot.data();
+  //             setCallStatus(callData as CallStatus);
+  //           },
+  //           (error) => {
+  //             console.error('Error fetching upcoming sessions:', error);
+  //           },
+  //         );
 
-          setCallStatus(callData as CallStatus);
-        });
-      },
-      (error) => {
-        console.error('Error fetching upcoming sessions:', error);
-      },
-    );
-    return () => unsubscribe();
-  }, [userId]);
+  //         setCallStatus(callData as CallStatus);
+  //       });
+  //     },
+  //     (error) => {
+  //       console.error('Error fetching upcoming sessions:', error);
+  //     },
+  //   );
+  //   return () => unsubscribe();
+  // }, [userId]);
 
   // useEffect(() => {
   //   if (currentCallRef) {
