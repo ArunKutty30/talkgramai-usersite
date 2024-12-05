@@ -4,7 +4,7 @@ import { db } from '../utils/firebase';
 import { createCall } from '../utils/api';
 import { addDoc, getDocs, Timestamp, updateDoc } from 'firebase/firestore';
 
-import { collection, limit, onSnapshot, query, where } from 'firebase/firestore';
+import { collection, limit, onSnapshot, query, where, or, and } from 'firebase/firestore';
 import { User } from 'firebase/auth';
 import { Tutor } from './useOnlineUsers';
 import toast from 'react-hot-toast';
@@ -30,41 +30,44 @@ export const useCall = (user: User | null) => {
   const roomId = currentCallStatus?.roomId;
 
   useEffect(() => {
+    // const q = query(
+    //   callRef,
+    //   where('callerId', '==', userId),
+    //   where('status', 'in', ['ringing', 'connected']),
+    //   limit(1),
+    // );
+
     const q = query(
       callRef,
-      where('callerId', '==', userId),
-      where('status', 'in', ['ringing', 'connected']),
-      limit(1)
+      and(
+        or(where('callerId', '==', userId), where('receiver', '==', userId)),
+        where('status', 'in', ['ringing', 'connected']),
+      ),
+      limit(1),
     );
-
-
 
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
         snapshot.forEach((doc) => {
           const callData = doc.data();
-
-          console.log("call status fetched")
-
           onSnapshot(
             doc.ref,
             (docSnapshot) => {
               const callData = docSnapshot.data();
-              console.log("call status updated")
               setCallStatus(callData as CallStatus);
             },
             (error) => {
               console.error('Error fetching upcoming sessions:', error);
-            }
-          ); 
+            },
+          );
 
           setCallStatus(callData as CallStatus);
         });
       },
       (error) => {
         console.error('Error fetching upcoming sessions:', error);
-      }
+      },
     );
     return () => unsubscribe();
   }, [userId]);
@@ -91,7 +94,7 @@ export const useCall = (user: User | null) => {
       callRef,
       where('receiver', '==', tutorId),
       where('status', '!=', 'ended'),
-      limit(1)
+      limit(1),
     );
     const querySnapshot = await getDocs(q);
 
@@ -125,6 +128,19 @@ export const useCall = (user: User | null) => {
     return roomId;
   };
 
+  const acceptCall = async () => {
+    const callQuery = query(callRef, where('roomId', '==', roomId));
+    const callSnapshot = await getDocs(callQuery);
+    callSnapshot.forEach(async (doc) => {
+      await updateDoc(doc.ref, {
+        status: 'connected',
+        updatedAt: Timestamp.now(),
+      });
+    });
+
+    setCallStatus(currentCallStatus ? { ...currentCallStatus, status: 'connected' } : null);
+  };
+
   const endCall = async () => {
     if (roomId) {
       const callQuery = query(callRef, where('roomId', '==', roomId), limit(1));
@@ -134,8 +150,6 @@ export const useCall = (user: User | null) => {
         await updateDoc(doc.ref, { status: 'ended' });
       });
 
-      console.log("call end done")
-
       setCallStatus(null);
     }
   };
@@ -144,5 +158,6 @@ export const useCall = (user: User | null) => {
     initiateCall,
     endCall,
     currentCallStatus,
+    acceptCall,
   };
 };

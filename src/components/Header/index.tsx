@@ -41,6 +41,7 @@ import { reminderStore } from '../../store/reminderStore';
 import MenuDropdown from '../MenuDropdown';
 import EmailVerificationModal from '../Modal/EmailVerificationModal';
 import Banner from './Banner';
+import { useUserPresence } from '../../hooks/usePresence';
 
 const Header = ({ hide }: { hide?: boolean }) => {
   const user = userStore((state) => state.user);
@@ -84,8 +85,8 @@ const Header = ({ hide }: { hide?: boolean }) => {
     updateCancelledSession(
       await getUserCancelledSessionOnCurrentMonth(
         subscriptionData.user,
-        subscriptionData.startDate.toDate()
-      )
+        subscriptionData.startDate.toDate(),
+      ),
     );
 
     if (subscriptionData.demoClass === true) {
@@ -93,7 +94,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
         subscriptionData.user,
         subscriptionData.id,
         subscriptionData.startDate.toDate(),
-        subscriptionData.endDate.toDate()
+        subscriptionData.endDate.toDate(),
       );
 
       if (sessionInfo.some((s) => s.status === 'COMPLETED')) {
@@ -117,14 +118,14 @@ const Header = ({ hide }: { hide?: boolean }) => {
 
     const currentInfo = getCurrentWeekInfo(
       subscriptionData.startDate.toDate(),
-      subscriptionData.endDate.toDate()
+      subscriptionData.endDate.toDate(),
     );
     // console.log('current', currentInfo);
     const sessionInfo = await getUserBookedSessionOnThisWeekDoc(
       subscriptionData.user,
       subscriptionData.id,
       currentInfo.currentWeekStartDate,
-      currentInfo.currentWeekEndDate
+      currentInfo.currentWeekEndDate,
     );
 
     if (currentInfo.currentWeek > 1) {
@@ -132,7 +133,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
         subscriptionData.user,
         subscriptionData.id,
         subscriptionData.startDate.toDate(),
-        currentInfo.lastWeekEndDate
+        currentInfo.lastWeekEndDate,
       );
 
       const sessionPerWeek = subscriptionData?.sessionPerWeek ?? 0;
@@ -157,7 +158,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
       subscriptionData.user,
       subscriptionData.id,
       subscriptionData.startDate.toDate(),
-      new Date()
+      new Date(),
     );
     updateCurrentPlanSession(currentPlanSession);
     updateAllSessionFetching(false);
@@ -177,7 +178,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
 
     if (bookedSession + missedSession === subscriptionData.noOfSession && backlogSession === 0) {
       const isCompleted = currentPlanSession.some(
-        (s) => Boolean(s.isLastSession) && s.status === 'COMPLETED'
+        (s) => Boolean(s.isLastSession) && s.status === 'COMPLETED',
       );
       if (isCompleted) {
         await updateSubscriptionDoc(subscriptionData.id, { subscriptionStatus: 'EXPIRED' });
@@ -342,6 +343,8 @@ const Header = ({ hide }: { hide?: boolean }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useUserPresence(user, profileData?.profileImg);
+
   if (!showHeader) return null;
   if (hide) return null;
 
@@ -439,7 +442,7 @@ const Header = ({ hide }: { hide?: boolean }) => {
         )}
         {user ? (
           user.emailVerified ? null : !profileData ? null : Boolean(
-              profileData?.emailVerified
+              profileData?.emailVerified,
             ) ? null : (
             <EmailVerificationModal isOpen />
           )

@@ -9,9 +9,15 @@ export type Tutor = {
   state: string;
   last_changed: string;
   busy: boolean;
+  role: string;
 };
 
-const useOnlineUsers = () => {
+type Props = {
+  role?: 'student' | 'tutor';
+  loggedInUserId?: string;
+};
+
+const useOnlineUsers = ({ role, loggedInUserId }: Props) => {
   const [onlineUsers, setOnlineUsers] = useState<Tutor[]>([]);
 
   useEffect(() => {
@@ -23,7 +29,11 @@ const useOnlineUsers = () => {
 
       if (usersStatus) {
         Object.keys(usersStatus).forEach((userId) => {
-          if (usersStatus[userId].state === 'online') {
+          if (
+            usersStatus[userId].state === 'online' &&
+            usersStatus[userId].role === role &&
+            userId !== loggedInUserId
+          ) {
             onlineUserList.push(usersStatus[userId]);
           }
         });

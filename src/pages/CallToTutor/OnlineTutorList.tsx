@@ -6,10 +6,15 @@ import { Button } from '../../components';
 
 function OnlineTutorList({
   initiateCall,
+  userId,
 }: {
   initiateCall: (tutor: Tutor) => Promise<string | null>;
+  userId: string;
 }) {
-  const onlineUsers = useOnlineUsers();
+  const onlineUsers = useOnlineUsers({
+    loggedInUserId: userId,
+    role: 'student',
+  });
 
   return (
     <div>
