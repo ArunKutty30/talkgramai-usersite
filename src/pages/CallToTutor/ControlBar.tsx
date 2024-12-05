@@ -4,7 +4,7 @@ import Phone from '@mui/icons-material/Phone';
 import Tooltip from '@mui/material/Tooltip';
 import { useMeeting } from '@videosdk.live/react-sdk';
 import React from 'react';
-import CallDuration from './CallDuration';
+//import CallDuration from './CallDuration';
 import { ControlBarContainer, ControlButton, ControlsWrapper } from './styles';
 
 function ControlBar() {
