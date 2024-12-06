@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { ref, onDisconnect, set, update, serverTimestamp, onValue } from 'firebase/database';
+import { ref, onDisconnect, set, serverTimestamp, onValue } from 'firebase/database';
 import { rtdb } from '../utils/firebase';
 import { User } from 'firebase/auth';
 // import { useIncomingCall } from "./useIncomingCalls";
@@ -29,7 +29,7 @@ export const useUserPresence = (user: User | null, profileImg: string | undefine
       last_changed: serverTimestamp(),
       role: 'student',
     }),
-    [userId, user?.displayName, profileImg],
+    [userId, user?.displayName, profileImg]
   );
 
   // useEffect(() => {

@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
 import { db } from '../utils/firebase';
 // import { VideoSDK } from '@videosdk.live/react-sdk';
 import { createCall } from '../utils/api';
 import { addDoc, getDocs, Timestamp, updateDoc } from 'firebase/firestore';
 
-import { collection, limit, onSnapshot, query, where, or, and } from 'firebase/firestore';
+import { collection, limit, query, where } from 'firebase/firestore';
 import { User } from 'firebase/auth';
 import { Tutor } from './useOnlineUsers';
 import toast from 'react-hot-toast';
@@ -96,7 +95,7 @@ export const useCall = (user: User | null) => {
       callRef,
       where('receiver', '==', tutorId),
       where('status', '!=', 'ended'),
-      limit(1),
+      limit(1)
     );
     const querySnapshot = await getDocs(q);
 
